@@ -212,11 +212,21 @@ def player_record(row: dict[str, str], source: dict, history: dict | None, nba_i
         # 现役头像固定走 260x190；历史名宿继续使用已缓存的高清图。
         size = "260x190" if source["kind"] == "current" else "1040x760"
         photo_url = f"https://cdn.nba.com/headshots/nba/latest/{size}/{nba_id}.png"
+    # Resolve the best usable image path. Many historical local caches were never
+    # shipped, so a photoLocal that doesn't exist on disk would render blank in the
+    # browser. When the local file is missing, fall back to the NBA CDN URL so the
+    # avatar still loads. (Current players' local cache exists and is kept.)
+    resolved_local = current_photo or history_photo
+    if resolved_local and not (ROOT / resolved_local).exists():
+        resolved_local = photo_url or ""
     honors = honor_snapshot(history, source["year"], row)
     identity = (history or {}).get("realId") or norm(english) or norm(name)
     return {
         "id": number(row.get("id"), index),
         "uid": f"pp_{source['code']}_{tid}_{identity}_{index}",
+        # Stable cross-season identity (no row index) so the same person can be
+        # deduped to a single peak entry regardless of which season row we see.
+        "identity": identity,
         "name": name,
         "nameCn": name,
         "nameEn": english,
@@ -228,7 +238,7 @@ def player_record(row: dict[str, str], source: dict, history: dict | None, nba_i
         "age": number(row.get("age"), 24),
         "yearsLeague": number(row.get("yearsLeague")),
         "image": number(row.get("image")),
-        "photoLocal": current_photo or history_photo,
+        "photoLocal": resolved_local,
         "fallbackPhotoLocal": fallback_photo,
         "photoUrl": photo_url,
         "photoSource": "hupu-buildplayer-nba-cdn" if source["kind"] == "current" and nba_id else ("nba-cdn" if nba_id else ("local-historical-cache" if history_photo else "initial-fallback")),
@@ -265,7 +275,8 @@ def main() -> None:
         rows_by_source[source["code"]] = load_csv(DATA_DIR / source["file"])
 
     current_by_team: dict[int, list[dict]] = defaultdict(list)
-    historical_by_team: dict[int, dict[str, dict]] = defaultdict(dict)
+    # Global peak lookup: identity -> best historical season record.
+    historical_peak: dict[str, dict] = {}
     for source in SEASONS:
         for index, row in enumerate(rows_by_source[source["code"]], start=1):
             tid = team_id(row)
@@ -278,16 +289,39 @@ def main() -> None:
                 continue
             if not is_star(record["honors"], record["rating"]):
                 continue
-            key = str(record["uid"]).split("_", 3)[-1]
-            old = historical_by_team[tid].get(key)
-            if old is None or record["starScore"] > old["starScore"]:
-                historical_by_team[tid][key] = record
+            # Dedupe globally by player identity (NOT per-team), keeping only the
+            # single peak season. Why: the same legend appeared once per team and
+            # even once per season, so Vince Carter/Duncan/etc. showed up many times.
+            # Peak = highest starScore, tie -> higher rating, tie -> earlier year.
+            key = record["identity"]
+            old = historical_peak.get(key)
+            if old is None or (
+                record["starScore"], record["rating"], -record["source"]["year"]
+            ) > (old["starScore"], old["rating"], -old["source"]["year"]):
+                historical_peak[key] = record
+
+    # Current players are the live 2025-26 rosters; any historical entry that is the
+    # same person as a current player must be dropped (a legend still playing is
+    # represented by his current card, never by an old season).
+    current_identities = set()
+    for records in current_by_team.values():
+        for rec in records:
+            current_identities.add(rec["identity"])
+
+    # Assign each unique historical legend to the team where he peaked.
+    historical_by_team: dict[int, list[dict]] = defaultdict(list)
+    dropped_current = 0
+    for rec in historical_peak.values():
+        if rec["identity"] in current_identities:
+            dropped_current += 1
+            continue
+        historical_by_team[rec["teamId"]].append(rec)
 
     teams: dict[str, dict] = {}
     warnings: list[str] = []
     for tid, label in TEAM_NAMES.items():
         current = sorted(current_by_team[tid], key=lambda p: (-p["rating"], p["nameEn"]))
-        history = sorted(historical_by_team[tid].values(), key=lambda p: (-p["starScore"], -p["rating"], p["nameEn"]))
+        history = sorted(historical_by_team[tid], key=lambda p: (-p["starScore"], -p["rating"], p["nameEn"]))
         current_take = current[:12]
         history_take = history[:3]
         if len(current_take) < 12:
@@ -301,6 +335,7 @@ def main() -> None:
             "historicalCount": len(history_take),
             "players": current_take + history_take,
         }
+    print(f"historical unique legends kept={sum(len(v) for v in historical_by_team.values())} dropped_as_current={dropped_current}")
 
     payload = {
         "version": 1,

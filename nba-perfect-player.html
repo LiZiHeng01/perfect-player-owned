@@ -1683,7 +1683,47 @@ var HEADSHOT_NAME_FIX = {
   'Kel\'el Ware': "Kel'el Ware",
   'KyShawn George': "Kyshawn George",
 };
-/** 获取球员头像样式（仅 NBA CDN） */
+/** 名字归一化：去重音、统一直/弯撇号、去除空格标点，用于宽松匹配头像。
+ *  Why: 花名册里的名字常用弯引号(’)与重音字母(Dončić)，而 NBA_PLAYER_IMAGES
+ *  用直引号/去重音写法，导致 Jokić、O’Neale、De’Aaron Fox 等匹配失败露出灰头像。 */
+function _hsNormKey(s) {
+  if (!s) return '';
+  try { s = s.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (e) {}
+  return s.toLowerCase().replace(/[’‘]/g, "'").replace(/[^a-z0-9]/g, '');
+}
+/** 懒构建 NBA_PLAYER_IMAGES 的归一化索引（只建一次）。 */
+var _hsNormIndex = null;
+function _hsGetNormIndex() {
+  if (_hsNormIndex) return _hsNormIndex;
+  _hsNormIndex = {};
+  if (typeof NBA_PLAYER_IMAGES !== 'undefined') {
+    for (var key in NBA_PLAYER_IMAGES) {
+      var nk = _hsNormKey(key);
+      if (nk && !(nk in _hsNormIndex)) _hsNormIndex[nk] = NBA_PLAYER_IMAGES[key];
+    }
+  }
+  return _hsNormIndex;
+}
+/** 无照片球员的兜底头像：用姓名首字母生成彩色 SVG，比灰圈更体面。 */
+function _hsInitialsAvatar(name, displaySize) {
+  var parts = String(name || '?').trim().split(/[\s\-]+/).filter(Boolean);
+  var initials = parts.length >= 2
+    ? (parts[0].charAt(0) + parts[parts.length - 1].charAt(0))
+    : (parts[0] || '?').slice(0, 2);
+  initials = initials.toUpperCase();
+  // 由名字派生稳定色相
+  var h = 0; for (var i = 0; i < name.length; i++) { h = (h * 31 + name.charCodeAt(i)) % 360; }
+  var c1 = 'hsl(' + h + ',62%,58%)', c2 = 'hsl(' + ((h + 28) % 360) + ',62%,46%)';
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">' +
+    '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">' +
+    '<stop offset="0" stop-color="' + c1 + '"/><stop offset="1" stop-color="' + c2 + '"/></linearGradient></defs>' +
+    '<rect width="64" height="64" fill="url(#g)"/>' +
+    '<text x="32" y="33" font-family="Fredoka,Arial,sans-serif" font-size="26" font-weight="700" ' +
+    'fill="#fff" text-anchor="middle" dominant-baseline="central">' + initials + '</text></svg>';
+  var uri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  return 'background-image:url("' + uri + '");background-size:cover;background-position:center;background-repeat:no-repeat;width:' + displaySize + 'px;height:' + displaySize + 'px;';
+}
+/** 获取球员头像样式（本地缓存 → NBA CDN → 归一化匹配 → 首字母兜底） */
 function getPlayerHeadshotStyle(playerName, displaySize) {
   if (!playerName) return '';
   displaySize = displaySize || 30;
@@ -1707,11 +1747,18 @@ function getPlayerHeadshotStyle(playerName, displaySize) {
         }
       }
     }
+    // 归一化匹配（去重音/撇号/标点）——解决 Jokić、O’Neale、De’Aaron Fox 等
+    if (!pid) {
+      var idx = _hsGetNormIndex();
+      var nk = _hsNormKey(playerName);
+      if (nk && (nk in idx)) pid = idx[nk];
+    }
     if (pid) {
       return 'background-image:url(https://cdn.nba.com/headshots/nba/latest/260x190/' + pid + '.png);background-size:cover;background-position:center;background-repeat:no-repeat;width:' + (displaySize||30) + 'px;height:' + (displaySize||30) + 'px;';
     }
   }
-  return '';
+  // 兜底：无任何照片时给出首字母彩色头像，避免空白灰圈
+  return _hsInitialsAvatar(playerName, displaySize);
 }
 </script>
 <script src="assets/js/hupu/script-01-2678-5hu3djrc-upload-1783494754597-12.js"></script>
