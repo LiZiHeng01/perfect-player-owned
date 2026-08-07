@@ -271,19 +271,62 @@
     { id:'rookie_number', stage:'post', title:'号码选择', scene:'装备经理发来可选号码。你最熟悉的号码不在其中，只能在纪念过去和开启新身份之间做选择。', choices:[
       { label:'选有纪念意义的号码', hint:'向来路致意', apply:function() { addProfileDelta('loyalty', 1); addProfileDelta('chinaPopularity', 1); return '你选了一个只有家人和老球迷能看懂的号码。它很快有了自己的故事。<br><br>效果：忠诚+1；中国人气+1。'; } },
       { label:'选一个全新号码', hint:'从 NBA 重新开始', apply:function() { addProfileDelta('fame', 1); addProfileDelta('leadership', 1); return '你决定让新号码只代表 NBA 里的自己。第一批球衣很快开始印刷。<br><br>效果：人气+1；领导力+1。'; } }
+    ]},
+    // ===== 追加事件：扩充池子（弹出概率已在 runPerfectPlayerDraftRandomEvent 中收紧） =====
+    { id:'shoe_deal_bidding', stage:'pre', title:'球鞋竞标', scene:'两家球鞋品牌在选秀前争抢你的签名。一家给的钱更多，另一家承诺给你专属产品线，但要你现在就站队。', choices:[
+      { label:'选高报价合同', hint:'先把钱拿到手', apply:function() { addProfileDelta('businessValue', 3); addProfileDelta('loyalty', -1); return '你签下了报价更高的一份。数字很漂亮，但另一家在社媒上意味深长地祝你好运。<br><br>效果：商业价值+3；忠诚-1。'; } },
+      { label:'选专属产品线', hint:'赌长期价值', apply:function() { addProfileDelta('businessValue', 1); addProfileDelta('fame', 1); if (Math.random() < 0.4) changeDraftStock(1); return '你押注在能长期陪你成长的品牌上。发布会当天，你的名字第一次和一双鞋绑在了一起。<br><br>效果：商业价值+1；人气+1。'; } }
+    ]},
+    { id:'draft_night_outfit', stage:'pre', title:'选秀夜造型', scene:'造型团队准备了三套方案：低调经典、大胆先锋、还是带有家乡元素的定制款。镜头会记住你走上舞台的第一个画面。', choices:[
+      { label:'大胆先锋造型', hint:'博眼球，也可能被议论', apply:function() { addProfileDelta('fame', 2); addProfileDelta('controversy', 1); return '你的造型当晚就上了时尚版热搜，评价两极，但没有人记不住你。<br><br>效果：人气+2；争议+1。'; } },
+      { label:'家乡元素定制', hint:'讲好自己的故事', apply:function() { addProfileDelta('chinaPopularity', 2); addProfileDelta('fanSupport', 1); return '你把家乡的图案缝进西装内衬。采访里你讲起它的含义，很多人因此记住了你从哪来。<br><br>效果：中国人气+2；球迷支持+1。'; } },
+      { label:'低调经典造型', hint:'让实力说话', apply:function() { addProfileDelta('mediaTrust', 1); return '你穿了一套挑不出毛病的西装，把所有话题都留给了球场。<br><br>效果：媒体信任+1。'; } }
+    ]},
+    { id:'mock_draft_slip', stage:'pre', title:'模拟选秀下滑', scene:'一份权威模拟选秀把你的顺位往后调了几位，理由是"上限存疑"。经纪人问你要不要公开回应这份榜单。', choices:[
+      { label:'用训练视频回应', hint:'把质疑变成动力', apply:function() { if (Math.random() < 0.55) { changeDraftStock(1); return '你放出一段高强度训练视频，几家球队重新把你列入试训名单。<br><br>效果：选秀行情回升。'; } addSeasonMod('formVariance', 1, -10, 10); return '视频没有改变太多风向，但至少证明了你没有松懈。<br><br>效果：状态波动+1。'; } },
+      { label:'不予理会', hint:'专注自己的节奏', apply:function() { addProfileDelta('mediaTrust', 1); addSeasonMod('formVariance', -1, -10, 10); return '你没有回应任何一份榜单，只是照常训练。安静反而让人高看一眼。<br><br>效果：媒体信任+1；状态波动-1。'; } }
+    ]},
+    { id:'agent_dinner', stage:'pre', title:'球队高层晚宴', scene:'一支彩票区球队约你共进晚餐。饭桌上没有谈篮球，全在聊你的性格和抗压能力。你意识到这也是一场考试。', choices:[
+      { label:'坦诚展现自己', hint:'真实，但风险自负', apply:function() { if (Math.random() < 0.6) { changeDraftStock(1); addProfileDelta('mediaTrust', 1); return '你没有背稿子，聊得很真诚。第二天球队管理层给了你很正面的评价。<br><br>效果：选秀行情上升；媒体信任+1。'; } addProfileDelta('controversy', 1); return '你说得太直接，有句玩笑被理解偏了。<br><br>效果：争议+1。'; } },
+      { label:'滴水不漏地应对', hint:'安全，但少了记忆点', apply:function() { addProfileDelta('coachTrust', 1); return '你把每个问题都答得四平八稳。球队觉得你成熟，但也没什么惊喜。<br><br>效果：教练信任+1。'; } }
+    ]},
+    { id:'draft_charity', stage:'post', title:'第一笔慈善', scene:'签约奖金还没到账，家乡的青少年篮球营就发来求助信息。经纪团队提醒你现金流还很紧张。', choices:[
+      { label:'个人出资支持', hint:'回馈家乡', apply:function() { addProfileDelta('chinaPopularity', 3); addProfileDelta('fanSupport', 1); addProfileDelta('businessValue', -1); return '你悄悄捐了第一笔钱，直到孩子们的照片被传上网，大家才知道。<br><br>效果：中国人气+3；球迷支持+1；商业价值-1。'; } },
+      { label:'承诺赛季后再帮', hint:'先稳住自己的脚跟', apply:function() { addProfileDelta('loyalty', 1); return '你回复说等站稳脚跟一定回来。这句话被截图保存，很多人在等你兑现。<br><br>效果：忠诚+1。'; } }
+    ]},
+    { id:'summer_league_buzz', stage:'post', title:'夏季联赛焦点', scene:'夏季联赛第一场你就打出亮眼表现，媒体开始造势。教练组却提醒你别被夏联的数据冲昏头。', choices:[
+      { label:'继续保持火力', hint:'趁热证明自己', apply:function() { if (Math.random() < 0.55) { addProfileDelta('fame', 2); return '你在夏联持续爆发，新秀榜上开始有了你的名字。<br><br>效果：人气+2。'; } addSeasonMod('staminaLoad', 1, -10, 10); return '你太想证明自己，出手选择有些勉强，教练在场边皱了眉。<br><br>效果：体能负荷+1。'; } },
+      { label:'打磨短板', hint:'把夏联当训练场', apply:function() { addProfileDelta('coachTrust', 2); return '你主动要求多打自己不擅长的位置。数据没那么华丽，但教练组记住了你的态度。<br><br>效果：教练信任+2。'; } }
+    ]},
+    { id:'hometown_return', stage:'post', title:'衣锦还乡', scene:'选秀结束后的第一个休息日，家乡想为你办一场欢迎仪式。这会占掉你宝贵的适应期时间。', choices:[
+      { label:'回去参加仪式', hint:'和家乡一起庆祝', apply:function() { addProfileDelta('chinaPopularity', 2); addProfileDelta('fanSupport', 2); addSeasonMod('staminaLoad', 1, -10, 10); return '你站在挤满人的广场上，忽然明白自己代表的不只是一个人。<br><br>效果：中国人气+2；球迷支持+2；体能负荷+1。'; } },
+      { label:'留队投入训练', hint:'先抓住立足机会', apply:function() { addProfileDelta('coachTrust', 1); addSeasonMod('formVariance', -1, -10, 10); return '你婉拒了仪式，把时间全给了训练馆。家乡人有点失落，但更多人说理解。<br><br>效果：教练信任+1；状态波动-1。'; } }
     ]}
   ];
 
-  window.PERFECT_PLAYER_DRAFT_EVENT_REPORT = { total:DRAFT_RANDOM_EVENTS.length, pre:6, post:6, perRun:2 };
+  window.PERFECT_PLAYER_DRAFT_EVENT_REPORT = { total:DRAFT_RANDOM_EVENTS.length, pre:10, post:9, perRun:1, stageChance:{ pre:0.5, post:0.4 } };
   window.pickPerfectPlayerDraftEventId = function(stage, seen) {
     seen = seen || [];
     var pool = DRAFT_RANDOM_EVENTS.filter(function(event) { return event.stage === stage && seen.indexOf(event.id) < 0; });
     if (!pool.length) return null;
     return pool[Math.floor(Math.random() * pool.length)].id;
   };
+  // Probability that a random event actually fires at each draft stage.
+  // Why: the draft already runs a long fixed narrative chain (前夜→经纪→试训→结果→合同…),
+  // so firing a guaranteed extra modal both pre- and post-draft felt like event spam.
+  // Gating each stage — and hard-capping the whole draft at one random event — keeps the
+  // variety of the pool while cutting the number of popups a player actually sees per run.
+  var DRAFT_EVENT_STAGE_CHANCE = { pre: 0.5, post: 0.4 };
+  var DRAFT_EVENT_MAX_PER_RUN = 1;
+
   window.runPerfectPlayerDraftRandomEvent = function(stage, done) {
     var pending = draftPending();
     if (!pending || typeof showDraftChoiceModal !== 'function') { if (done) done(); return; }
+    // Hard cap: at most one random event across the entire draft run.
+    if ((pending.randomEventIds || []).length >= DRAFT_EVENT_MAX_PER_RUN) { if (done) done(); return; }
+    var chance = DRAFT_EVENT_STAGE_CHANCE[stage];
+    if (chance == null) chance = 0.4;
+    if (Math.random() >= chance) { if (done) done(); return; }
     var id = window.pickPerfectPlayerDraftEventId(stage, pending.randomEventIds);
     var event = DRAFT_RANDOM_EVENTS.find(function(item) { return item.id === id; });
     if (!event) { if (done) done(); return; }

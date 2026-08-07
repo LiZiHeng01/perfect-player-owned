@@ -1,0 +1,607 @@
+/* ============================================================
+ * Perfect Player — Enhancements
+ * 成就系统 + SVG 动画 + 粒子特效
+ * 独立模块：不改动主引擎的核心逻辑，仅通过包裹(monkey-patch)
+ * 现有全局函数在关键时刻注入特效与成就检测。
+ * All user-facing strings are Simplified Chinese by project convention.
+ * ============================================================ */
+(function () {
+  'use strict';
+
+  /* ---------- 小工具 ---------- */
+  function $(id) { return document.getElementById(id); }
+  function ce(tag, cls) { var e = document.createElement(tag); if (cls) e.className = cls; return e; }
+  function rand(min, max) { return min + Math.random() * (max - min); }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+  // 成就数据独立持久化（与主存档解耦：跨生涯累计），localStorage 直存。
+  // Why: achievements are meta-progression that should survive a career reset,
+  // so they are intentionally NOT part of the lenf_auto_slot save blob.
+  var ACH_KEY = 'pp_achievements_v1';
+
+  var PP_FX = window.PP_FX = {};
+
+  /* ==================== 样式注入 ==================== */
+  function injectStyle() {
+    if (document.getElementById('pp-fx-style')) return;
+    var css = PP_FX_CSS;
+    var s = ce('style'); s.id = 'pp-fx-style'; s.textContent = css;
+    document.head.appendChild(s);
+  }
+  // 成就面板样式（单独数组，拼接进主样式）
+  var PP_FX_CSS_PANEL = [
+'.pp-ach-panel-overlay{position:fixed;inset:0;z-index:9100;display:flex;align-items:flex-end;justify-content:center;',
+'  background:rgba(20,12,4,.55);backdrop-filter:blur(3px);opacity:0;transition:opacity .3s ease}',
+'.pp-ach-panel-overlay.show{opacity:1}',
+'.pp-ach-panel{width:min(560px,100%);max-height:86vh;display:flex;flex-direction:column;',
+'  background:var(--bg,#faf5eb);border-radius:22px 22px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.3);',
+'  transform:translateY(100%);transition:transform .36s cubic-bezier(.16,.9,.3,1);padding-bottom:env(safe-area-inset-bottom,0px)}',
+'.pp-ach-panel-overlay.show .pp-ach-panel{transform:translateY(0)}',
+'.pp-ach-panel-head{display:flex;align-items:center;justify-content:space-between;padding:18px 18px 10px}',
+'.pp-ach-panel-title{font-family:var(--font-display,sans-serif);font-size:20px;font-weight:800;color:#2d1f0e}',
+'.pp-ach-close{width:32px;height:32px;border-radius:50%;border:none;background:rgba(45,31,14,.08);',
+'  color:#2d1f0e;font-size:15px;cursor:pointer;transition:transform .12s}.pp-ach-close:active{transform:scale(.88)}',
+'.pp-ach-progress{padding:0 18px 12px}',
+'.pp-ach-progress-bar{height:9px;border-radius:6px;background:rgba(45,31,14,.1);overflow:hidden}',
+'.pp-ach-progress-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,#ff6b35,#f7a600);',
+'  transition:width .6s cubic-bezier(.2,.8,.3,1)}',
+'.pp-ach-progress-txt{margin-top:6px;font-size:12px;color:#8a7a66;font-weight:600;font-family:var(--font-display,sans-serif)}',
+'.pp-ach-grid{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 14px 18px;display:flex;flex-direction:column;gap:8px}',
+'.pp-ach-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;',
+'  background:var(--bg-card,#fffaf2);border:1.5px solid var(--border,#f0e0cc);transition:transform .12s}',
+'.pp-ach-item.locked{opacity:.62;filter:grayscale(.4)}',
+'.pp-ach-item.got.rarity-legend{border-color:var(--gold,#f7a600);background:linear-gradient(120deg,#fffaf2,#fff3d9)}',
+'.pp-ach-item.got.rarity-epic{border-color:#c9b8f0}.pp-ach-item.got.rarity-rare{border-color:#9fe0d6}',
+'.pp-ach-badge{position:relative;width:46px;height:46px;flex:0 0 46px}',
+'.pp-ach-badge-ring{position:absolute;inset:0}',
+'.pp-ach-badge-ic{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:21px}',
+'.pp-ach-item.got .pp-ach-badge-ring .pp-ring-arc{animation:ppRingSpin 4s linear infinite;transform-origin:50% 50%}',
+'.pp-ach-meta{flex:1;min-width:0}',
+'.pp-ach-name{font-family:var(--font-display,sans-serif);font-size:14.5px;font-weight:800;color:#2d1f0e;',
+'  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+'.pp-ach-desc{font-size:11.5px;color:#8a7a66;line-height:1.35;margin-top:1px}',
+'.pp-ach-rarity{font-size:10px;font-weight:800;font-family:var(--font-display,sans-serif);padding:3px 8px;border-radius:20px;',
+'  background:rgba(45,31,14,.06);color:#8a7a66;flex:0 0 auto}',
+'.pp-ach-item.got.rarity-legend .pp-ach-rarity{background:rgba(247,166,0,.16);color:#c48a00}',
+'.pp-ach-item.got.rarity-epic .pp-ach-rarity{background:rgba(183,164,232,.2);color:#7d5fd0}',
+'.pp-ach-item.got.rarity-rare .pp-ach-rarity{background:rgba(46,196,182,.16);color:#1f9e91}',
+'@media(prefers-reduced-motion:reduce){.pp-ring-arc,.pp-ach-fab::after{animation:none!important}}',
+''
+];
+
+  var PP_FX_CSS = [
+'.pp-fx-layer{position:fixed;inset:0;pointer-events:none;z-index:9000;overflow:hidden}',
+'.pp-spark{position:fixed;border-radius:50%;pointer-events:none;will-change:transform,opacity;',
+'  animation:ppSpark .95s cubic-bezier(.18,.7,.35,1) forwards}',
+'@keyframes ppSpark{0%{transform:translate(-50%,-50%) scale(.4) rotate(0);opacity:1}',
+'  70%{opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.9) rotate(var(--rot));opacity:0}}',
+'.pp-confetti{position:fixed;top:-18px;pointer-events:none;will-change:transform,opacity;',
+'  animation:ppConfetti linear forwards}',
+'@keyframes ppConfetti{0%{transform:translateY(-10px) translateX(0) rotate(0);opacity:1}',
+'  100%{transform:translateY(105vh) translateX(var(--sway)) rotate(var(--spin));opacity:.9}}',
+'.pp-floattext{position:fixed;transform:translate(-50%,-50%);font-family:var(--font-display,sans-serif);',
+'  font-weight:800;font-size:15px;color:var(--orange,#ff6b35);text-shadow:0 1px 3px rgba(0,0,0,.25);',
+'  pointer-events:none;animation:ppFloat 1.3s ease-out forwards}',
+'@keyframes ppFloat{0%{opacity:0;transform:translate(-50%,-40%) scale(.7)}20%{opacity:1}',
+'  100%{opacity:0;transform:translate(-50%,-160%) scale(1.05)}}',
+'.pp-toast-wrap{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));',
+'  transform:translateX(-50%);z-index:9200;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}',
+'.pp-toast{display:flex;align-items:center;gap:8px;max-width:86vw;padding:11px 16px;border-radius:14px;',
+'  background:rgba(45,31,14,.92);color:#fff7ec;font-family:var(--font-body,sans-serif);font-size:13.5px;font-weight:600;',
+'  box-shadow:0 8px 26px rgba(0,0,0,.3);backdrop-filter:blur(6px);opacity:0;transform:translateY(14px) scale(.96);',
+'  transition:opacity .28s ease,transform .28s cubic-bezier(.2,.8,.3,1);border:1.5px solid rgba(255,107,53,.35)}',
+'.pp-toast.show{opacity:1;transform:translateY(0) scale(1)}',
+'.pp-toast.gold{border-color:var(--gold,#f7a600);background:linear-gradient(135deg,rgba(80,55,10,.95),rgba(45,31,14,.95))}',
+'.pp-toast-ic{font-size:17px;line-height:1}.pp-toast-msg{line-height:1.4}',
+// —— 成就入口悬浮按钮 ——
+'.pp-ach-fab{position:fixed;right:calc(12px + env(safe-area-inset-right,0px));',
+'  bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:8800;width:50px;height:50px;border-radius:50%;',
+'  border:none;cursor:pointer;background:linear-gradient(145deg,#ff8a5c,#ff6b35);color:#fff;font-size:22px;',
+'  box-shadow:0 6px 18px rgba(255,107,53,.42),inset 0 2px 4px rgba(255,255,255,.35);',
+'  display:flex;align-items:center;justify-content:center;transition:transform .15s ease;animation:ppFabIn .5s ease}',
+'.pp-ach-fab:active{transform:scale(.9)}',
+'.pp-ach-fab::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(255,107,53,.5);',
+'  animation:ppFabPulse 2.4s ease-out infinite}',
+'@keyframes ppFabPulse{0%{transform:scale(.85);opacity:.7}100%{transform:scale(1.4);opacity:0}}',
+'@keyframes ppFabIn{from{transform:scale(0) rotate(-40deg);opacity:0}to{transform:scale(1);opacity:1}}',
+'.pp-ach-fab-ic{filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}',
+// —— 解锁弹窗 ——
+'.pp-ach-pop{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:50%;',
+'  transform:translate(-50%,-140%);z-index:9300;display:flex;align-items:center;gap:12px;width:min(360px,92vw);',
+'  padding:12px 16px 12px 12px;border-radius:16px;background:linear-gradient(135deg,#fffaf2,#fff2d9);',
+'  box-shadow:0 14px 40px rgba(45,31,14,.28);border:2px solid var(--gold,#f7a600);',
+'  transition:transform .5s cubic-bezier(.16,.9,.3,1.1),opacity .4s ease;opacity:0;pointer-events:none}',
+'.pp-ach-pop.show{transform:translate(-50%,0);opacity:1}',
+'.pp-ach-pop.rarity-common{border-color:#9fb0bf}.pp-ach-pop.rarity-rare{border-color:#2ec4b6}',
+'.pp-ach-pop.rarity-epic{border-color:#b7a4e8}.pp-ach-pop.rarity-legend{border-color:var(--gold,#f7a600);',
+'  background:linear-gradient(135deg,#fff7e6,#ffe9c2)}',
+'.pp-ach-pop-ring{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:52px;height:52px;pointer-events:none}',
+'.pp-ach-pop-ic{width:52px;height:52px;flex:0 0 52px;display:flex;align-items:center;justify-content:center;',
+'  font-size:26px;position:relative;z-index:1}',
+'.pp-ach-pop-body{flex:1;min-width:0}',
+'.pp-ach-pop-tag{font-family:var(--font-display,sans-serif);font-size:10px;font-weight:800;letter-spacing:1px;',
+'  color:var(--orange,#ff6b35);text-transform:uppercase}',
+'.pp-ach-pop-name{font-family:var(--font-display,sans-serif);font-size:17px;font-weight:800;color:#2d1f0e;margin:1px 0 2px}',
+'.pp-ach-pop-desc{font-size:12px;color:#8a7a66;line-height:1.35}',
+'.pp-ring-arc{animation:ppRingSpin 3.4s linear infinite;transform-origin:50% 50%}',
+'@keyframes ppRingSpin{to{transform:rotate(270deg)}}',
+''
+].concat(PP_FX_CSS_PANEL).join('\n');
+  injectStyle();
+
+  /* ==================== 粒子特效引擎 ==================== */
+  var fxLayer = null;
+  function ensureLayer() {
+    if (fxLayer && document.body.contains(fxLayer)) return fxLayer;
+    fxLayer = ce('div'); fxLayer.className = 'pp-fx-layer';
+    document.body.appendChild(fxLayer);
+    return fxLayer;
+  }
+
+  // 尊重"减少动态效果"无障碍偏好
+  function reduceMotion() {
+    try { return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+    catch (e) { return false; }
+  }
+
+  var FX_COLORS = ['#ff6b35', '#f7a600', '#2ec4b6', '#ff8a5c', '#ffd23f', '#e63946'];
+
+  // 从某个屏幕坐标向外炸开的火花/彩带
+  PP_FX.burst = function (x, y, opts) {
+    if (reduceMotion()) return;
+    opts = opts || {};
+    var layer = ensureLayer();
+    var count = opts.count || 26;
+    var colors = opts.colors || FX_COLORS;
+    var spread = opts.spread || 150;
+    for (var i = 0; i < count; i++) {
+      var p = ce('span', 'pp-spark');
+      var ang = rand(0, Math.PI * 2);
+      var dist = rand(spread * 0.35, spread);
+      var dx = Math.cos(ang) * dist;
+      var dy = Math.sin(ang) * dist - rand(10, 50); // 略微上飘
+      var sz = rand(6, 12);
+      p.style.left = x + 'px'; p.style.top = y + 'px';
+      p.style.width = sz + 'px'; p.style.height = sz + 'px';
+      p.style.background = colors[(Math.random() * colors.length) | 0];
+      p.style.setProperty('--dx', dx.toFixed(1) + 'px');
+      p.style.setProperty('--dy', dy.toFixed(1) + 'px');
+      p.style.setProperty('--rot', (rand(-360, 360)).toFixed(0) + 'deg');
+      p.style.animationDelay = rand(0, 0.08).toFixed(2) + 's';
+      if (Math.random() < 0.5) p.style.borderRadius = '2px';
+      layer.appendChild(p);
+      (function (el) { setTimeout(function () { el.remove(); }, 1200); })(p);
+    }
+  };
+
+  // 从元素中心炸开
+  PP_FX.burstFrom = function (el, opts) {
+    if (!el) return;
+    var r = el.getBoundingClientRect();
+    PP_FX.burst(r.left + r.width / 2, r.top + r.height / 2, opts);
+  };
+
+  // 全屏彩带雨（用于重大时刻）
+  PP_FX.confetti = function (opts) {
+    if (reduceMotion()) return;
+    opts = opts || {};
+    var layer = ensureLayer();
+    var count = opts.count || 90;
+    var colors = opts.colors || FX_COLORS;
+    var dur = opts.duration || 3200;
+    for (var i = 0; i < count; i++) {
+      var c = ce('span', 'pp-confetti');
+      c.style.left = rand(0, 100).toFixed(2) + '%';
+      c.style.background = colors[(Math.random() * colors.length) | 0];
+      var w = rand(6, 11);
+      c.style.width = w + 'px';
+      c.style.height = rand(9, 16) + 'px';
+      c.style.animationDelay = rand(0, 1.6).toFixed(2) + 's';
+      c.style.animationDuration = rand(2.2, 3.6).toFixed(2) + 's';
+      c.style.setProperty('--sway', rand(-70, 70).toFixed(0) + 'px');
+      c.style.setProperty('--spin', rand(-720, 720).toFixed(0) + 'deg');
+      if (Math.random() < 0.4) c.style.borderRadius = '50%';
+      layer.appendChild(c);
+      (function (el) { setTimeout(function () { el.remove(); }, dur + 1200); })(c);
+    }
+  };
+
+  // 屏幕点击涟漪 + 小火花（轻量的全局手感提升）
+  PP_FX.tapSpark = function (x, y) {
+    if (reduceMotion()) return;
+    PP_FX.burst(x, y, { count: 7, spread: 46 });
+  };
+
+  // 数字上扬的漂浮文字（如"+2 三分"）
+  PP_FX.floatText = function (x, y, text, color) {
+    var layer = ensureLayer();
+    var t = ce('div', 'pp-floattext');
+    t.textContent = text;
+    t.style.left = x + 'px'; t.style.top = y + 'px';
+    if (color) t.style.color = color;
+    layer.appendChild(t);
+    setTimeout(function () { t.remove(); }, 1400);
+  };
+
+  // 华丽 toast（主引擎的 showToast 是空实现，这里补上一个带 SVG 光环的提示）
+  var toastWrap = null;
+  PP_FX.toast = function (msg, opts) {
+    opts = opts || {};
+    if (!toastWrap || !document.body.contains(toastWrap)) {
+      toastWrap = ce('div', 'pp-toast-wrap');
+      document.body.appendChild(toastWrap);
+    }
+    var t = ce('div', 'pp-toast' + (opts.gold ? ' gold' : ''));
+    t.innerHTML = (opts.icon ? '<span class="pp-toast-ic">' + opts.icon + '</span>' : '') +
+      '<span class="pp-toast-msg">' + msg + '</span>';
+    toastWrap.appendChild(t);
+    // 触发进入动画
+    requestAnimationFrame(function () { t.classList.add('show'); });
+    setTimeout(function () {
+      t.classList.remove('show');
+      setTimeout(function () { t.remove(); }, 300);
+    }, opts.duration || 2600);
+  };
+
+  /* ==================== 成就系统 ==================== */
+  // 每个成就：id / 图标 / 名称 / 描述 / 稀有度(common|rare|epic|legend)
+  // 稀有度只影响解锁弹窗与徽章配色。
+  var ACHIEVEMENTS = [
+    // — 起步 —
+    { id: 'create_player', icon: '🏀', name: '梦开始的地方', desc: '创建你的第一位球员', rarity: 'common' },
+    { id: 'ovr_80', icon: '📈', name: '天赋兑现', desc: '揭晓时综合能力达到 80', rarity: 'rare' },
+    { id: 'ovr_90', icon: '💎', name: '天选之子', desc: '揭晓时综合能力达到 90', rarity: 'epic' },
+    { id: 'ovr_95', icon: '👑', name: '降维打击', desc: '揭晓时综合能力达到 95', rarity: 'legend' },
+    // — 选秀 —
+    { id: 'lottery_pick', icon: '🎯', name: '乐透秀', desc: '在选秀乐透区(前14顺位)被选中', rarity: 'rare' },
+    { id: 'first_pick', icon: '🥇', name: '状元登基', desc: '成为选秀状元(第1顺位)', rarity: 'epic' },
+    { id: 'undrafted', icon: '🔥', name: '落选逆袭', desc: '落选后依然踏上 NBA 赛场', rarity: 'rare' },
+    // — 个人荣誉 —
+    { id: 'all_star', icon: '⭐', name: '全明星首秀', desc: '首次入选全明星', rarity: 'rare' },
+    { id: 'all_nba', icon: '🌟', name: '最佳阵容', desc: '入选一届最佳阵容', rarity: 'epic' },
+    { id: 'roty', icon: '🌱', name: '年度最佳新秀', desc: '拿下最佳新秀', rarity: 'epic' },
+    { id: 'dpoy', icon: '🔒', name: '防守中枢', desc: '当选最佳防守球员', rarity: 'epic' },
+    { id: 'sixth_man', icon: '🛋️', name: '超级第六人', desc: '当选最佳第六人', rarity: 'rare' },
+    { id: 'mvp', icon: '🏆', name: '联盟 MVP', desc: '荣膺常规赛最有价值球员', rarity: 'legend' },
+    { id: 'mvp_x3', icon: '🐐', name: 'MVP 王朝', desc: '生涯累计 3 座 MVP', rarity: 'legend' },
+    // — 球队战绩 —
+    { id: 'playoffs', icon: '🎟️', name: '季后赛门票', desc: '首次带队打进季后赛', rarity: 'common' },
+    { id: 'win_60', icon: '🎊', name: '60 胜赛季', desc: '单赛季常规赛拿下 60 胜', rarity: 'epic' },
+    { id: 'champion', icon: '🏆', name: '总冠军', desc: '夺得总冠军', rarity: 'legend' },
+    { id: 'champion_x3', icon: '💍', name: '三连话题', desc: '生涯累计 3 座总冠军', rarity: 'legend' },
+    // — 数据里程碑（单场） —
+    { id: 'game_40', icon: '🔥', name: '40 分之夜', desc: '单场砍下 40+ 得分', rarity: 'rare' },
+    { id: 'game_50', icon: '💥', name: '50 分神迹', desc: '单场砍下 50+ 得分', rarity: 'epic' },
+    { id: 'triple_double', icon: '🎰', name: '三双', desc: '单场砍下三双', rarity: 'rare' },
+    // — 数据里程碑（赛季场均） —
+    { id: 'avg_30', icon: '📊', name: '得分机器', desc: '赛季场均 30+ 得分', rarity: 'epic' },
+    { id: 'season_25_10', icon: '🧱', name: '两双基石', desc: '赛季场均 25 分 10 板', rarity: 'epic' },
+    // — 生涯长度 —
+    { id: 'season_5', icon: '📅', name: '中生代', desc: '效力满 5 个赛季', rarity: 'common' },
+    { id: 'season_10', icon: '🏛️', name: '一朝元老', desc: '效力满 10 个赛季', rarity: 'rare' },
+    { id: 'retire', icon: '🎓', name: '功成身退', desc: '完成一段完整生涯并退役', rarity: 'epic' },
+    // — 彩蛋 —
+    { id: 'explorer', icon: '🧭', name: '成就猎人', desc: '解锁 10 个成就', rarity: 'rare' },
+    { id: 'collector', icon: '🗂️', name: '收藏家', desc: '解锁 20 个成就', rarity: 'legend' }
+  ];
+  PP_FX.ACHIEVEMENTS = ACHIEVEMENTS;
+  var ACH_MAP = {};
+  ACHIEVEMENTS.forEach(function (a) { ACH_MAP[a.id] = a; });
+
+  var RARITY_CN = { common: '普通', rare: '稀有', epic: '史诗', legend: '传奇' };
+
+  function loadUnlocked() {
+    try {
+      var raw = localStorage.getItem(ACH_KEY);
+      if (!raw) return {};
+      var o = JSON.parse(raw);
+      return (o && typeof o === 'object') ? o : {};
+    } catch (e) { return {}; }
+  }
+  function saveUnlocked(map) {
+    try { localStorage.setItem(ACH_KEY, JSON.stringify(map)); } catch (e) {}
+  }
+
+  var unlocked = loadUnlocked();
+  PP_FX.getUnlocked = function () { return unlocked; };
+
+  // 解锁一个成就；已解锁则忽略。返回是否为新解锁。
+  PP_FX.unlock = function (id) {
+    var def = ACH_MAP[id];
+    if (!def) return false;
+    if (unlocked[id]) return false;
+    unlocked[id] = { at: Date.now() };
+    saveUnlocked(unlocked);
+    showUnlockPopup(def);
+    // 元成就：解锁数量里程碑（延迟以免与当前弹窗叠加）
+    var n = Object.keys(unlocked).length;
+    if (n >= 10 && !unlocked['explorer']) setTimeout(function () { PP_FX.unlock('explorer'); }, 2600);
+    if (n >= 20 && !unlocked['collector']) setTimeout(function () { PP_FX.unlock('collector'); }, 2600);
+    return true;
+  };
+
+  // 解锁弹窗（右上滑入的徽章卡片 + 粒子）
+  var unlockQueue = [];
+  var unlockBusy = false;
+  function showUnlockPopup(def) {
+    unlockQueue.push(def);
+    if (!unlockBusy) drainUnlockQueue();
+  }
+  function drainUnlockQueue() {
+    if (unlockQueue.length === 0) { unlockBusy = false; return; }
+    unlockBusy = true;
+    var def = unlockQueue.shift();
+    var card = ce('div', 'pp-ach-pop rarity-' + def.rarity);
+    card.innerHTML =
+      '<div class="pp-ach-pop-ring">' + achRingSVG(def.rarity) + '</div>' +
+      '<div class="pp-ach-pop-ic">' + def.icon + '</div>' +
+      '<div class="pp-ach-pop-body">' +
+        '<div class="pp-ach-pop-tag">成就解锁 · ' + (RARITY_CN[def.rarity] || '') + '</div>' +
+        '<div class="pp-ach-pop-name">' + def.name + '</div>' +
+        '<div class="pp-ach-pop-desc">' + def.desc + '</div>' +
+      '</div>';
+    document.body.appendChild(card);
+    requestAnimationFrame(function () { card.classList.add('show'); });
+    // 粒子庆祝
+    setTimeout(function () { PP_FX.burstFrom(card, { count: def.rarity === 'legend' ? 34 : 20 }); }, 260);
+    try {
+      if (window.navigator && navigator.vibrate) navigator.vibrate(def.rarity === 'legend' ? [30, 40, 60] : 25);
+    } catch (e) {}
+    var hold = def.rarity === 'legend' ? 4200 : 3200;
+    setTimeout(function () {
+      card.classList.remove('show');
+      setTimeout(function () { card.remove(); drainUnlockQueue(); }, 420);
+    }, hold);
+  }
+
+  // 徽章旋转光环 SVG（按稀有度换配色）
+  function achRingSVG(rarity) {
+    var stops = {
+      common: ['#b8c4cf', '#7f92a2'],
+      rare: ['#5db9d6', '#2ec4b6'],
+      epic: ['#b7a4e8', '#ff6b35'],
+      legend: ['#f7a600', '#ff6b35']
+    }[rarity] || ['#ff6b35', '#f7a600'];
+    var gid = 'ppg_' + rarity;
+    return '<svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true">' +
+      '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="1" y2="1">' +
+      '<stop offset="0%" stop-color="' + stops[0] + '"/><stop offset="100%" stop-color="' + stops[1] + '"/>' +
+      '</linearGradient></defs>' +
+      '<circle class="pp-ring-track" cx="50" cy="50" r="44" fill="none" stroke="rgba(0,0,0,.08)" stroke-width="5"/>' +
+      '<circle class="pp-ring-arc" cx="50" cy="50" r="44" fill="none" stroke="url(#' + gid + ')" stroke-width="5" ' +
+      'stroke-linecap="round" stroke-dasharray="210 300" transform="rotate(-90 50 50)"/>' +
+      '</svg>';
+  }
+  PP_FX.achRingSVG = achRingSVG;
+
+  /* ==================== 成就面板 ==================== */
+  PP_FX.openPanel = function () {
+    var existing = $('pp-ach-panel');
+    if (existing) existing.remove();
+    var total = ACHIEVEMENTS.length;
+    var got = Object.keys(unlocked).length;
+    var pct = Math.round(got / total * 100);
+    var cards = ACHIEVEMENTS.map(function (a) {
+      var has = !!unlocked[a.id];
+      return '<div class="pp-ach-item rarity-' + a.rarity + (has ? ' got' : ' locked') + '">' +
+        '<div class="pp-ach-badge">' +
+          '<div class="pp-ach-badge-ring">' + achRingSVG(a.rarity) + '</div>' +
+          '<div class="pp-ach-badge-ic">' + (has ? a.icon : '🔒') + '</div>' +
+        '</div>' +
+        '<div class="pp-ach-meta">' +
+          '<div class="pp-ach-name">' + (has ? a.name : '？？？') + '</div>' +
+          '<div class="pp-ach-desc">' + a.desc + '</div>' +
+        '</div>' +
+        '<div class="pp-ach-rarity">' + (RARITY_CN[a.rarity] || '') + '</div>' +
+      '</div>';
+    }).join('');
+    var overlay = ce('div'); overlay.id = 'pp-ach-panel'; overlay.className = 'pp-ach-panel-overlay';
+    overlay.innerHTML =
+      '<div class="pp-ach-panel">' +
+        '<div class="pp-ach-panel-head">' +
+          '<div class="pp-ach-panel-title">🏅 成就殿堂</div>' +
+          '<button class="pp-ach-close" id="pp-ach-close" aria-label="关闭">✕</button>' +
+        '</div>' +
+        '<div class="pp-ach-progress">' +
+          '<div class="pp-ach-progress-bar"><div class="pp-ach-progress-fill" style="width:' + pct + '%"></div></div>' +
+          '<div class="pp-ach-progress-txt">已解锁 ' + got + ' / ' + total + '（' + pct + '%）</div>' +
+        '</div>' +
+        '<div class="pp-ach-grid">' + cards + '</div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    requestAnimationFrame(function () { overlay.classList.add('show'); });
+    function close() { overlay.classList.remove('show'); setTimeout(function () { overlay.remove(); }, 300); }
+    $('pp-ach-close').onclick = close;
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+  };
+
+  // 测试/调试：全部清空
+  PP_FX.resetAchievements = function () { unlocked = {}; saveUnlocked(unlocked); };
+
+  /* ==================== 与主引擎的接线(hooks) ==================== */
+  // 策略：不改核心逻辑，只在已有全局函数前后"包裹"我们的检测与特效。
+  // 若某个目标函数不存在（引擎改版），wrap 会安全跳过。
+  function wrap(name, before, after) {
+    var orig = window[name];
+    if (typeof orig !== 'function') return false;
+    window[name] = function () {
+      if (before) { try { before.apply(this, arguments); } catch (e) {} }
+      var r = orig.apply(this, arguments);
+      if (after) { try { after.call(this, r, arguments); } catch (e) {} }
+      return r;
+    };
+    return true;
+  }
+
+  function G() { return (typeof window.STATE !== 'undefined') ? window.STATE : null; }
+  function displayName() { try { return window.getHupuDisplayName ? getHupuDisplayName() : ''; } catch (e) { return ''; } }
+
+  // 累计计数（跨赛季，存在成就存档里的隐藏计数中）
+  function bumpCounter(key) {
+    unlocked.__counters = unlocked.__counters || {};
+    unlocked.__counters[key] = (unlocked.__counters[key] || 0) + 1;
+    saveUnlocked(unlocked);
+    return unlocked.__counters[key];
+  }
+  function getCounter(key) { return (unlocked.__counters && unlocked.__counters[key]) || 0; }
+
+  // 1) 创建/揭晓球员 → 创建成就 + OVR 里程碑
+  function afterReveal() {
+    var s = G(); if (!s) return;
+    PP_FX.unlock('create_player');
+    var ovr = s.finalOVR || 0;
+    if (ovr >= 80) PP_FX.unlock('ovr_80');
+    if (ovr >= 90) PP_FX.unlock('ovr_90');
+    if (ovr >= 95) PP_FX.unlock('ovr_95');
+    // 揭晓页放一束小粒子
+    setTimeout(function () {
+      var el = document.querySelector('#screen-reveal .reveal-card') || document.querySelector('.big-ovr');
+      if (el) PP_FX.burstFrom(el, { count: 22, colors: ['#ff6b35', '#f7a600', '#ffd23f'] });
+    }, 700);
+  }
+
+  // 2) 选秀定型 → 顺位相关成就
+  function afterFinalizeDraft() {
+    var s = G(); if (!s || !s.career || !s.career.draft) return;
+    var d = s.career.draft;
+    if (d.type === 'undrafted') PP_FX.unlock('undrafted');
+    if (d.round === 1 && d.pick >= 1 && d.pick <= 14) PP_FX.unlock('lottery_pick');
+    if (d.round === 1 && d.pick === 1) PP_FX.unlock('first_pick');
+  }
+
+  // 3) 赛季奖项结算 → 荣誉成就
+  function afterAwards() {
+    var s = G(); if (!s || !s.season || !s.season.awards) return;
+    var me = displayName();
+    s.season.awards.forEach(function (a) {
+      if (!a) return;
+      var mine = a.isUser || (me && a.winner === me);
+      if (!mine) return;
+      switch (a.act) {
+        case 'mvp':
+          PP_FX.unlock('mvp');
+          if (bumpCounter('mvp') >= 3) PP_FX.unlock('mvp_x3');
+          break;
+        case 'dpoy': PP_FX.unlock('dpoy'); break;
+        case 'roty': PP_FX.unlock('roty'); break;
+        case 'sixthman': PP_FX.unlock('sixth_man'); break;
+        case 'allStar': PP_FX.unlock('all_star'); break;
+        case 'allNBA': PP_FX.unlock('all_nba'); break;
+        case 'champion':
+          PP_FX.unlock('champion');
+          if (bumpCounter('champion') >= 3) PP_FX.unlock('champion_x3');
+          break;
+      }
+    });
+    // 赛季场均里程碑
+    var ps = s.season.playerStats;
+    if (ps && ps.games >= 40) {
+      var g = ps.games;
+      var ppg = ps.pts / g, rpg = ps.reb / g;
+      if (ppg >= 30) PP_FX.unlock('avg_30');
+      if (ppg >= 25 && rpg >= 10) PP_FX.unlock('season_25_10');
+    }
+  }
+
+  // 4) 赛季结束 → 战绩/季后赛/生涯长度成就
+  function afterEndOfSeason() {
+    var s = G(); if (!s || !s.season) return;
+    if ((s.season.wins || 0) >= 60) PP_FX.unlock('win_60');
+    var seed = null;
+    try { seed = window.getConferenceSeed ? getConferenceSeed(s.careerTeam) : null; } catch (e) {}
+    if (seed != null && seed <= 8) PP_FX.unlock('playoffs');
+    var sc = (s.career && s.career.seasonCount) || 0;
+    // seasonCount 在结算时通常尚未自增，用已完成赛季数 +1 估计
+    var played = sc + 1;
+    if (played >= 5) PP_FX.unlock('season_5');
+    if (played >= 10) PP_FX.unlock('season_10');
+  }
+
+  // 5) 夺冠庆祝 → 追加彩带并解锁（防止 awards 未覆盖）
+  function afterChampion() {
+    PP_FX.unlock('champion');
+    if (getCounter('champion') === 0) bumpCounter('champion');
+    PP_FX.confetti({ count: 120, colors: ['#f7a600', '#ffd23f', '#ff6b35', '#fff4de'] });
+  }
+
+  // 6) 退役
+  function afterRetire() { PP_FX.unlock('retire'); }
+
+  // 7) 单场比赛数据里程碑 —— 包裹 showGameModal / renderGameCastNew 皆可拿到 stats
+  var _lastCheckedGame = -1;
+  function checkGameMilestones(stats) {
+    if (!stats) return;
+    var s = G(); if (!s || !s.season) return;
+    var gi = (s.season.games || []).length;
+    if (gi === _lastCheckedGame) return; // 防重复
+    _lastCheckedGame = gi;
+    if ((stats.pts || 0) >= 50) PP_FX.unlock('game_50');
+    else if ((stats.pts || 0) >= 40) PP_FX.unlock('game_40');
+    var dd = 0;
+    ['pts', 'reb', 'ast', 'stl', 'blk'].forEach(function (k) { if ((stats[k] || 0) >= 10) dd++; });
+    if (dd >= 3) PP_FX.unlock('triple_double');
+  }
+
+  /* ---------- 安装 hooks（DOM 就绪后，确保主引擎已定义这些函数） ---------- */
+  function install() {
+    wrap('revealPlayer', null, afterReveal);
+    wrap('finalizeDraft', null, afterFinalizeDraft);
+    wrap('showAwardsScreen', null, afterAwards);
+    wrap('calcSeasonAwards', null, afterAwards);
+    wrap('showEndOfSeason', null, afterEndOfSeason);
+    wrap('showChampionshipCelebration', afterChampion, null);
+    wrap('showRetirementModal', afterRetire, null);
+
+    // 单场里程碑：showGameModal(game) 或 renderGameCastNew(game,result,stats)
+    wrap('renderGameCastNew', null, function (r, args) {
+      if (args && args.length >= 3) checkGameMilestones(args[2]);
+    });
+
+    // 把主引擎里空实现的 showToast 接到我们的华丽 toast 上
+    var origToast = window.showToast;
+    window.showToast = function (msg) {
+      try { if (msg) PP_FX.toast(String(msg)); } catch (e) {}
+      // 保留原实现（若之后被重新赋值）
+      if (typeof origToast === 'function' && origToast !== window.showToast) {
+        try { origToast(msg); } catch (e) {}
+      }
+    };
+  }
+
+  /* ---------- 成就入口按钮 + 全局点击火花 ---------- */
+  function mountEntryButton() {
+    if ($('pp-ach-fab')) return;
+    var btn = ce('button', 'pp-ach-fab');
+    btn.id = 'pp-ach-fab';
+    btn.title = '成就殿堂';
+    btn.setAttribute('aria-label', '打开成就殿堂');
+    btn.innerHTML = '<span class="pp-ach-fab-ic">🏅</span>';
+    btn.onclick = function (e) { e.stopPropagation(); PP_FX.openPanel(); };
+    document.body.appendChild(btn);
+  }
+
+  function mountTapSpark() {
+    // 仅在按钮/可点击元素上迸发轻量火花，避免全屏乱溅
+    document.addEventListener('click', function (e) {
+      var t = e.target;
+      if (!t) return;
+      var hit = t.closest && t.closest('button, .btn, .feature-card, .pos-card, .event-choice, .slot-btn, .awards-next');
+      if (hit && !hit.classList.contains('pp-ach-close')) {
+        PP_FX.tapSpark(e.clientX, e.clientY);
+      }
+    }, true);
+  }
+
+  function boot() {
+    install();
+    mountEntryButton();
+    mountTapSpark();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+})();
