@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "generatedAt": "2026-06-16T07:08:15.513Z",
+  "salaries": [],
+  "sourceCoverage": {
+    "available": false,
+    "reason": "No verified GitHub salary CSV snapshot has been vendored yet."
+  }
+}

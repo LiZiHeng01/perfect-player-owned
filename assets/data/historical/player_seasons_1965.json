@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "generatedAt": "2026-06-16T07:08:15.513Z",
+  "seasonEndYear": 1965,
+  "rows": [
+    {
+      "type": "regular",
+      "season": 1964,
+      "seasonEndYear": 1965,
+      "team": "PHI",
+      "teamId": 4,
+      "gp": 76,
+      "mins": 34.1,
+      "fgPct": 41.4,
+      "tpPct": 0,
+      "ftPct": 71.3,
+      "ppg": 14.8,
+      "rpg": 12.9,
+      "apg": 1.2,
+      "spg": 0,
+      "bpg": 0,
+      "source": "github_kaggle_seasons_stats",
+      "realId": "local:lukejackson",
+      "name": "Luke Jackson",
+      "displayName": "Luke Jackson"
+    }
+  ]
+}

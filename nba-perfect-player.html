@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Perfect Player · 完美球员</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/css/perfect-player.css?v=20260807-basketball">
+</head>
+<body>
+
+<!-- core.js 依赖的空模态容器（本项目通用） -->
+<div id="modalBg" class="modal-bg" style="display:none;"><div id="modalBox"></div></div>
+
+<div id="pp-app">
+
+  <!-- ============ 主菜单 ============ -->
+  <section class="screen active" id="screen-menu">
+    <div class="navbar">
+      <div class="nav-logo"><span class="nav-ball" aria-hidden="true">🏀</span> BUILD<span class="hl">-A-</span>PLAYER</div>
+      <div class="nav-era" id="menu-era-label">2025-26 现役</div>
+    </div>
+    <div class="hero">
+      <div class="hero-title">BASKETBALL CAREER · BUILD YOUR LEGEND</div>
+      <div class="hero-headline">打造我的传奇球星</div>
+      <div class="hero-desc">从历史名宿与现役球星身上夺取属性，打造属于我的完美球员</div>
+    </div>
+    <div class="era-grid" id="era-grid"></div>
+    <div class="menu-actions">
+      <button class="btn btn-primary" id="btn-new-game">🃏 新建生涯</button>
+      <button class="btn btn-secondary" id="btn-continue">▶ 继续生涯</button>
+      <button class="btn btn-help" id="btn-help">📖 玩法说明</button>
+      <button class="btn btn-danger-ghost" id="btn-reset">重置存档</button>
+    </div>
+    <div class="fc-footer">基于「重生之NBA2K系统」历史球员库 · 比赛模拟引擎</div>
+  </section>
+
+  <!-- ============ 角色创建（名字 + 随机真人风格头像） ============ -->
+  <section class="screen" id="screen-character">
+    <div class="section-title">
+      <h1>👤 创建我的角色</h1>
+      <div class="sub">输入名字，选择一张真人风格球员大头照（可随机）</div>
+    </div>
+    <div class="char-card">
+      <div class="char-preview" id="char-preview">
+        <img id="char-preview-img" src="" alt="头像预览" class="char-preview-img">
+        <span id="char-preview-fallback" class="char-preview-fallback">?</span>
+      </div>
+      <label class="char-field-label" for="char-name-input">我的名字</label>
+      <div class="char-name-row">
+        <input id="char-name-input" class="char-name-input" type="text" maxlength="12" placeholder="输入名字，如：林一飞" autocomplete="off">
+        <button class="cal-nav" id="btn-random-name" title="随机名字">🎲</button>
+      </div>
+      <div class="char-field-label">球员大头照（亚洲 / 白人 / 黑人，各 2 张）</div>
+      <div class="char-avatar-grid" id="char-avatar-grid"></div>
+      <button class="btn btn-secondary" id="btn-random-avatar">🎲 随机换一个头像</button>
+      <button class="btn btn-primary" id="btn-confirm-character" style="margin-top:10px;">✅ 确认角色</button>
+    </div>
+  </section>
+
+  <!-- ============ 选位置 ============ -->
+  <section class="screen" id="screen-position">
+    <div class="section-title">
+      <h1>选择我的位置</h1>
+      <div class="sub" id="position-era-sub">历史模式 · 自选位置</div>
+    </div>
+    <div class="pos-grid" id="pos-grid"></div>
+    <button class="btn btn-primary" id="btn-confirm-position" disabled>确认位置</button>
+  </section>
+
+  <!-- ============ 建球员（抽队 / 选人 / 锁属性） ============ -->
+  <section class="screen" id="screen-build">
+    <div class="section-title">
+      <h1>建球员</h1>
+      <div class="sub" id="build-pos-indicator">--</div>
+    </div>
+    <div id="build-progress-area"></div>
+    <div class="build-split">
+      <div class="build-left">
+        <div class="bl-header">
+          <span class="bl-ovr" id="bl-ovr">--</span>
+          <span class="bl-label">OVR</span>
+        </div>
+        <div class="bl-attrs" id="bl-attrs"></div>
+        <div class="bl-footer" id="bl-footer"></div>
+      </div>
+      <div class="build-right" id="build-right">
+        <div id="br-slot-area"></div>
+        <div id="br-roster-area"></div>
+      </div>
+    </div>
+    <div id="build-toast"></div>
+  </section>
+
+  <!-- ============ 揭幕 ============ -->
+  <section class="screen" id="screen-reveal">
+    <div class="section-title">
+      <h1>🎉 揭幕</h1>
+      <div class="sub">我的球员已建成</div>
+    </div>
+    <div id="reveal-content"></div>
+    <button class="btn btn-primary" id="btn-to-career" style="margin-top:12px;">开始生涯</button>
+  </section>
+
+  <!-- ============ 生涯球队 ============ -->
+  <section class="screen" id="screen-career">
+    <div class="section-title">
+      <h1>🏆 生涯球队</h1>
+      <div class="sub">决定我的命运</div>
+    </div>
+    <div id="career-area"></div>
+  </section>
+
+  <!-- ============ 赛季 ============ -->
+  <section class="screen" id="screen-season">
+    <div class="season-top">
+      <div class="st-record">
+        <span class="st-team" id="season-team-name">--</span>
+        <span class="st-wl" id="season-record">0-0</span>
+        <span class="st-date" id="season-date">第 0 场</span>
+      </div>
+      <div class="st-nav">
+        <button class="cal-nav" id="btn-season-back">◀ 返回</button>
+        <button class="cal-nav" id="btn-my-data">我的数据</button>
+      </div>
+    </div>
+    <div class="vitals" id="vitals-panel"></div>
+    <div id="season-body"></div>
+  </section>
+
+  <!-- ============ 季后赛 ============ -->
+  <section class="screen" id="screen-playoffs">
+    <div class="season-top">
+      <div class="st-record">
+        <span class="st-team" id="po-team-name">--</span>
+        <span class="st-date" id="po-round-label">季后赛</span>
+      </div>
+      <div class="st-nav">
+        <button class="cal-nav" id="btn-playoffs-back">◀ 返回</button>
+      </div>
+    </div>
+    <div id="playoff-body"></div>
+  </section>
+
+  <!-- ============ 休赛期 ============ -->
+  <section class="screen" id="screen-offseason">
+    <div class="section-title">
+      <h1>☀️ 休赛期</h1>
+      <div class="sub" id="offseason-season-label">--</div>
+    </div>
+    <div id="offseason-body"></div>
+  </section>
+
+  <!-- ============ 我的卡 / 生涯 ============ -->
+  <section class="screen" id="screen-mycard">
+    <div class="section-title">
+      <h1>🪪 我的卡</h1>
+      <div class="sub" id="mycard-age-label">--</div>
+    </div>
+    <div id="mycard-body"></div>
+    <div class="bottom-nav">
+      <button class="cal-nav" id="btn-mycard-back">◀ 返回赛季</button>
+    </div>
+  </section>
+
+  <!-- ============ 玩法说明弹窗 ============ -->
+  <div id="helpModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="help-title">📖 玩法说明</span>
+        <button class="modal-close" id="help-close">✕</button>
+      </div>
+      <div class="modal-tabs" id="helpTabs"></div>
+      <div class="help-nav">
+        <button class="cal-nav" id="helpPrevBtn">◀</button>
+        <div class="help-page" id="helpPageIndicator">1/4</div>
+        <button class="cal-nav" id="helpNextBtn">▶</button>
+      </div>
+      <div class="modal-body" id="helpBody"></div>
+    </div>
+  </div>
+
+  <!-- ============ 事件弹窗（随机事件选择） ============ -->
+  <div id="eventModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content event-card">
+      <div class="event-head">
+        <span class="event-emoji" id="event-emoji">📌</span>
+        <div class="event-badge" id="event-title">事件</div>
+      </div>
+      <div class="event-body" id="event-body"></div>
+      <div class="event-choices" id="event-choices"></div>
+    </div>
+  </div>
+
+  <!-- ============ 比赛结果弹窗 ============ -->
+  <div id="gameModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content game-card">
+      <div class="game-head" id="game-head"></div>
+      <div class="game-body" id="game-body"></div>
+      <button class="btn btn-primary" id="game-close">继续</button>
+    </div>
+  </div>
+
+  <div id="pp-toast"></div>
+</div>
+
+<script src="assets/js/core.js?v=20260629rookie3p"></script>
+<script src="assets/js/text-pools.js?v=20260429templates"></script>
+<script src="assets/js/text-pools-extra.js?v=20260429templates2"></script>
+<script src="assets/js/text-pools-long.js?v=20260429longtemplates"></script>
+<script src="assets/js/sim.js?v=20260703shotrealism"></script>
+<script src="assets/data/nba-player-images.js?v=20260807"></script>
+<script src="assets/js/perfect-player.js?v=20260807-basketball"></script>
+</body>
+</html>

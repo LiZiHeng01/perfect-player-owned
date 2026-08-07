@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "generatedAt": "2026-06-16T07:08:15.513Z",
+  "seasonEndYear": 1958,
+  "rows": [
+    {
+      "type": "regular",
+      "season": 1957,
+      "seasonEndYear": 1958,
+      "team": "CIN",
+      "teamId": 25,
+      "gp": 67,
+      "mins": 26.8,
+      "fgPct": 35.2,
+      "tpPct": 0,
+      "ftPct": 73.3,
+      "ppg": 9.8,
+      "rpg": 5.2,
+      "apg": 2.1,
+      "spg": 0,
+      "bpg": 0,
+      "source": "github_kaggle_seasons_stats",
+      "realId": "local:jimpaxson",
+      "name": "Jim Paxson",
+      "displayName": "Jim Paxson"
+    }
+  ]
+}

@@ -1,0 +1,2187 @@
+{
+  "version": 1,
+  "generatedAt": "2026-06-16T07:08:22.808Z",
+  "providerChain": [
+    {
+      "id": "nba_api",
+      "label": "NBA Stats API",
+      "enabled": true,
+      "used": false,
+      "requiresKey": false,
+      "skippedReason": "offline_cached_generation; set HISTORICAL_DB_FETCH=1 to refresh raw cache"
+    },
+    {
+      "id": "balldontlie",
+      "label": "balldontlie",
+      "enabled": false,
+      "used": false,
+      "requiresKey": true,
+      "skippedReason": "missing BALLDONTLIE_API_KEY"
+    },
+    {
+      "id": "sportsdataio",
+      "label": "SportsDataIO",
+      "enabled": false,
+      "used": false,
+      "requiresKey": true,
+      "skippedReason": "missing SPORTSDATAIO_API_KEY"
+    },
+    {
+      "id": "local_csv",
+      "label": "GitHub/local CSV fallback",
+      "enabled": true,
+      "used": true,
+      "requiresKey": false,
+      "skippedReason": ""
+    }
+  ],
+  "supportedStartYears": [
+    1983,
+    1996,
+    2003,
+    2009,
+    2025
+  ],
+  "dataValidationYears": [
+    2005
+  ],
+  "errors": [],
+  "warnings": [
+    "1983 draft photo placeholder: Darrell Walker",
+    "1983 draft photo placeholder: Leo Rautins",
+    "1983 draft photo placeholder: Larry Micheaux",
+    "1983 draft photo placeholder: Dirk Minniefield",
+    "1983 draft photo placeholder: Guy Williams",
+    "1983 draft photo placeholder: Chris McNealy",
+    "1983 draft photo placeholder: Michael Holton",
+    "1983 draft photo placeholder: John Pinone",
+    "1983 draft photo placeholder: Bruce Kuczenski",
+    "1983 draft photo placeholder: Ron Crevier",
+    "1983 draft photo placeholder: Peter Thibeaux",
+    "1983 draft photo placeholder: Mark Jones",
+    "1983 draft photo placeholder: Brant Weidner",
+    "2025 draft photo placeholder: Hunter Sallis",
+    "allowed no-NBA-data roster players: 461"
+  ],
+  "teamIdZeroRows": [],
+  "allowedNoNbaDataPlayers": [
+    {
+      "startYear": 2025,
+      "realId": "local:aaronestrada",
+      "name": "Aaron Estrada",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:adonisarms",
+      "name": "Adonis Arms",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:aleksandarvezenkov",
+      "name": "Aleksandar Vezenkov",
+      "yearsLeague": 8,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:alexmorales",
+      "name": "Alex Morales",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:alexoconnell",
+      "name": "Alex O'Connell",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:alievans",
+      "name": "Ali Evans",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:alievans",
+      "name": "Ali Evans",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:alievans",
+      "name": "Ali Evans",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:alvarojared",
+      "name": "Alvaro Jared",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:alvarojared",
+      "name": "Alvaro Jared",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:alvarojared",
+      "name": "Alvaro Jared",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:anthonymasonjr",
+      "name": "Anthony Mason Jr.",
+      "yearsLeague": 8,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:armaanfranklin",
+      "name": "Armaan Franklin",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:armandobacot",
+      "name": "Armando Bacot",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:audiesetoney",
+      "name": "Au'Diese Toney",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:azuolastubelis",
+      "name": "Azuolas Tubelis",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:babacarsane",
+      "name": "Babacar Sané",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:balsakoprivica",
+      "name": "Balsa Koprivica",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:baotown",
+      "name": "Bao Town",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:baowuyou",
+      "name": "Bao Wuyou",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:bencoupetjr",
+      "name": "Ben Coupet Jr.",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:biqianping",
+      "name": "Bi Qianping",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:blakehinson",
+      "name": "Blake Hinson",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:bobhurley",
+      "name": "Bob Hurley",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:boobuieiii",
+      "name": "Boo Buie III",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:boogieellis",
+      "name": "Boogie Ellis",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:brooksalcock",
+      "name": "Brooks Alcock",
+      "yearsLeague": 8,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:brooksalcock",
+      "name": "Brooks Alcock",
+      "yearsLeague": 8,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:brooksalcock",
+      "name": "Brooks Alcock",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:brucekuczenski",
+      "name": "Bruce Kuczenski",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:brycewillis",
+      "name": "Bryce Willis",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:brysonwarren",
+      "name": "Bryson Warren",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:brysonwilliams",
+      "name": "Bryson Williams",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:bujing",
+      "name": "Bu Jing",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:calebdandridge",
+      "name": "Caleb Dandridge",
+      "yearsLeague": 12,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:calebdandridge",
+      "name": "Caleb Dandridge",
+      "yearsLeague": 12,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:calebdandridge",
+      "name": "Caleb Dandridge",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:calebdaniels",
+      "name": "Caleb Daniels",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:calebmcconnell",
+      "name": "Caleb McConnell",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:cameronchristie",
+      "name": "Cameron Christie",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:cameronreynolds",
+      "name": "Cameron Reynolds",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:carlosclark",
+      "name": "Carlos Clark",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:cartinoalderman",
+      "name": "Cartino Alderman",
+      "yearsLeague": 14,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:cartinoalderman",
+      "name": "Cartino Alderman",
+      "yearsLeague": 14,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:cartinoalderman",
+      "name": "Cartino Alderman",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:cartinoheard",
+      "name": "Cartino Heard",
+      "yearsLeague": 16,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:cartinoheard",
+      "name": "Cartino Heard",
+      "yearsLeague": 16,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:cartinoheard",
+      "name": "Cartino Heard",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:cassieherberson",
+      "name": "Cassie Herberson",
+      "yearsLeague": 13,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:cassieherberson",
+      "name": "Cassie Herberson",
+      "yearsLeague": 13,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:cassieherberson",
+      "name": "Cassie Herberson",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:changhaizhi",
+      "name": "Chang Haizhi",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:changqian",
+      "name": "Chang Qian",
+      "yearsLeague": 5,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:charlesbediako",
+      "name": "Charles Bediako",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:chasejeter",
+      "name": "Chase Jeter",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:chaundeebrownjr",
+      "name": "Chaundee Brown Jr.",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:chendelun",
+      "name": "Chen Delun",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:chengongbo",
+      "name": "Chen Gongbo",
+      "yearsLeague": 5,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:chengzhen",
+      "name": "Cheng Zhen",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:chubode",
+      "name": "Chu Bode",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:coltonpheppen",
+      "name": "Colton Pheppen",
+      "yearsLeague": 7,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:coltonpheppen",
+      "name": "Colton Pheppen",
+      "yearsLeague": 7,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:coltonpheppen",
+      "name": "Colton Pheppen",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:cormacryan",
+      "name": "Cormac Ryan",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:craigporter",
+      "name": "Craig Porter",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2009,
+      "realId": "local:djmbenga",
+      "name": "D.J. Mbenga",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:djsteward",
+      "name": "D.J. Steward",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:djstewart",
+      "name": "D.J. Stewart",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:daifaxiong",
+      "name": "Dai Faxiong",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:danegoodwin",
+      "name": "Dane Goodwin",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:dariusbrown",
+      "name": "Darius Brown",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:dariusmcghee",
+      "name": "Darius McGhee",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:dariussongaila",
+      "name": "Darius Songaila",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:daronholmesii",
+      "name": "DaRon Holmes II",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:daultonhommes",
+      "name": "Daulton Hommes",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:davidjonesgarcia",
+      "name": "David Jones Garcia",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:davidmuoka",
+      "name": "David Muoka",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:davidsingleton",
+      "name": "David Singleton",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:devonhiggs",
+      "name": "Devon Higgs",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:dillongracie",
+      "name": "Dillon Gracie",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:dillongracie",
+      "name": "Dillon Gracie",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:dillongracie",
+      "name": "Dillon Gracie",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:dingjinhui",
+      "name": "Ding Jin hui",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:dontascott",
+      "name": "Donta Scott",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:douglasedwards",
+      "name": "Douglas Edwards",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:duchenbo",
+      "name": "Du Chenbo",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:dylandisu",
+      "name": "Dylan Disu",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:eddienealy",
+      "name": "Eddie Nealy",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:elisap",
+      "name": "Eli Sap",
+      "yearsLeague": 13,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:elisap",
+      "name": "Eli Sap",
+      "yearsLeague": 13,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:elisap",
+      "name": "Eli Sap",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:erikstevenson",
+      "name": "Erik Stevenson",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:ethanthompson",
+      "name": "Ethan Thompson",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:fanqian",
+      "name": "Fan Qian",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:fangkequn",
+      "name": "Fang Kequn",
+      "yearsLeague": 5,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:feigu",
+      "name": "Fei Gu",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:feilun",
+      "name": "Fei Lun",
+      "yearsLeague": 5,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:fengbaisheng",
+      "name": "Feng Baisheng",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:fengguidong",
+      "name": "Feng Guidong",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:fengshanguan",
+      "name": "Feng Shanguan",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:fernandocaster",
+      "name": "Fernando Caster",
+      "yearsLeague": 15,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:fernandocaster",
+      "name": "Fernando Caster",
+      "yearsLeague": 15,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:fernandocaster",
+      "name": "Fernando Caster",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:frankmason",
+      "name": "Frank Mason",
+      "yearsLeague": 8,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:franklinsusfield",
+      "name": "Franklin Susfield",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:franklinsusfield",
+      "name": "Franklin Susfield",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:franklinsusfield",
+      "name": "Franklin Susfield",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:fredroberts",
+      "name": "Fred Roberts",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:freddiemaggs",
+      "name": "Freddie Maggs",
+      "yearsLeague": 9,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:freddiemaggs",
+      "name": "Freddie Maggs",
+      "yearsLeague": 9,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:freddiemaggs",
+      "name": "Freddie Maggs",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:gabemcglothan",
+      "name": "Gabe McGlothan",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:gabeosabuohien",
+      "name": "Gabe Osabuohien",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:gabrieleprocida",
+      "name": "Gabriele Procida",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:galenrobinsonjr",
+      "name": "Galen Robinson Jr.",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:georgecondittiv",
+      "name": "George Conditt IV",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:georgeholt",
+      "name": "George Holt",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:georgeholt",
+      "name": "George Holt",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:georgeholt",
+      "name": "George Holt",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:georgeleejohnson",
+      "name": "George Lee Johnson",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:germankieu",
+      "name": "German Kieu",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:germankieu",
+      "name": "German Kieu",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:germankieu",
+      "name": "German Kieu",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:gongxiaobin",
+      "name": "Gong Xiaobin",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:graysonmurphy",
+      "name": "Grayson Murphy",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:gregkite",
+      "name": "Greg Kite",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:gregoryballard",
+      "name": "Gregory Ballard",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:guoailun",
+      "name": "Guo Ailun",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:guohaowen",
+      "name": "Guo Haowen",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:hanxing",
+      "name": "Hanxing",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:hasonward",
+      "name": "Hason Ward",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:hefengsong",
+      "name": "He Fengsong",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:hegebai",
+      "name": "He Gebai",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:heying",
+      "name": "He Ying",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:hezhanquan",
+      "name": "He Zhanquan",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:hotrodwilliams",
+      "name": "Hot Rod Williams",
+      "yearsLeague": 11,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:huweidong",
+      "name": "Hu Weidong",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:hualunxin",
+      "name": "Hua lunxin",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:huayixian",
+      "name": "Hua Yixian",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:huangbinzhao",
+      "name": "Huang Binzhao",
+      "yearsLeague": 5,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:hugobesson",
+      "name": "Hugo Besson",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:huntermaldonado",
+      "name": "Hunter Maldonado",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:huozheng",
+      "name": "Huo Zheng",
+      "yearsLeague": 5,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:iboubadji",
+      "name": "Ibou Badji",
+      "yearsLeague": 5,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:imeudoka",
+      "name": "Ime Udoka",
+      "yearsLeague": 8,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:isaiahhaven",
+      "name": "Isaiah Haven",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:isaiahhaven",
+      "name": "Isaiah Haven",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:isaiahhaven",
+      "name": "Isaiah Haven",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:isaiahriderjr",
+      "name": "Isaiah Rider Jr.",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:ismaelkamagate",
+      "name": "Ismael Kamagate",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:issacbonga",
+      "name": "Issac Bonga",
+      "yearsLeague": 7,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:jabarismithjr",
+      "name": "Jabari Smith Jr.",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:jadenshackelford",
+      "name": "Jaden Shackelford",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:jadenshackelford",
+      "name": "Jaden Shackelford",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:jaedonledee",
+      "name": "Jaedon LeDee",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:jahadiwhite",
+      "name": "Jahadi White",
+      "yearsLeague": 5,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:jalenlewis",
+      "name": "Jalen Lewis",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:jaletsefrosa",
+      "name": "Jalet Sefrosa",
+      "yearsLeague": 7,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:jaletsefrosa",
+      "name": "Jalet Sefrosa",
+      "yearsLeague": 7,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:jaletsefrosa",
+      "name": "Jalet Sefrosa",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:jamarionsharp",
+      "name": "Jamarion Sharp",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:jameernelsonjr",
+      "name": "Jameer Nelson Jr.",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:jamesakinjo",
+      "name": "James Akinjo",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:jamesnnaji",
+      "name": "James Nnaji",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:jamirchaplin",
+      "name": "Jamir Chaplin",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:jaredbrownridge",
+      "name": "Jared Brownridge",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:jarkeljoiner",
+      "name": "Jarkel Joiner",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:jarodlucas",
+      "name": "Jarod Lucas",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:jasonbarzley",
+      "name": "Jason Barzley",
+      "yearsLeague": 8,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:jasonbarzley",
+      "name": "Jason Barzley",
+      "yearsLeague": 8,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:jasonbarzley",
+      "name": "Jason Barzley",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:javanjohnson",
+      "name": "Javan Johnson",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:javantemccoy",
+      "name": "Javante McCoy",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:javontecooke",
+      "name": "Javonte Cooke",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:jaylingalloway",
+      "name": "Jaylin Galloway",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:jeromeisaacs",
+      "name": "Jerome Isaacs",
+      "yearsLeague": 7,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:jeromeisaacs",
+      "name": "Jerome Isaacs",
+      "yearsLeague": 7,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:jeromeisaacs",
+      "name": "Jerome Isaacs",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:jishu",
+      "name": "Ji Shu",
+      "yearsLeague": 5,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:jiayanshan",
+      "name": "Jia Yanshan",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:jiangjun",
+      "name": "Jiang Jun",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:jiquanfeng",
+      "name": "Jiquan Feng",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:joebarrycarroll",
+      "name": "Joe Barry Carroll",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:joelbaniani",
+      "name": "Joel Baniani",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:joelbaniani",
+      "name": "Joel Baniani",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:joelbaniani",
+      "name": "Joel Baniani",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:joelsoriano",
+      "name": "Joel Soriano",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:joeyhauser",
+      "name": "Joey Hauser",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:johnbutler",
+      "name": "John Butler",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:johnlucasii",
+      "name": "John Lucas II",
+      "yearsLeague": 7,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2009,
+      "realId": "local:johnlucasiii",
+      "name": "John Lucas III",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:joirdonnicholas",
+      "name": "Joirdon Nicholas",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:jonsundvold",
+      "name": "Jon Sundvold",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:jordanbowden",
+      "name": "Jordan Bowden",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:jordantucker",
+      "name": "Jordan Tucker",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:jordanwalker",
+      "name": "Jordan Walker",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:joshoduro",
+      "name": "Josh Oduro",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:josiahjordanjames",
+      "name": "Josiah-Jordan James",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:juannunez",
+      "name": "Juan Nunez",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:judahmintz",
+      "name": "Judah Mintz",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:juhannbegarin",
+      "name": "Juhann Begarin",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:justinlewis",
+      "name": "Justin Lewis",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:justinpowell",
+      "name": "Justin Powell",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:justinianjessup",
+      "name": "Justinian Jessup",
+      "yearsLeague": 5,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:kahlilwhitney",
+      "name": "Kahlil Whitney",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:kairasit",
+      "name": "Kai Rasit",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:kairasit",
+      "name": "Kai Rasit",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:kairasit",
+      "name": "Kai Rasit",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:katonkaplin",
+      "name": "Katon Kaplin",
+      "yearsLeague": 13,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:katonkaplin",
+      "name": "Katon Kaplin",
+      "yearsLeague": 13,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:katonkaplin",
+      "name": "Katon Kaplin",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:kehuizhong",
+      "name": "Ke Huizhong",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:keyi",
+      "name": "Ke Yi",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:keiseitominaga",
+      "name": "Keisei Tominaga",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:keithvanhorn",
+      "name": "Keith Van Horn",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:kendricdavis",
+      "name": "Kendric Davis",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:kennywooten",
+      "name": "Kenny Wooten",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:keshawnjustice",
+      "name": "Keshawn Justice",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:kevinobanor",
+      "name": "Kevin Obanor",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:kevinzhang",
+      "name": "Kevin Zhang",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:khalifadiop",
+      "name": "Khalifa Diop",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:kjjonesii",
+      "name": "KJ Jones II",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:kjwilliams",
+      "name": "KJ Williams",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:kylemangas",
+      "name": "Kyle Mangas",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:landersnolleyii",
+      "name": "Landers Nolley II",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:langhua",
+      "name": "Lang Hua",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:laphonsodarnellellis",
+      "name": "LaPhonso Darnell Ellis",
+      "yearsLeague": 13,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:ledlei",
+      "name": "Ledlei",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:leipingyan",
+      "name": "Lei Pingyan",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:leo",
+      "name": "LEO",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:linan",
+      "name": "Li Nan",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:lixiaoxu",
+      "name": "Li Xiaoxu",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:lixiaoyong",
+      "name": "Li Xiaoyong",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:lixiaoyou",
+      "name": "Li Xiaoyou",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:liangqiangong",
+      "name": "Liang Qiangong",
+      "yearsLeague": 5,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:ligen",
+      "name": "Ligen",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:linshunda",
+      "name": "Lin Shunda",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:liubinliang",
+      "name": "Liu Binliang",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:liudong",
+      "name": "Liu Dong",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:liuwei",
+      "name": "Liu Wei",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:liuyudong",
+      "name": "Liu Yudong",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:loganvandervelden",
+      "name": "Logan Vander Velden",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:luchenhang",
+      "name": "Lu Chenhang",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:lulongying",
+      "name": "Lu Longying",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:lutaoqian",
+      "name": "Lu Taoqian",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:luckukoch",
+      "name": "Luc Kukoch",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:lucavildoza",
+      "name": "Luca Vildoza",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:luoyirui",
+      "name": "Luo Yirui",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:lvxiang",
+      "name": "Lv Xiang",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:lvyou",
+      "name": "Lv You",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:makurmaker",
+      "name": "Makur Maker",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:maoqianjian",
+      "name": "Mao Qianjian",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:maoyichen",
+      "name": "Mao Yichen",
+      "yearsLeague": 5,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:marcusdomask",
+      "name": "Marcus Domask",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:marcuszegarowski",
+      "name": "Marcus Zegarowski",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:markarmstrong",
+      "name": "Mark Armstrong",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:marvinbagley",
+      "name": "Marvin Bagley",
+      "yearsLeague": 7,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:mattbradley",
+      "name": "Matt Bradley",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:matteospagnolo",
+      "name": "Matteo Spagnolo",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:matthewmayer",
+      "name": "Matthew Mayer",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:matthewmooney",
+      "name": "Matthew Mooney",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:maxabmas",
+      "name": "Max Abmas",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:maxbeckwell",
+      "name": "Max Beckwell",
+      "yearsLeague": 14,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:maxbeckwell",
+      "name": "Max Beckwell",
+      "yearsLeague": 14,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:maxbeckwell",
+      "name": "Max Beckwell",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:maxfiedler",
+      "name": "Max Fiedler",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:maxheidegger",
+      "name": "Max Heidegger",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:meihan",
+      "name": "Mei Han",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:meimaoyou",
+      "name": "Mei Maoyou",
+      "yearsLeague": 5,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:melvinajinca",
+      "name": "Melvin Ajinca",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:melvinfrazier",
+      "name": "Melvin Frazier",
+      "yearsLeague": 7,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:mengkebateer",
+      "name": "Mengke Bateer",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2009,
+      "realId": "local:mettaworldpeace",
+      "name": "Metta World Peace",
+      "yearsLeague": 9,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:mettaworldpeace",
+      "name": "Metta World Peace",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:michaeldevoe",
+      "name": "Michael Devoe",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:michaeljohnsmith",
+      "name": "Michael John Smith",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:michaelmitchell",
+      "name": "Michael Mitchell",
+      "yearsLeague": 5,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:michaelwilson",
+      "name": "Michael Wilson",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:michealdouglaswilliams",
+      "name": "Micheal Douglas Williams",
+      "yearsLeague": 8,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:michealrayrichardson",
+      "name": "Micheal Ray Richardson",
+      "yearsLeague": 5,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:mikegibson",
+      "name": "Mike Gibson",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:mikemilesjr",
+      "name": "Mike Miles Jr.",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:millerkopp",
+      "name": "Miller Kopp",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:miltoncasbert",
+      "name": "Milton Casbert",
+      "yearsLeague": 16,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:miltoncasbert",
+      "name": "Milton Casbert",
+      "yearsLeague": 16,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:miltoncasbert",
+      "name": "Milton Casbert",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:mingjie",
+      "name": "Mingjie",
+      "yearsLeague": 4,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:mitchellkupchak",
+      "name": "Mitchell Kupchak",
+      "yearsLeague": 7,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:mohamedbamba",
+      "name": "Mohamed Bamba",
+      "yearsLeague": 7,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:mojaveking",
+      "name": "Mojave King",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:moseswood",
+      "name": "Moses Wood",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:muxiang",
+      "name": "Mu Xiang",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:myrongardner",
+      "name": "Myron Gardner",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:natearchibald",
+      "name": "Nate Archibald",
+      "yearsLeague": 13,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1983,
+      "realId": "local:nilinpeng",
+      "name": "Ni Linpeng",
+      "yearsLeague": 2,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:nickmuszynski",
+      "name": "Nick Muszynski",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2003,
+      "realId": "local:nickvanexel",
+      "name": "Nick Van Exel",
+      "yearsLeague": 10,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 1996,
+      "realId": "local:nickvanexel",
+      "name": "Nick Van Exel",
+      "yearsLeague": 3,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:nicolasclaxton",
+      "name": "Nicolas Claxton",
+      "yearsLeague": 6,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    },
+    {
+      "startYear": 2025,
+      "realId": "local:nigelhayesdavis",
+      "name": "Nigel Hayes-Davis",
+      "yearsLeague": 1,
+      "reason": "no official NBA regular-season rows matched before start year; allowed for CBA, fictional, or no-NBA-regular-season players"
+    }
+  ],
+  "incompleteMatchedHistories": [],
+  "checks": {
+    "targetDraftPhotos": true,
+    "noPlayerSeasonTeamIdZero": true,
+    "iverson2005CareerBeforeStart": true,
+    "noSeedEraTop100": true,
+    "matchedOfficialRowsFullyWritten": true,
+    "rosterPlayersWithPriorSeasonRows": true,
+    "rosterHistoryGapCount": 461,
+    "allowedNoNbaDataPlayerCount": 461,
+    "awardsV2": true,
+    "historicalAwardPlayers": 418,
+    "historicalAwardSeasonPlayers": 418,
+    "lebron2009AwardsAligned": true,
+    "kobe2009AwardsAligned": true,
+    "jordan2009AwardsAligned": true,
+    "players": 2643
+  }
+}

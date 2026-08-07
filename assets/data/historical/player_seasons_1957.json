@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "generatedAt": "2026-06-16T07:08:15.513Z",
+  "seasonEndYear": 1957,
+  "rows": [
+    {
+      "type": "regular",
+      "season": 1956,
+      "seasonEndYear": 1957,
+      "team": "MNL",
+      "teamId": 23,
+      "gp": 71,
+      "mins": 17.9,
+      "fgPct": 28.5,
+      "tpPct": 0,
+      "ftPct": 72,
+      "ppg": 6.3,
+      "rpg": 3.7,
+      "apg": 1.2,
+      "spg": 0,
+      "bpg": 0,
+      "source": "github_kaggle_seasons_stats",
+      "realId": "local:jimpaxson",
+      "name": "Jim Paxson",
+      "displayName": "Jim Paxson"
+    }
+  ]
+}

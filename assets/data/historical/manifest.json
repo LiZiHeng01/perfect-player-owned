@@ -1,0 +1,237 @@
+{
+  "version": 2,
+  "generatedAt": "2026-06-16T07:08:15.513Z",
+  "supportedStartYears": [
+    1983,
+    1996,
+    2003,
+    2009,
+    2025
+  ],
+  "dataValidationYears": [
+    2005
+  ],
+  "files": {
+    "players": "players.json",
+    "draftClasses": "draft_classes.json",
+    "awards": "awards.json",
+    "transactions": "transactions.json",
+    "salaries": "salaries.json",
+    "eraTop100": "era_top100.json",
+    "validationReport": "validation_report.json",
+    "playerSeasons": [
+      "player_seasons_1957.json",
+      "player_seasons_1958.json",
+      "player_seasons_1965.json",
+      "player_seasons_1966.json",
+      "player_seasons_1967.json",
+      "player_seasons_1968.json",
+      "player_seasons_1969.json",
+      "player_seasons_1970.json",
+      "player_seasons_1971.json",
+      "player_seasons_1972.json",
+      "player_seasons_1973.json",
+      "player_seasons_1974.json",
+      "player_seasons_1975.json",
+      "player_seasons_1976.json",
+      "player_seasons_1977.json",
+      "player_seasons_1978.json",
+      "player_seasons_1979.json",
+      "player_seasons_1980.json",
+      "player_seasons_1981.json",
+      "player_seasons_1982.json",
+      "player_seasons_1983.json",
+      "player_seasons_1984.json",
+      "player_seasons_1985.json",
+      "player_seasons_1986.json",
+      "player_seasons_1987.json",
+      "player_seasons_1988.json",
+      "player_seasons_1989.json",
+      "player_seasons_1990.json",
+      "player_seasons_1991.json",
+      "player_seasons_1992.json",
+      "player_seasons_1993.json",
+      "player_seasons_1994.json",
+      "player_seasons_1995.json",
+      "player_seasons_1996.json",
+      "player_seasons_1997.json",
+      "player_seasons_1998.json",
+      "player_seasons_1999.json",
+      "player_seasons_2000.json",
+      "player_seasons_2001.json",
+      "player_seasons_2002.json",
+      "player_seasons_2003.json",
+      "player_seasons_2004.json",
+      "player_seasons_2005.json",
+      "player_seasons_2006.json",
+      "player_seasons_2007.json",
+      "player_seasons_2008.json",
+      "player_seasons_2009.json",
+      "player_seasons_2010.json",
+      "player_seasons_2011.json",
+      "player_seasons_2012.json",
+      "player_seasons_2013.json",
+      "player_seasons_2014.json",
+      "player_seasons_2015.json",
+      "player_seasons_2016.json",
+      "player_seasons_2017.json",
+      "player_seasons_2018.json",
+      "player_seasons_2019.json",
+      "player_seasons_2020.json",
+      "player_seasons_2021.json",
+      "player_seasons_2022.json",
+      "player_seasons_2023.json",
+      "player_seasons_2024.json",
+      "player_seasons_2025.json"
+    ]
+  },
+  "sourceCoverage": {
+    "providerChain": [
+      {
+        "id": "nba_api",
+        "label": "NBA Stats API",
+        "enabled": true,
+        "used": false,
+        "requiresKey": false,
+        "skippedReason": "offline_cached_generation; set HISTORICAL_DB_FETCH=1 to refresh raw cache"
+      },
+      {
+        "id": "balldontlie",
+        "label": "balldontlie",
+        "enabled": false,
+        "used": false,
+        "requiresKey": true,
+        "skippedReason": "missing BALLDONTLIE_API_KEY"
+      },
+      {
+        "id": "sportsdataio",
+        "label": "SportsDataIO",
+        "enabled": false,
+        "used": false,
+        "requiresKey": true,
+        "skippedReason": "missing SPORTSDATAIO_API_KEY"
+      },
+      {
+        "id": "local_csv",
+        "label": "GitHub/local CSV fallback",
+        "enabled": true,
+        "used": true,
+        "requiresKey": false,
+        "skippedReason": ""
+      }
+    ],
+    "rawCacheDir": "tools/data/raw",
+    "headshotCacheDir": "assets/data/historical/headshots",
+    "rosters": "assets/data/rosters*.csv",
+    "rookies": "assets/data/rostersRookiesReal.csv",
+    "verifiedManualStats": [
+      "Shaquille O'Neal",
+      "LeBron James",
+      "Allen Iverson"
+    ],
+    "regularSeason": "GitHub/Kaggle player-season CSV matched into player_seasons_*.json",
+    "regularSeasonSources": [
+      {
+        "id": "github_kaggle_seasons_stats",
+        "kind": "basketball_reference_totals",
+        "path": "tools/data/raw/vimalsubbiah_NBA-EDA-and-PPG-prediction/NBA-EDA-and-PPG-prediction-master/Seasons_Stats.csv",
+        "url": "https://github.com/vimalsubbiah/NBA-EDA-and-PPG-prediction",
+        "coverage": "1950-2017 regular-season player totals",
+        "available": true,
+        "rows": 24691,
+        "usableRows": 24624
+      },
+      {
+        "id": "github_2025_per_game",
+        "kind": "basketball_reference_per_game",
+        "path": "tools/data/raw/MahdiMahin_NBA-stats-sql-tableau/NBA-stats-sql-tableau-main/data/nba_projectSQL1.csv",
+        "url": "https://github.com/MahdiMahin/NBA-stats-sql-tableau",
+        "coverage": "2024-25 regular-season player per-game rows",
+        "available": true,
+        "rows": 736,
+        "usableRows": 735
+      },
+      {
+        "id": "github_nba_box_scores_2010_2024",
+        "kind": "nba_game_box_scores",
+        "paths": [
+          "tools/data/raw/NocturneBear_NBA-Data-2010-2024/NBA-Data-2010-2024-main/regular_season_box_scores_2010_2024_part_1.csv",
+          "tools/data/raw/NocturneBear_NBA-Data-2010-2024/NBA-Data-2010-2024-main/regular_season_box_scores_2010_2024_part_2.csv",
+          "tools/data/raw/NocturneBear_NBA-Data-2010-2024/NBA-Data-2010-2024-main/regular_season_box_scores_2010_2024_part_3.csv"
+        ],
+        "url": "https://github.com/NocturneBear/NBA-Data-2010-2024",
+        "coverage": "2010-11 through 2023-24 regular-season player box scores aggregated to player-season rows",
+        "available": true,
+        "rows": 424478,
+        "usableRows": 7188
+      }
+    ],
+    "regularSeasonMatchedPlayers": 2138,
+    "playoffs": "partial_verified_for_key_players; adapter-ready for GitHub raw CSV",
+    "awards": "historical_awards v2: NBA API PlayerAwards adapter-ready, manual verified timelines, verified overrides, and local roster aggregates",
+    "awardsCoverage": {
+      "providerChain": [
+        {
+          "id": "nba_api",
+          "label": "NBA Stats API",
+          "enabled": true,
+          "used": false,
+          "requiresKey": false,
+          "skippedReason": "offline_cached_generation; set HISTORICAL_DB_FETCH=1 to refresh raw cache"
+        },
+        {
+          "id": "balldontlie",
+          "label": "balldontlie",
+          "enabled": false,
+          "used": false,
+          "requiresKey": true,
+          "skippedReason": "missing BALLDONTLIE_API_KEY"
+        },
+        {
+          "id": "sportsdataio",
+          "label": "SportsDataIO",
+          "enabled": false,
+          "used": false,
+          "requiresKey": true,
+          "skippedReason": "missing SPORTSDATAIO_API_KEY"
+        },
+        {
+          "id": "local_csv",
+          "label": "GitHub/local CSV fallback",
+          "enabled": true,
+          "used": true,
+          "requiresKey": false,
+          "skippedReason": ""
+        }
+      ],
+      "source": "historical_awards",
+      "nbaApiPlayerAwards": "offline_not_refreshed",
+      "localRosterAggregates": true,
+      "manualVerifiedTimelines": 3,
+      "verifiedHonorOverrides": 10,
+      "playersWithAwards": 418,
+      "playersWithAwardSeasons": 418,
+      "noFakeAwards": true
+    },
+    "legacyFormulaVersion": 5,
+    "transactions": "not vendored; null/empty by design",
+    "salaries": "not vendored; null/empty by design",
+    "validation": {
+      "targetDraftPhotos": true,
+      "noPlayerSeasonTeamIdZero": true,
+      "iverson2005CareerBeforeStart": true,
+      "noSeedEraTop100": true,
+      "matchedOfficialRowsFullyWritten": true,
+      "rosterPlayersWithPriorSeasonRows": true,
+      "rosterHistoryGapCount": 461,
+      "allowedNoNbaDataPlayerCount": 461,
+      "awardsV2": true,
+      "historicalAwardPlayers": 418,
+      "historicalAwardSeasonPlayers": 418,
+      "lebron2009AwardsAligned": true,
+      "kobe2009AwardsAligned": true,
+      "jordan2009AwardsAligned": true,
+      "players": 2643
+    }
+  }
+}

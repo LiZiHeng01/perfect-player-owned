@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "generatedAt": "2026-06-16T07:08:15.513Z",
+  "transactions": [],
+  "sourceCoverage": {
+    "available": false,
+    "reason": "No verified GitHub transaction CSV snapshot has been vendored yet."
+  }
+}
