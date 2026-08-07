@@ -1,0 +1,147 @@
+/* ============================================================
+   Perfect Player — "Hardwood Broadcast" 高级篮球质感层
+   Loaded AFTER the inline <style> so equal-specificity rules win.
+   设计取向：保留奶油亮色基底，注入木地板纹理 + 球场缝线 + 转播感数字。
+   关键：Oswald 无中文字形，故用 'Oswald','Noto Sans SC' 字栈——
+        拉丁数字走 Oswald(转播/球衣号码感)，中文回退 Noto，不会缺字。
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&display=swap');
+
+:root {
+  /* 木地板与球场缝线的补充色（叠加在既有 --orange/--gold 上，不改动原变量） */
+  --wood-deep: #3a2817;      /* 深胡桃：缝线/描边 */
+  --wood-warm: #c8894e;      /* 暖木纹高光 */
+  --court-ink: rgba(58,40,23,.14);
+  --foil-1: #f7c65a;         /* 金箔渐变 */
+  --foil-2: #d98a1f;
+  --font-athletic: 'Oswald','Noto Sans SC',sans-serif;
+  /* 更精致的分层阴影（近-中-远三层，替换单层 flat 阴影观感） */
+  --shadow-court: 0 1px 2px rgba(45,31,14,.06), 0 4px 12px rgba(45,31,14,.08), 0 12px 32px rgba(45,31,14,.06);
+}
+
+/* ---------- 木地板纹理背景（极淡，只做氛围，不抢内容） ---------- */
+body {
+  background-color: var(--bg);
+  background-image:
+    repeating-linear-gradient(90deg, rgba(200,137,78,.035) 0 2px, transparent 2px 46px),
+    radial-gradient(120% 80% at 50% -10%, rgba(255,107,53,.06), transparent 60%);
+  background-attachment: fixed;
+}
+
+/* ---------- 顶部栏：转播记分条质感 ---------- */
+.navbar {
+  border-bottom: 1px solid var(--court-ink);
+  box-shadow: 0 1px 0 rgba(255,255,255,.6);
+}
+.nav-logo {
+  font-family: var(--font-athletic);
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+
+/* ---------- 区块标题：球场缝线双下划线（结构编码，非装饰） ---------- */
+.section-title h1 {
+  font-family: var(--font-athletic);
+  font-weight: 700;
+  letter-spacing: 1px;
+  border-bottom: none;
+  padding-bottom: 10px;
+  position: relative;
+}
+.section-title h1::after {
+  content: '';
+  position: absolute;
+  left: 50%; bottom: 0;
+  transform: translateX(-50%);
+  width: 64px; height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--orange), var(--gold));
+  box-shadow: 0 0 0 3px rgba(255,107,53,.08);
+}
+
+/* ---------- 揭晓卡：signature——转播式 OVR 数字 + 缝线 ---------- */
+.reveal-card {
+  border: 2px solid var(--border);
+  box-shadow: var(--shadow-court);
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(255,107,53,.05), transparent 55%),
+    var(--bg-card);
+}
+/* 卡片顶部一道橙金球场线 */
+.reveal-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--orange), var(--gold), var(--orange));
+}
+.big-ovr {
+  font-family: var(--font-athletic);
+  font-weight: 700;
+  font-size: clamp(64px, 17vw, 88px);
+  letter-spacing: -1px;
+  background: linear-gradient(180deg, var(--orange-light), var(--orange) 60%, #d94f1a);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 3px 6px rgba(255,107,53,.28));
+}
+.big-pos, .big-cname {
+  font-family: var(--font-athletic);
+  letter-spacing: .5px;
+}
+
+/* ---------- 大数字统一转播体：赛季战绩 / 比分 / 排名 ---------- */
+.eos-record, .gc-score, .gc-total, .award-rank, .sh-wins, .sh-losses, .big-ovr {
+  font-family: var(--font-athletic);
+  font-variant-numeric: tabular-nums;
+}
+.eos-record { letter-spacing: 1px; }
+
+/* ---------- 卡片统一精致化：更柔的分层阴影 + 缝线描边 ---------- */
+.feature-card, .pos-card, .award-row, .eos-container {
+  box-shadow: var(--shadow-court);
+}
+.feature-card { position: relative; overflow: hidden; }
+/* 特色卡左侧一道球场边线 */
+.feature-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+  background: linear-gradient(180deg, var(--orange), var(--gold));
+  opacity: .0; transition: opacity .18s;
+}
+.feature-card.selected::before { opacity: 1; }
+
+/* 奖项行：金/铜排名用金箔质感 */
+.award-rank.gold {
+  background: linear-gradient(180deg, var(--foil-1), var(--foil-2));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 1px rgba(160,110,20,.25));
+}
+.award-label {
+  font-family: var(--font-athletic);
+  letter-spacing: .5px;
+}
+
+/* ---------- 主按钮：更立体的球场质感（保留原橙，加顶光） ---------- */
+.btn-primary, .fc-btn {
+  background: linear-gradient(180deg, var(--orange-light), var(--orange));
+}
+.btn-gold {
+  background: linear-gradient(180deg, var(--foil-1), var(--foil-2));
+}
+
+/* ---------- 冠军庆祝：金箔标题更高级 ---------- */
+.champion-title {
+  font-family: var(--font-athletic);
+  letter-spacing: 3px;
+  background: linear-gradient(180deg, var(--foil-1), var(--foil-2));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ---------- 无障碍：尊重减少动态效果 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .feature-card::before { transition: none; }
+}
