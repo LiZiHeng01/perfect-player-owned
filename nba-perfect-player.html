@@ -5250,11 +5250,14 @@ function calcSeasonAwards() {
         userRookieRank = '未入围';
       }
       var names = rookies.map(function(r) { return r.cname; });
+      var enNames = rookies.map(function(r) { return r.playerName || ''; });
       if (rotyIsTop4) {
         names[4] = getHupuDisplayName();
+        enNames[4] = '';  // user slot — rendered via avatar, not a CDN name
       }
       var winnerList = names.join('、');
-      STATE.season.awards.push({ act:'allRookie', label:'最佳新秀阵容', winner:winnerList, winnerEN:'', team:'', isUser:userInRookie, userRank:userRookieRank, isList:true });
+      var winnerENList = enNames.join(',');
+      STATE.season.awards.push({ act:'allRookie', label:'最佳新秀阵容', winner:winnerList, winnerEN:winnerENList, team:'', isUser:userInRookie, userRank:userRookieRank, isList:true });
     })();
   }
 
@@ -5359,11 +5362,12 @@ function showAwardsScreen() {
     if (a.userRank.indexOf('🥇') >= 0) rankCls = 'gold';
     else if (a.userRank.indexOf('🥉') >= 0) rankCls = 'orange';
 
-    // 头像（列表奖项留空占位，保证对齐）
+    // 头像
     var headshotHtml = '';
-    var TEAM_ICON = 'https://i4.hoopchina.com.cn/colorbox/6bd73a77ab165f7791ef4a650965e797.png';
     if (a.isList) {
-      headshotHtml = '<div style="width:44px;height:44px;flex-shrink:0;border-radius:50%;background-image:url(' + TEAM_ICON + ');background-size:cover;background-position:center;border:2px solid var(--orange);"></div>';
+      // 列表奖项（最佳阵容/新秀阵容）：头像逐行显示在名字旁（见下方 leftContent），
+      // 左侧大圈用奖项 emoji 作为分组标识，取代原来加载失败的空白队标占位圈。
+      headshotHtml = '<div style="width:44px;height:44px;flex-shrink:0;border-radius:50%;background:var(--orange-dim);display:flex;align-items:center;justify-content:center;font-size:20px;">' + emoji + '</div>';
     } else {
       var hsStyle = '';
       if (a.isUser) {
@@ -5382,10 +5386,25 @@ function showAwardsScreen() {
     var leftContent = '';
     if (a.isList) {
       var names = a.winner.split('、');
+      var namesEN = (a.winnerEN || '').split(',');
+      var myDisplayName = getHupuDisplayName();
       leftContent = '<div style="padding:2px 0 0;">';
       for (var ni = 0; ni < names.length; ni++) {
-        var isMy = names[ni] === getHupuDisplayName();
-        leftContent += '<div style="font-size:11px;' + (isMy ? 'color:var(--orange);font-weight:700;' : 'color:var(--text);font-weight:500;') + ';line-height:1.5;">' + (isMy ? '⭐ ' : '') + names[ni].replace(/·/g, '-') + '</div>';
+        var isMy = names[ni] === myDisplayName;
+        // 每位球员名字前显示小头像
+        var rowHs;
+        if (isMy) {
+          var myAvatar = getHupuAvatarUrl();
+          rowHs = myAvatar
+            ? 'background-image:url(' + myAvatar + ');background-size:cover;background-position:center;width:18px;height:18px;'
+            : getPlayerHeadshotStyle(myDisplayName, 18);
+        } else {
+          rowHs = getPlayerHeadshotStyle(namesEN[ni] || names[ni], 18);
+        }
+        leftContent += '<div style="display:flex;align-items:center;gap:6px;line-height:1.7;">' +
+          '<div style="width:18px;height:18px;border-radius:50%;flex-shrink:0;border:1.5px solid ' + (isMy ? 'var(--gold)' : 'var(--border)') + ';background-size:cover;background-position:center;' + rowHs + '"></div>' +
+          '<span style="font-size:11px;' + (isMy ? 'color:var(--orange);font-weight:700;' : 'color:var(--text);font-weight:500;') + '">' + (isMy ? '⭐ ' : '') + names[ni].replace(/·/g, '-') + '</span>' +
+        '</div>';
       }
       leftContent += '</div>';
     } else {
@@ -9746,8 +9765,10 @@ function checkSeasonBranchEvent(game, result, stats) {
       }
     }
   }
-  if (Math.random() * 100 >= 5) return null;
-  var maxRandomEvents = romanceStepPool.length > 0 ? 1 : 2;
+  // 更多但分散：提高单场触发率(5%→7%)与赛季上限(2→4)，冷却(12场)保持不变，
+  // 这样一个赛季能遇到更多剧情事件，但仍被冷却拉开、不会扎堆。
+  if (Math.random() * 100 >= 7) return null;
+  var maxRandomEvents = romanceStepPool.length > 0 ? 3 : 4;
   if ((c.branchSeasonEvents._count || 0) >= maxRandomEvents) return null;
   var pool = getBranchEventSource().filter(function(ev) {
     if (getEventPhases(ev).indexOf('season') < 0) return false;
@@ -18503,8 +18524,8 @@ function checkRandomEvents(game, result, stats) {
   if (!ev) return null;
   if (ev.suspensionGamesLeft > 0 || ev.injuryGamesLeft > 0) return null;
 
-  // 常规赛最多触发 2 个伤病事件
-  if (!STATE.season.isPlayoffs && ev.storyTimeline.length >= 2) return null;
+  // 常规赛最多触发 3 个伤病/冲突事件（原 2，配合 10 场冷却保持分散）
+  if (!STATE.season.isPlayoffs && ev.storyTimeline.length >= 3) return null;
   // 季后赛最多触发 2 个伤病事件
   if (STATE.season.isPlayoffs && ev.playoffEventCount >= 2) return null;
 

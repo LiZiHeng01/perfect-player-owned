@@ -66,6 +66,33 @@
 '.pp-ach-item.got.rarity-epic .pp-ach-rarity{background:rgba(183,164,232,.2);color:#7d5fd0}',
 '.pp-ach-item.got.rarity-rare .pp-ach-rarity{background:rgba(46,196,182,.16);color:#1f9e91}',
 '@media(prefers-reduced-motion:reduce){.pp-ring-arc,.pp-ach-fab::after{animation:none!important}}',
+// —— 传承祭坛 ——
+'.pp-lg-open-btn{border:none;cursor:pointer;background:linear-gradient(135deg,#b7a4e8,#ff6b35);color:#fff;',
+'  font-family:var(--font-display,sans-serif);font-weight:700;font-size:12px;padding:7px 12px;border-radius:20px;',
+'  box-shadow:0 3px 10px rgba(183,164,232,.35)}.pp-lg-open-btn:active{transform:scale(.94)}',
+'.pp-lg-lp{padding:2px 18px 4px;font-size:13px;color:#8a7a66;font-family:var(--font-display,sans-serif)}',
+'.pp-lg-lp b{color:var(--orange,#ff6b35);font-size:17px}',
+'.pp-lg-hint{padding:0 18px 10px;font-size:11.5px;color:#9a8a76;line-height:1.5}',
+'.pp-lg-grid{gap:10px}',
+'.pp-lg-perk{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:14px;background:var(--bg-card,#fffaf2);',
+'  border:1.5px solid var(--border,#f0e0cc)}',
+'.pp-lg-perk.maxed{border-color:#c9b8f0;background:linear-gradient(120deg,#fffaf2,#f4eeff)}',
+'.pp-lg-perk-ic{width:40px;height:40px;flex:0 0 40px;border-radius:12px;background:var(--orange-dim,rgba(255,107,53,.1));',
+'  display:flex;align-items:center;justify-content:center;font-size:20px}',
+'.pp-lg-perk-body{flex:1;min-width:0}',
+'.pp-lg-perk-name{font-family:var(--font-display,sans-serif);font-size:14px;font-weight:800;color:#2d1f0e}',
+'.pp-lg-lvl{font-size:11px;color:#8a7a66;font-weight:600}',
+'.pp-lg-perk-desc{font-size:11.5px;color:#8a7a66;margin:1px 0 4px;line-height:1.4}',
+'.pp-lg-pips{display:flex;gap:4px}',
+'.pp-lg-pip{width:14px;height:6px;border-radius:3px;background:rgba(45,31,14,.12)}',
+'.pp-lg-pip.on{background:linear-gradient(90deg,#ff6b35,#f7a600)}',
+'.pp-lg-buy{flex:0 0 auto;border:none;cursor:pointer;background:var(--orange,#ff6b35);color:#fff;font-weight:800;',
+'  font-family:var(--font-display,sans-serif);font-size:13px;padding:9px 12px;border-radius:11px;min-width:56px;',
+'  box-shadow:0 3px 0 #c94d1e}.pp-lg-buy:active{transform:translateY(2px);box-shadow:0 1px 0 #c94d1e}',
+'.pp-lg-buy:disabled{opacity:.4;box-shadow:none;cursor:not-allowed}',
+'.pp-lg-foot{padding:10px 18px 18px}',
+'.pp-lg-respec{width:100%;border:1.5px dashed var(--border,#f0e0cc);background:transparent;color:#8a7a66;',
+'  font-size:12px;padding:9px;border-radius:11px;cursor:pointer}.pp-lg-respec:active{transform:scale(.98)}',
 ''
 ];
 
@@ -305,6 +332,15 @@
   var unlocked = loadUnlocked();
   PP_FX.getUnlocked = function () { return unlocked; };
 
+  // 已解锁的"真实成就"数量：只统计存在于 ACH_MAP 的键，
+  // 排除 __counters 等内部记账键（否则会把进度算多，甚至 29/28 > 100%）。
+  function unlockedCount() {
+    var n = 0;
+    for (var k in unlocked) { if (Object.prototype.hasOwnProperty.call(unlocked, k) && ACH_MAP[k]) n++; }
+    return n;
+  }
+  PP_FX.unlockedCount = unlockedCount;
+
   // 解锁一个成就；已解锁则忽略。返回是否为新解锁。
   PP_FX.unlock = function (id) {
     var def = ACH_MAP[id];
@@ -314,7 +350,7 @@
     saveUnlocked(unlocked);
     showUnlockPopup(def);
     // 元成就：解锁数量里程碑（延迟以免与当前弹窗叠加）
-    var n = Object.keys(unlocked).length;
+    var n = unlockedCount();
     if (n >= 10 && !unlocked['explorer']) setTimeout(function () { PP_FX.unlock('explorer'); }, 2600);
     if (n >= 20 && !unlocked['collector']) setTimeout(function () { PP_FX.unlock('collector'); }, 2600);
     return true;
@@ -379,7 +415,7 @@
     var existing = $('pp-ach-panel');
     if (existing) existing.remove();
     var total = ACHIEVEMENTS.length;
-    var got = Object.keys(unlocked).length;
+    var got = unlockedCount();
     var pct = Math.round(got / total * 100);
     var cards = ACHIEVEMENTS.map(function (a) {
       var has = !!unlocked[a.id];
@@ -400,7 +436,10 @@
       '<div class="pp-ach-panel">' +
         '<div class="pp-ach-panel-head">' +
           '<div class="pp-ach-panel-title">🏅 成就殿堂</div>' +
-          '<button class="pp-ach-close" id="pp-ach-close" aria-label="关闭">✕</button>' +
+          '<div style="display:flex;gap:8px;align-items:center;">' +
+            '<button class="pp-lg-open-btn" id="pp-ach-to-legacy">🧬 传承祭坛</button>' +
+            '<button class="pp-ach-close" id="pp-ach-close" aria-label="关闭">✕</button>' +
+          '</div>' +
         '</div>' +
         '<div class="pp-ach-progress">' +
           '<div class="pp-ach-progress-bar"><div class="pp-ach-progress-fill" style="width:' + pct + '%"></div></div>' +
@@ -412,11 +451,156 @@
     requestAnimationFrame(function () { overlay.classList.add('show'); });
     function close() { overlay.classList.remove('show'); setTimeout(function () { overlay.remove(); }, 300); }
     $('pp-ach-close').onclick = close;
+    var toLg = $('pp-ach-to-legacy');
+    if (toLg) toLg.onclick = function () { close(); setTimeout(PP_FX.openLegacyPanel, 260); };
     overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
   };
 
   // 测试/调试：全部清空
   PP_FX.resetAchievements = function () { unlocked = {}; saveUnlocked(unlocked); };
+
+  /* ==================== 传承系统（Roguelike 重生） ==================== */
+  // 玩法：解锁成就累计"传承点(LP)"，在传承祭坛把 LP 投入永久强化。
+  // 每次开启新生涯(揭晓球员时)按已购强化，给初始属性/OVR 永久加成——即"重生奖励"。
+  // 设计要点：LP 由成就稀有度决定，跨生涯保留；强化可叠加但有上限，避免破坏平衡。
+  var LEGACY_KEY = 'pp_legacy_v1';
+  var LP_BY_RARITY = { common: 1, rare: 2, epic: 4, legend: 8 };
+
+  // 强化项：cost 为每级消耗，max 为最高等级，apply 描述对新生涯的加成。
+  // attrs 用主引擎 13 项属性键（threePT/MID/FIN/DNK/HAN/PAS/PDEF/IDEF/BLK/REB/ATH/STR/CLU）。
+  var LEGACY_PERKS = [
+    { id: 'scorer',    icon: '🎯', name: '得分天赋', desc: '每级 三分/中投/终结 +1', max: 5, cost: 2, attrs: ['threePT', 'MID', 'FIN'] },
+    { id: 'playmaker', icon: '🎩', name: '组织视野', desc: '每级 传球/控球 +1', max: 5, cost: 2, attrs: ['PAS', 'HAN'] },
+    { id: 'defender',  icon: '🛡️', name: '防守本能', desc: '每级 外防/内防/盖帽 +1', max: 5, cost: 2, attrs: ['PDEF', 'IDEF', 'BLK'] },
+    { id: 'athlete',   icon: '💪', name: '身体天赋', desc: '每级 运动/力量/篮板 +1', max: 5, cost: 2, attrs: ['ATH', 'STR', 'REB'] },
+    { id: 'clutch',    icon: '❄️', name: '大心脏',   desc: '每级 关键 +2', max: 4, cost: 3, attrs: ['CLU'], step: 2 },
+    { id: 'prodigy',   icon: '🌟', name: '天选之才', desc: '每级 全属性 +1（最贵）', max: 3, cost: 6,
+      attrs: ['threePT', 'MID', 'FIN', 'DNK', 'HAN', 'PAS', 'PDEF', 'IDEF', 'BLK', 'REB', 'ATH', 'STR', 'CLU'] }
+  ];
+  PP_FX.LEGACY_PERKS = LEGACY_PERKS;
+  var PERK_MAP = {};
+  LEGACY_PERKS.forEach(function (p) { PERK_MAP[p.id] = p; });
+
+  function loadLegacy() {
+    try {
+      var o = JSON.parse(localStorage.getItem(LEGACY_KEY) || '{}');
+      return (o && typeof o === 'object') ? o : {};
+    } catch (e) { return {}; }
+  }
+  function saveLegacy(o) { try { localStorage.setItem(LEGACY_KEY, JSON.stringify(o)); } catch (e) {} }
+  var legacy = loadLegacy();          // { levels:{perkId:lvl}, spent:number }
+  legacy.levels = legacy.levels || {};
+  legacy.spent = legacy.spent || 0;
+
+  // 总 LP = 已解锁成就按稀有度求和
+  function totalLP() {
+    var sum = 0;
+    for (var k in unlocked) {
+      if (!Object.prototype.hasOwnProperty.call(unlocked, k)) continue;
+      var def = ACH_MAP[k];
+      if (def) sum += (LP_BY_RARITY[def.rarity] || 0);
+    }
+    return sum;
+  }
+  function availableLP() { return Math.max(0, totalLP() - (legacy.spent || 0)); }
+  PP_FX.totalLP = totalLP;
+  PP_FX.availableLP = availableLP;
+  PP_FX.getLegacy = function () { return legacy; };
+
+  // 计算某强化当前等级带来的属性增量表 {attrKey: delta}
+  function legacyAttrBonuses() {
+    var bon = {};
+    LEGACY_PERKS.forEach(function (p) {
+      var lvl = legacy.levels[p.id] || 0;
+      if (!lvl) return;
+      var per = p.step || 1;
+      p.attrs.forEach(function (a) { bon[a] = (bon[a] || 0) + per * lvl; });
+    });
+    return bon;
+  }
+  PP_FX.legacyAttrBonuses = legacyAttrBonuses;
+
+  // 购买一级强化
+  PP_FX.buyPerk = function (id) {
+    var p = PERK_MAP[id];
+    if (!p) return false;
+    var lvl = legacy.levels[id] || 0;
+    if (lvl >= p.max) return false;
+    if (availableLP() < p.cost) return false;
+    legacy.levels[id] = lvl + 1;
+    legacy.spent = (legacy.spent || 0) + p.cost;
+    saveLegacy(legacy);
+    return true;
+  };
+
+  // 重置所有强化（返还 LP）——用于玩家重新分配
+  PP_FX.respecLegacy = function () {
+    legacy.levels = {};
+    legacy.spent = 0;
+    saveLegacy(legacy);
+  };
+
+  // 传承祭坛面板
+  function legacyPerkCardHtml(p) {
+    var lvl = legacy.levels[p.id] || 0;
+    var maxed = lvl >= p.max;
+    var canBuy = !maxed && availableLP() >= p.cost;
+    var pips = '';
+    for (var i = 0; i < p.max; i++) {
+      pips += '<span class="pp-lg-pip' + (i < lvl ? ' on' : '') + '"></span>';
+    }
+    return '<div class="pp-lg-perk' + (maxed ? ' maxed' : '') + '">' +
+      '<div class="pp-lg-perk-ic">' + p.icon + '</div>' +
+      '<div class="pp-lg-perk-body">' +
+        '<div class="pp-lg-perk-name">' + p.name + ' <span class="pp-lg-lvl">Lv.' + lvl + '/' + p.max + '</span></div>' +
+        '<div class="pp-lg-perk-desc">' + p.desc + '</div>' +
+        '<div class="pp-lg-pips">' + pips + '</div>' +
+      '</div>' +
+      '<button class="pp-lg-buy" data-perk="' + p.id + '"' + (canBuy ? '' : ' disabled') + '>' +
+        (maxed ? '满级' : ('🧬 ' + p.cost)) + '</button>' +
+    '</div>';
+  }
+
+  function renderLegacyBody(root) {
+    var avail = availableLP(), total = totalLP();
+    root.querySelector('.pp-lg-lp').innerHTML =
+      '可用传承点 <b>' + avail + '</b> · 累计 ' + total;
+    root.querySelector('.pp-lg-grid').innerHTML =
+      LEGACY_PERKS.map(legacyPerkCardHtml).join('');
+    root.querySelectorAll('.pp-lg-buy').forEach(function (b) {
+      b.onclick = function () {
+        if (PP_FX.buyPerk(b.getAttribute('data-perk'))) {
+          PP_FX.burstFrom(b, { count: 14 });
+          renderLegacyBody(root);
+        }
+      };
+    });
+  }
+
+  PP_FX.openLegacyPanel = function () {
+    var ex = $('pp-legacy-panel'); if (ex) ex.remove();
+    var overlay = ce('div'); overlay.id = 'pp-legacy-panel'; overlay.className = 'pp-ach-panel-overlay';
+    overlay.innerHTML =
+      '<div class="pp-ach-panel pp-legacy">' +
+        '<div class="pp-ach-panel-head">' +
+          '<div class="pp-ach-panel-title">🧬 传承祭坛</div>' +
+          '<button class="pp-ach-close" id="pp-lg-close" aria-label="关闭">✕</button>' +
+        '</div>' +
+        '<div class="pp-lg-lp"></div>' +
+        '<div class="pp-lg-hint">解锁成就积累传承点，投入永久强化。下次开启新生涯时，初始属性获得对应加成（重生奖励）。</div>' +
+        '<div class="pp-ach-grid pp-lg-grid"></div>' +
+        '<div class="pp-lg-foot"><button class="pp-lg-respec" id="pp-lg-respec">重置强化并返还全部传承点</button></div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    requestAnimationFrame(function () { overlay.classList.add('show'); });
+    function close() { overlay.classList.remove('show'); setTimeout(function () { overlay.remove(); }, 300); }
+    $('pp-lg-close').onclick = close;
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+    $('pp-lg-respec').onclick = function () {
+      PP_FX.respecLegacy(); renderLegacyBody(overlay);
+    };
+    renderLegacyBody(overlay);
+  };
 
   /* ==================== 与主引擎的接线(hooks) ==================== */
   // 策略：不改核心逻辑，只在已有全局函数前后"包裹"我们的检测与特效。
@@ -445,6 +629,23 @@
   }
   function getCounter(key) { return (unlocked.__counters && unlocked.__counters[key]) || 0; }
 
+  // 0) 传承加成：在揭晓(计算OVR)之前，把已购强化加到初始属性上。每个生涯只应用一次。
+  function applyLegacyBeforeReveal() {
+    var s = G(); if (!s || !s.attrs) return;
+    // 用属性对象自身打标记，避免重复揭晓时叠加；换新生涯会得到全新 attrs。
+    if (s.attrs.__legacyApplied) return;
+    var bon = legacyAttrBonuses();
+    var keys = Object.keys(bon);
+    if (!keys.length) { s.attrs.__legacyApplied = true; return; }
+    keys.forEach(function (k) {
+      if (typeof s.attrs[k] === 'number') {
+        s.attrs[k] = Math.max(25, Math.min(99, s.attrs[k] + bon[k]));
+      }
+    });
+    s.attrs.__legacyApplied = true;
+    PP_FX._legacyAppliedThisCareer = bon;  // 供揭晓后提示
+  }
+
   // 1) 创建/揭晓球员 → 创建成就 + OVR 里程碑
   function afterReveal() {
     var s = G(); if (!s) return;
@@ -458,6 +659,15 @@
       var el = document.querySelector('#screen-reveal .reveal-card') || document.querySelector('.big-ovr');
       if (el) PP_FX.burstFrom(el, { count: 22, colors: ['#ff6b35', '#f7a600', '#ffd23f'] });
     }, 700);
+    // 若本次生涯吃到了传承加成，给出重生奖励提示
+    var lb = PP_FX._legacyAppliedThisCareer;
+    if (lb && Object.keys(lb).length) {
+      var totalPlus = 0; for (var kk in lb) totalPlus += lb[kk];
+      PP_FX._legacyAppliedThisCareer = null;
+      setTimeout(function () {
+        PP_FX.toast('传承加成已注入：初始属性共 +' + totalPlus, { gold: true, icon: '🧬', duration: 3200 });
+      }, 900);
+    }
   }
 
   // 2) 选秀定型 → 顺位相关成就
@@ -527,14 +737,19 @@
   // 6) 退役
   function afterRetire() { PP_FX.unlock('retire'); }
 
-  // 7) 单场比赛数据里程碑 —— 包裹 showGameModal / renderGameCastNew 皆可拿到 stats
-  var _lastCheckedGame = -1;
-  function checkGameMilestones(stats) {
-    if (!stats) return;
-    var s = G(); if (!s || !s.season) return;
-    var gi = (s.season.games || []).length;
-    if (gi === _lastCheckedGame) return; // 防重复
-    _lastCheckedGame = gi;
+  // 7) 单场比赛数据里程碑
+  // 关键修复：主引擎的 renderGameCastNew 只定义未调用（快速模拟用点阵图），
+  // 所以旧的 game_40/game_50/triple_double 永远无法触发。改为在每场比赛推入
+  // STATE.season.games 后（simDayLeagueGames 在所有路径都会被调用）检查最新一场的 stats。
+  var _lastCheckedGameIdx = -1;
+  function checkLatestGameMilestones() {
+    var s = G(); if (!s || !s.season || !s.season.games) return;
+    var games = s.season.games;
+    var idx = games.length - 1;
+    if (idx < 0 || idx === _lastCheckedGameIdx) return; // 防重复
+    _lastCheckedGameIdx = idx;
+    var stats = games[idx] && games[idx].stats;
+    if (!stats) return; // 禁赛场次 stats 为 null
     if ((stats.pts || 0) >= 50) PP_FX.unlock('game_50');
     else if ((stats.pts || 0) >= 40) PP_FX.unlock('game_40');
     var dd = 0;
@@ -544,18 +759,18 @@
 
   /* ---------- 安装 hooks（DOM 就绪后，确保主引擎已定义这些函数） ---------- */
   function install() {
-    wrap('revealPlayer', null, afterReveal);
+    wrap('revealPlayer', applyLegacyBeforeReveal, afterReveal);
     wrap('finalizeDraft', null, afterFinalizeDraft);
     wrap('showAwardsScreen', null, afterAwards);
     wrap('calcSeasonAwards', null, afterAwards);
     wrap('showEndOfSeason', null, afterEndOfSeason);
     wrap('showChampionshipCelebration', afterChampion, null);
-    wrap('showRetirementModal', afterRetire, null);
+    // 退役实际走 announcePlayerRetirement()，showRetirementModal 定义了却从未被调用，
+    // 旧 hook 挂在后者上导致 retire 成就永远无法解锁。
+    wrap('announcePlayerRetirement', afterRetire, null);
 
-    // 单场里程碑：showGameModal(game) 或 renderGameCastNew(game,result,stats)
-    wrap('renderGameCastNew', null, function (r, args) {
-      if (args && args.length >= 3) checkGameMilestones(args[2]);
-    });
+    // 单场里程碑：simDayLeagueGames 在每场比赛推入 games 后都会被调用（含季后赛）
+    wrap('simDayLeagueGames', null, function () { checkLatestGameMilestones(); });
 
     // 把主引擎里空实现的 showToast 接到我们的华丽 toast 上
     var origToast = window.showToast;
