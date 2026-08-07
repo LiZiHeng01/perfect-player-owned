@@ -491,10 +491,10 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
     .character-error{min-height:20px;margin:2px 0 5px;text-align:center;font-size:12px;color:var(--red)}
 
     /* ── 生涯状态显化：只展示原系统已有数值 ── */
-    .player-state-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin:6px 10px;padding:7px 6px;background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px}
+    .player-state-strip{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px 2px;margin:6px 10px;padding:6px 5px;background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px}
     .player-state-item{text-align:center;min-width:0}
-    .player-state-value{display:block;font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--text);line-height:1.1}
-    .player-state-label{display:block;margin-top:2px;font-size:9px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .player-state-value{display:block;font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--text);line-height:1.05}
+    .player-state-label{display:block;margin-top:1px;font-size:8px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .player-state-item.alert .player-state-value{color:var(--red)}
     .player-state-item.good .player-state-value{color:var(--green)}
   </style>
@@ -2211,10 +2211,9 @@ function getCurrentSeasonLabel() {
 }
 
 function getNextSeasonMods() {
-  if (!STATE.career) return { injuryRiskBonus: 0, formVariance: 0, teamChemistry: 0 };
-  if (!STATE.career.nextSeasonMods) {
-    STATE.career.nextSeasonMods = { injuryRiskBonus: 0, formVariance: 0, teamChemistry: 0 };
-  }
+  var defaults = { injuryRiskBonus: 0, formVariance: 0, teamChemistry: 0, moraleBonus: 0, mediaPressure: 0, staminaLoad: 0 };
+  if (!STATE.career) return defaults;
+  STATE.career.nextSeasonMods = Object.assign(defaults, STATE.career.nextSeasonMods || {});
   return STATE.career.nextSeasonMods;
 }
 
@@ -2904,12 +2903,17 @@ function spinSlotMachine() {
   }, 2800);
 }
 
+/** 仅用于建模阶段的候选池；正式比赛始终读取 NBA2K_DATA 现役名单。 */
+function getBuildPlayerPool(team) {
+  return (window.PERFECT_PLAYER_BUILD_DATA && window.PERFECT_PLAYER_BUILD_DATA[team]) || NBA2K_DATA[team] || [];
+}
+
 /** Show team roster — 5 random players (below the slot machine) */
 function showTeamRoster(team) {
   const rosterArea = document.getElementById('br-roster-area');
   if (!rosterArea) return;
   
-  const players = NBA2K_DATA[team];
+  const players = getBuildPlayerPool(team);
   const available = players.filter(p => !STATE.usedPlayers.includes(p.name));
   
   if (available.length === 0) {
@@ -2980,7 +2984,7 @@ function renderRosterPlayers(team, shown, allAvailable) {
 function rerollTeamPlayers() {
   if (STATE._rerollsLeft <= 0 || !STATE.currentTeam) return;
   
-  const players = NBA2K_DATA[STATE.currentTeam];
+  const players = getBuildPlayerPool(STATE.currentTeam);
   const available = players.filter(p => !STATE.usedPlayers.includes(p.name));
   
   const notShown = available.filter(p => !STATE._shownThisTeam.includes(p.name));
@@ -3005,7 +3009,7 @@ function rerollTeamPlayers() {
 function pickPlayer(name) {
   
   if (STATE._locking || !STATE.currentTeam) return;
-  const players = NBA2K_DATA[STATE.currentTeam];
+  const players = getBuildPlayerPool(STATE.currentTeam);
   const player = players.find(p => p.name === name);
   if (!player) return;
   
@@ -3484,7 +3488,8 @@ function continueDraftResult() {
 function showDraftStory() {
   STATE._draftPending = {
     agent: null, prep: null, type: null, round: 1, pick: 1,
-    twoWay: false, contractYears: 4, selfPicked: false
+    twoWay: false, contractYears: 4, selfPicked: false,
+    draftStockBonus: 0, randomEventIds: []
   };
   STATE.career.branches = STATE.career.branches || {};
   setBranchNode('draft_night', 'draft_entry');
@@ -3566,9 +3571,13 @@ function showDraftPrepStep() {
       if (STATE._draftPending.combineHurt) {
         showDraftResultModal('试训策略',
           '联合试训的最后一场，你在一次变向时感觉大腿发紧。队医让你提前结束，顺位预测被媒体往下调了一点。<br><br>效果：状态波动+1；媒体压力+1。',
-          nextDraftReady);
+          function() {
+            if (typeof runPerfectPlayerDraftRandomEvent === 'function') runPerfectPlayerDraftRandomEvent('pre', nextDraftReady);
+            else nextDraftReady();
+          });
       } else {
-        nextDraftReady();
+        if (typeof runPerfectPlayerDraftRandomEvent === 'function') runPerfectPlayerDraftRandomEvent('pre', nextDraftReady);
+        else nextDraftReady();
       }
     });
 }
@@ -3584,6 +3593,7 @@ function computeDraftBand() {
   } else if (p.prep === 'skip') {
     shift = -(2 + Math.floor(Math.random() * 4));
   }
+  shift += Number(p.draftStockBonus) || 0;
   var v = ovr + shift;
   if (v >= 88) { p.type = 'lottery'; p.round = 1; p.pick = 1 + Math.floor(Math.random() * 5); }
   else if (v >= 84) { p.type = 'lottery'; p.round = 1; p.pick = 6 + Math.floor(Math.random() * 9); }
@@ -3712,7 +3722,8 @@ function showDraftResultStep() {
 
 function afterDraftResult() {
   setBranchNode('draft_night', 'draft_contract');
-  renderCareerSpin();
+  if (typeof runPerfectPlayerDraftRandomEvent === 'function') runPerfectPlayerDraftRandomEvent('post', renderCareerSpin);
+  else renderCareerSpin();
 }
 
 function runPostDraftContractFlow(team, done) {
@@ -4158,6 +4169,9 @@ function getPlayerTeam(player) {
 
 /** 获取球员显示名：优先中文名（取-后部分），无中文名则取逗号后的名 */
 function getPlayerDisplayName(playerName) {
+  if (window.PERFECT_PLAYER_DISPLAY_BY_NAME && window.PERFECT_PLAYER_DISPLAY_BY_NAME[playerName]) {
+    return window.PERFECT_PLAYER_DISPLAY_BY_NAME[playerName];
+  }
   // 先找中文名
   for (const team of NBA2K_TEAMS) {
     const players = NBA2K_DATA[team];
@@ -5483,14 +5497,8 @@ function simDayLeagueGames(day) {
       // 跳过包含我方球队的比赛（这些已经通过我们的比赛模拟过了）
       if (g.home === STATE.careerTeam || g.away === STATE.careerTeam) return;
       
-      const p1 = calcTeamPowerWithPlayer(g.home);
-      const p2 = calcTeamPowerWithPlayer(g.away);
-      // ★ 用差值法计算胜率，与 simulateGameNew 一致
-      const netRating1 = (p1.offense - p2.offense) * 0.4 + (p1.defense - p2.defense) * 0.4 + (p1.depth - p2.depth) * 0.2;
-      const winProb = 0.5 + netRating1 / 25;  // 强弱队胜率拉开，最强vs最弱≈84%
-      const clampedProb = Math.max(0.15, Math.min(0.85, winProb));
-      
-      if (Math.random() < clampedProb) {
+      const leagueResult = simulate82StyleMatchup(g.home, g.away, { teamAHome: true, includeBoxScore: false, leagueGame: true });
+      if (leagueResult.won) {
         standings[g.home].wins++; standings[g.away].losses++;
         updateStreak(g.home, true); updateStreak(g.away, false);
         if (STATE.season._leagueGameLog) STATE.season._leagueGameLog.push({ home: g.home, away: g.away, won: true });
@@ -5634,6 +5642,7 @@ function calcTeamLineup(team) {
 
 function clearLineupCache() {
   STATE._lineupCache = {};
+  STATE._simPowerBaseline = null;
 }
 
 function syncUserStarterStatus() {
@@ -5691,154 +5700,136 @@ function calcTeamPowerWithPlayer(team) {
   };
 }
 
-/** 比赛模拟 — 使用统一胜率公式 + 详细比分生成 */
-function simulateGameNew(teamA, teamB, seedBonus, probMultiplier) {
-  const powerA = calcTeamPowerWithPlayer(teamA);
-  const powerB = calcTeamPowerWithPlayer(teamB);
-  const config = SIM_CONFIG;
-  
-  // ★ 第一步：用统一胜率公式决定胜负
-  const netRatingA = (powerA.offense - powerB.offense) * 0.4 
-                   + (powerA.defense - powerB.defense) * 0.4 
-                   + (powerA.depth - powerB.depth) * 0.2
-                   + (seedBonus || 0);  // 季后赛种子保护：高顺位概率加成
-  const winProb = 0.5 + netRatingA / 25;
-  const clampedProb = Math.max(0.15, Math.min(0.85, winProb));
-  // ★ 概率乘数（用于季后赛用户 debuff）
-  const finalProb = probMultiplier != null ? Math.max(0.10, clampedProb * probMultiplier) : clampedProb;
-  const predeterminedWinner = Math.random() < finalProb ? teamA : teamB;
-  
-  // ★ 第二步：生成展示用比分（不影响胜负结果）
-  // 计算节奏
-  const paceA = config.PACE.base + (Math.random() - 0.5) * config.PACE.teamRange;
-  const paceB = config.PACE.base + (Math.random() - 0.5) * config.PACE.teamRange;
-  const gamePace = (paceA + paceB) / 2;
-  const possPerQ = Math.round(gamePace / 4);
-  
-  let scoreA = 0, scoreB = 0;
-  let highlight = false;
-  let keyEvents = [];
-  let momentum = 1.0;
-  let qScoresA = [], qScoresB = [];
-  
-  // 查找赛程，确认主客场
-  const schedule = STATE.season.schedule || [];
-  const gameIdx = schedule.findIndex(g => !g.simulated);
-  const isHome = gameIdx >= 0 ? schedule[gameIdx]?.home : true;
-  const isB2B = gameIdx > 0 && schedule[gameIdx-1]?.isB2B;
-  
-  // ★ 根据预定胜者设置倾向
-  const desiredWinner = predeterminedWinner;
-  
-  for (let q = 0; q < 4; q++) {
-    const baseQ = possPerQ;
-    
-    // 实力差值影响比分展示（小幅度，不决定胜负）
-    const offDefDiffA = (powerA.offense - powerB.defense) / 120;
-    const offDefDiffB = (powerB.offense - powerA.defense) / 120;
-    
-    // 主场加成
-    const homeBonusQ = isHome ? 1.0 : 0;
-    
-    // 每节得分 = 基准 + 实力展示 + 主场 + 大随机
-    let ptsA = baseQ + offDefDiffA * 3 + homeBonusQ + (momentum - 1) * 1.5;
-    let ptsB = baseQ + offDefDiffB * 3;
-    
-    // 确保预定胜者适度领先
-    const currentDiff = (scoreA + ptsA) - (scoreB + ptsB);
-    const targetLead = desiredWinner === teamA ? 1 : -1;
-    if ((desiredWinner === teamA && currentDiff < targetLead) ||
-        (desiredWinner === teamB && currentDiff > targetLead)) {
-      if (desiredWinner === teamA) ptsA += 2;
-      else ptsB += 2;
-    }
-    
-    // 背靠背
-    if (isB2B) { ptsA *= 0.96; ptsB *= 0.96; }
-    
-    // ★ 大随机波动 ±25%
-    ptsA *= (0.75 + Math.random() * 0.50);
-    ptsB *= (0.75 + Math.random() * 0.50);
-    
-    // 落后方反扑
-    if (Math.abs(currentDiff) > 10) {
-      const comeback = 1 + Math.abs(currentDiff) * 0.003;
-      if (currentDiff > 0) ptsB *= comeback; else ptsA *= comeback;
-    }
-    
-    const qA = Math.max(8, Math.round(ptsA));
-    const qB = Math.max(8, Math.round(ptsB));
-    
-    scoreA += qA;
-    scoreB += qB;
-    qScoresA.push(qA);
-    qScoresB.push(qB);
-    
-    // 随机事件
-    if (Math.random() < 0.08) {
-      const bonus = 3 + Math.round(Math.random() * 8);
-      if (Math.random() > 0.5) { scoreA += bonus; keyEvents.push(`🔥 ${getTeamName(teamA)} 单节爆发 +${bonus}`); }
-      else { scoreB += bonus; keyEvents.push(`🔥 ${getTeamName(teamB)} 单节爆发 +${bonus}`); }
-      highlight = true;
-    }
-    
-    momentum = momentum * 0.7 + 0.3;
-  }
-  
-  // 关键球/绝杀
-  if (Math.abs(scoreA - scoreB) < 6 && Math.random() < 0.35) {
-    highlight = true;
-    if (Math.random() > 0.5) { scoreA += 3; keyEvents.push('⚡ 关键三分！'); }
-    else { scoreB += 3; keyEvents.push('⚡ 关键三分！'); }
-  }
-  if (Math.abs(scoreA - scoreB) <= 3 && Math.random() < 0.12) {
-    highlight = true;
-    if (Math.random() > 0.5) { scoreA += 3; keyEvents.push('🏆 压哨绝杀！'); }
-    else { scoreB += 3; keyEvents.push('💔 被压哨绝杀...'); }
-  }
-  
-  // 加时
-  let ot = 0;
-  while (Math.abs(scoreA - scoreB) < 3 && ot < 3) {
-    ot++;
-    scoreA += Math.round(4 + Math.random() * 8);
-    scoreB += Math.round(4 + Math.random() * 8);
-    keyEvents.push(`⏱ 加时赛 #${ot}`);
-    highlight = true;
-  }
-  
-  // ★ 最终结果由预定胜者决定
-  const won = predeterminedWinner === teamA;
-  // 确保比分方向正确：胜者必须领先
-  if (won && scoreB >= scoreA) {
-    const add = scoreB - scoreA + 1;
-    scoreA += add;
-    if (qScoresA.length) qScoresA[qScoresA.length - 1] += add;
-  } else if (!won && scoreA >= scoreB) {
-    const add = scoreA - scoreB + 1;
-    scoreB += add;
-    if (qScoresB.length) qScoresB[qScoresB.length - 1] += add;
-  }
-  
-  // 冷门检测
-  const avgA = (powerA.offense + powerA.defense) / 2;
-  const avgB = (powerB.offense + powerB.defense) / 2;
-  if (won !== (avgA > avgB) && Math.abs(avgA - avgB) > 3) {
-    highlight = true;
-    keyEvents.push('💥 爆冷！');
-  }
-  
+/** Box-Muller 正态扰动，沿用 82 胜模式的“回合数 + 效率”思路。 */
+function simGaussian(mean, deviation) {
+  var u = Math.max(0.000001, Math.random());
+  var v = Math.max(0.000001, Math.random());
+  return mean + Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v) * deviation;
+}
+
+function splitRegulationScore(total) {
+  var weights = [0, 0, 0, 0].map(function() { return Math.max(0.72, simGaussian(1, 0.13)); });
+  var sum = weights.reduce(function(a, b) { return a + b; }, 0);
+  var quarters = weights.map(function(w) { return Math.floor(total * w / sum); });
+  var left = total - quarters.reduce(function(a, b) { return a + b; }, 0);
+  for (var i = 0; i < left; i++) quarters[i % 4]++;
+  return quarters;
+}
+
+function getCareerTeamGameModifiers(team) {
+  if (team !== STATE.careerTeam || !STATE.career) return { offense:0, defense:0, variance:0 };
+  var mods = getNextSeasonMods();
   return {
-    won, scoreA, scoreB,
-    qScoresA, qScoresB,
-    highlight, keyEvents, ot,
-    teamA: { power: powerA },
-    teamB: { power: powerB },
-    pace: gamePace,
-    possPerQ,
-    boxScore: generateBoxScore(teamA, teamB, scoreA, scoreB),
+    offense: (Number(mods.moraleBonus) || 0) * 0.35 + (Number(mods.teamChemistry) || 0) * 0.28 - (Number(mods.mediaPressure) || 0) * 0.16 - (Number(mods.staminaLoad) || 0) * 0.34,
+    defense: (Number(mods.teamChemistry) || 0) * 0.32 + (Number(mods.moraleBonus) || 0) * 0.18 - (Number(mods.staminaLoad) || 0) * 0.25,
+    variance: (Number(mods.formVariance) || 0) * 0.45
   };
 }
+
+function getSimulationPowerBaseline() {
+  var key = [STATE.careerTeam || '', STATE.finalOVR || 0, STATE.career && STATE.career.seasonCount || 0].join('|');
+  if (STATE._simPowerBaseline && STATE._simPowerBaseline.key === key) return STATE._simPowerBaseline;
+  var total = { offense:0, defense:0, athletic:0, depth:0 };
+  NBA2K_TEAMS.forEach(function(team) {
+    var power = calcTeamPowerWithPlayer(team);
+    total.offense += Number(power.offense) || 0;
+    total.defense += Number(power.defense) || 0;
+    total.athletic += Number(power.athletic) || 0;
+    total.depth += Number(power.depth) || 0;
+  });
+  var count = Math.max(1, NBA2K_TEAMS.length);
+  STATE._simPowerBaseline = { key:key, offense:total.offense/count, defense:total.defense/count, athletic:total.athletic/count, depth:total.depth/count };
+  return STATE._simPowerBaseline;
+}
+
+/** 与 82 胜模式一致：轮换实力决定攻防效率，比赛结果由真实生成的比分决定。 */
+function simulate82StyleMatchup(teamA, teamB, options) {
+  options = options || {};
+  var powerA = calcTeamPowerWithPlayer(teamA);
+  var powerB = calcTeamPowerWithPlayer(teamB);
+  var baseline = getSimulationPowerBaseline();
+  var modA = options.neutralState ? { offense:0, defense:0, variance:0 } : getCareerTeamGameModifiers(teamA);
+  var modB = options.neutralState ? { offense:0, defense:0, variance:0 } : getCareerTeamGameModifiers(teamB);
+  var teamAHome = options.teamAHome !== false;
+  var homeA = teamAHome ? 0.018 : 0;
+  var homeB = teamAHome ? 0 : 0.018;
+  var fatigueA = Number(options.fatigueA) || 0;
+  var fatigueB = Number(options.fatigueB) || 0;
+  var averageAthletic = ((Number(powerA.athletic) || 60) + (Number(powerB.athletic) || 60)) / 2;
+  var averageDepth = ((Number(powerA.depth) || 60) + (Number(powerB.depth) || 60)) / 2;
+  var pace = Math.max(89, Math.min(109, Math.round(96 + (averageAthletic - 60) * 0.08 + (averageDepth - 65) * 0.025 + simGaussian(0, 3.1))));
+  var edgeA = ((powerA.offense - baseline.offense) + modA.offense) - ((powerB.defense - baseline.defense) + modB.defense);
+  var edgeB = ((powerB.offense - baseline.offense) + modB.offense) - ((powerA.defense - baseline.defense) + modA.defense);
+  var depthEdge = ((Number(powerA.depth) || 60) - (Number(powerB.depth) || 60)) * 0.0015;
+  var seedPts = (Number(options.seedBonus) || 0) * 0.65;
+  var injuryPts = options.probMultiplier == null ? 0 : (Number(options.probMultiplier) - 1) * 28;
+  var efficiencyA = 1.115 + edgeA * 0.0062 + depthEdge + homeA - fatigueA * 0.012 + seedPts / pace + injuryPts / pace;
+  var efficiencyB = 1.115 + edgeB * 0.0062 - depthEdge + homeB - fatigueB * 0.012 - seedPts / pace;
+  efficiencyA = Math.max(0.88, Math.min(1.34, efficiencyA));
+  efficiencyB = Math.max(0.88, Math.min(1.34, efficiencyB));
+  var varianceA = Math.max(4.6, Math.min(10, 6.4 + modA.variance));
+  var varianceB = Math.max(4.6, Math.min(10, 6.4 + modB.variance));
+  var regulationA = Math.max(78, Math.min(148, Math.round(pace * efficiencyA + simGaussian(0, varianceA))));
+  var regulationB = Math.max(78, Math.min(148, Math.round(pace * efficiencyB + simGaussian(0, varianceB))));
+  var qScoresA = splitRegulationScore(regulationA);
+  var qScoresB = splitRegulationScore(regulationB);
+  var scoreA = regulationA;
+  var scoreB = regulationB;
+  var ot = 0;
+  var keyEvents = [];
+  while (scoreA === scoreB && ot < 3) {
+    ot++;
+    var otA = Math.max(4, Math.min(16, Math.round(simGaussian(9, 2.2))));
+    var otB = Math.max(4, Math.min(16, Math.round(simGaussian(9, 2.2))));
+    if (otA === otB && ot === 3) otA++;
+    scoreA += otA;
+    scoreB += otB;
+    keyEvents.push('⏱ 加时赛 #' + ot);
+  }
+  var won = scoreA > scoreB;
+  var expectedMargin = pace * (efficiencyA - efficiencyB);
+  var expectedWinProb = 1 / (1 + Math.exp(-expectedMargin / 7.2));
+  var favoriteA = expectedWinProb >= 0.5;
+  var margin = Math.abs(scoreA - scoreB);
+  if (margin <= 3) keyEvents.push(won ? '⚡ 关键回合守住胜局' : '💔 最后回合惜败');
+  if (won !== favoriteA && Math.abs(expectedWinProb - 0.5) >= 0.20) keyEvents.push('💥 爆冷！');
+  return {
+    won: won, scoreA: scoreA, scoreB: scoreB,
+    qScoresA: qScoresA, qScoresB: qScoresB,
+    highlight: ot > 0 || margin <= 3 || keyEvents.indexOf('💥 爆冷！') >= 0,
+    keyEvents: keyEvents, ot: ot,
+    teamA: { power: powerA }, teamB: { power: powerB },
+    pace: pace, possPerQ: Math.round(pace / 4), expectedWinProb: expectedWinProb,
+    boxScore: options.includeBoxScore === false ? null : generateBoxScore(teamA, teamB, scoreA, scoreB)
+  };
+}
+
+function simulateGameNew(teamA, teamB, seedBonus, probMultiplier) {
+  var schedule = STATE.season.schedule || [];
+  var gameIdx = schedule.findIndex(function(g) { return !g.simulated; });
+  var isHome = gameIdx >= 0 ? !!schedule[gameIdx].home : true;
+  var isB2B = gameIdx > 0 && !!schedule[gameIdx - 1].isB2B;
+  return simulate82StyleMatchup(teamA, teamB, {
+    teamAHome: isHome,
+    fatigueA: isB2B ? 1 : 0,
+    seedBonus: seedBonus || 0,
+    probMultiplier: probMultiplier
+  });
+}
+
+window.samplePerfectPlayerSimulation = function(teamA, teamB, games) {
+  games = Math.max(20, Math.min(2000, parseInt(games) || 400));
+  var wins = 0, pointsA = 0, pointsB = 0, minScore = 999, maxScore = 0;
+  for (var i = 0; i < games; i++) {
+    var result = simulate82StyleMatchup(teamA, teamB, { teamAHome:i % 2 === 0, includeBoxScore:false, neutralState:true });
+    if (result.won) wins++;
+    pointsA += result.scoreA; pointsB += result.scoreB;
+    minScore = Math.min(minScore, result.scoreA, result.scoreB);
+    maxScore = Math.max(maxScore, result.scoreA, result.scoreB);
+  }
+  return { games:games, teamA:teamA, teamB:teamB, winRate:wins/games, avgA:pointsA/games, avgB:pointsB/games, minScore:minScore, maxScore:maxScore };
+};
+window.PERFECT_PLAYER_SIM_REPORT = { engine:'82-win-possession', resultFromScore:true, homeCourt:true, fatigue:true, careerState:true };
 
 /** 生成两队全队数据（确保总分=比分） */
 function generateBoxScore(teamA, teamB, totalA, totalB) {
@@ -17213,7 +17204,7 @@ function resetForNewSeason() {
   };
   STATE.careerTeam = oldTeam;
   if (STATE.career && STATE.career.flags) delete STATE.career.flags.startBench;
-  STATE.career.nextSeasonMods = { injuryRiskBonus: 0, formVariance: 0, teamChemistry: 0 };
+  STATE.career.nextSeasonMods = { injuryRiskBonus: 0, formVariance: 0, teamChemistry: 0, moraleBonus: 0, mediaPressure: 0, staminaLoad: 0 };
   syncUserStarterStatus();
   initStandings();
   buildRealSchedule();

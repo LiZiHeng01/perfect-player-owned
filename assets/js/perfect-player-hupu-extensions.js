@@ -143,6 +143,8 @@
   }
 
   window.PERFECT_PLAYER_PHOTO_BY_NAME = window.PERFECT_PLAYER_PHOTO_BY_NAME || {};
+  window.PERFECT_PLAYER_DISPLAY_BY_NAME = window.PERFECT_PLAYER_DISPLAY_BY_NAME || {};
+  window.PERFECT_PLAYER_BUILD_DATA = window.PERFECT_PLAYER_BUILD_DATA || {};
   window.PERFECT_PLAYER_DATA_READY = fetch('assets/data/perfect-player-pool.json?v=20260807')
     .then(function (response) {
       if (!response.ok) throw new Error('球员库加载失败：' + response.status);
@@ -157,9 +159,10 @@
         var converted = (sourceTeam.players || []).map(convertPlayer);
         converted.forEach(function (player) {
           window.PERFECT_PLAYER_PHOTO_BY_NAME[player.name] = player._photoLocal;
+          window.PERFECT_PLAYER_DISPLAY_BY_NAME[player.name] = player.cname || player.name;
           report[player._sourceKind] += 1;
         });
-        NBA2K_DATA[abbr].splice.apply(NBA2K_DATA[abbr], [0, NBA2K_DATA[abbr].length].concat(converted));
+        window.PERFECT_PLAYER_BUILD_DATA[abbr] = converted;
         report.teams += 1;
         report.total += converted.length;
       });
@@ -180,18 +183,127 @@
     var career = typeof STATE !== 'undefined' && STATE.career ? STATE.career : {};
     var profile = career.profile || {};
     var mods = typeof getNextSeasonMods === 'function' ? getNextSeasonMods() : {};
-    var pressure = typeof getMentalPressure === 'function' ? Math.round(getMentalPressure()) : 0;
-    var stamina = Math.round(Number(mods.staminaLoad) || 0);
-    var morale = Math.round(Number(mods.moraleBonus) || 0);
-    var media = Math.round(Number(profile.mediaTrust) || 0);
-    var coach = Math.round(Number(profile.coachTrust) || 0);
-    return '<div class="player-state-strip" id="player-state-strip">' +
-      '<div class="player-state-item' + (pressure >= 8 ? ' alert' : '') + '"><span class="player-state-value">' + pressure + '</span><span class="player-state-label">压力</span></div>' +
-      '<div class="player-state-item' + (stamina >= 3 ? ' alert' : '') + '"><span class="player-state-value">' + signed(stamina) + '</span><span class="player-state-label">体能负荷</span></div>' +
-      '<div class="player-state-item' + (morale > 0 ? ' good' : (morale < 0 ? ' alert' : '')) + '"><span class="player-state-value">' + signed(morale) + '</span><span class="player-state-label">士气</span></div>' +
-      '<div class="player-state-item' + (media > 0 ? ' good' : (media < 0 ? ' alert' : '')) + '"><span class="player-state-value">' + signed(media) + '</span><span class="player-state-label">媒体信任</span></div>' +
-      '<div class="player-state-item' + (coach > 0 ? ' good' : (coach < 0 ? ' alert' : '')) + '"><span class="player-state-value">' + signed(coach) + '</span><span class="player-state-label">教练信任</span></div>' +
-    '</div>';
+    var values = [
+      { key:'pressure', label:'压力', value:typeof getMentalPressure === 'function' ? Math.round(getMentalPressure()) : 0, badHigh:true, raw:true },
+      { key:'staminaLoad', label:'体能负荷', value:mods.staminaLoad, badHigh:true },
+      { key:'moraleBonus', label:'士气', value:mods.moraleBonus, goodHigh:true },
+      { key:'formVariance', label:'状态波动', value:mods.formVariance, badHigh:true },
+      { key:'injuryRiskBonus', label:'伤病风险', value:mods.injuryRiskBonus, badHigh:true },
+      { key:'teamChemistry', label:'球队默契', value:mods.teamChemistry, goodHigh:true },
+      { key:'mediaPressure', label:'媒体压力', value:mods.mediaPressure, badHigh:true },
+      { key:'fame', label:'人气', value:profile.fame, goodHigh:true },
+      { key:'businessValue', label:'商业价值', value:profile.businessValue, goodHigh:true },
+      { key:'mediaTrust', label:'媒体信任', value:profile.mediaTrust, goodHigh:true },
+      { key:'controversy', label:'争议', value:profile.controversy, badHigh:true },
+      { key:'chinaPopularity', label:'中国人气', value:profile.chinaPopularity, goodHigh:true },
+      { key:'loyalty', label:'忠诚', value:profile.loyalty, goodHigh:true },
+      { key:'leadership', label:'领导力', value:profile.leadership, goodHigh:true },
+      { key:'coachTrust', label:'教练信任', value:profile.coachTrust, goodHigh:true },
+      { key:'lockerRoomTrust', label:'更衣室信任', value:profile.lockerRoomTrust, goodHigh:true },
+      { key:'fanSupport', label:'球迷支持', value:profile.fanSupport, goodHigh:true },
+      { key:'legacyBonus', label:'传奇加成', value:profile.legacyBonus, goodHigh:true }
+    ];
+    return '<div class="player-state-strip" id="player-state-strip" aria-label="球员完整状态">' + values.map(function (item) {
+      var value = Math.round(Number(item.value) || 0);
+      var stateClass = item.badHigh && value > 0 ? ' alert' : (item.goodHigh && value > 0 ? ' good' : (item.goodHigh && value < 0 ? ' alert' : ''));
+      return '<div class="player-state-item' + stateClass + '" data-status-key="' + item.key + '" title="' + item.label + '">' +
+        '<span class="player-state-value">' + (item.raw ? value : signed(value)) + '</span><span class="player-state-label">' + item.label + '</span></div>';
+    }).join('') + '</div>';
+  };
+
+  function draftPending() {
+    if (typeof STATE === 'undefined') return null;
+    STATE._draftPending = STATE._draftPending || { draftStockBonus:0, randomEventIds:[] };
+    STATE._draftPending.randomEventIds = STATE._draftPending.randomEventIds || [];
+    return STATE._draftPending;
+  }
+
+  function changeDraftStock(amount) {
+    var pending = draftPending();
+    if (pending) pending.draftStockBonus = (Number(pending.draftStockBonus) || 0) + amount;
+  }
+
+  var DRAFT_RANDOM_EVENTS = [
+    { id:'medical_recheck', stage:'pre', title:'医疗复查', scene:'一支握有高顺位签的球队临时要求追加膝盖检查。检查室外已经站了几名记者，经纪人问你要不要公开结果。', choices:[
+      { label:'公开检查结果', hint:'透明，但结果也可能改变行情', apply:function() { var clean = Math.random() < 0.72; addProfileDelta('mediaTrust', 1); changeDraftStock(clean ? 1 : -1); if (!clean) addSeasonMod('injuryRiskBonus', 1, -4, 8); return clean ? '报告没有异常，球队对你的透明态度很满意。<br><br>效果：媒体信任+1；选秀行情上升。' : '报告里出现一处需要观察的小问题，消息很快传到各队。<br><br>效果：媒体信任+1；选秀行情下降；伤病风险+1。'; } },
+      { label:'只交给球队', hint:'控制消息，不让媒体介入', apply:function() { addProfileDelta('controversy', 1); addProfileDelta('mediaTrust', -1); return '报告只在球队之间流转。你避免了公开讨论，但媒体开始猜测你在隐瞒什么。<br><br>效果：争议+1；媒体信任-1。'; } }
+    ]},
+    { id:'elite_workout', stage:'pre', title:'加赛试训', scene:'试训结束后，球探临时安排你和另一名热门新秀打一组五分钟对抗。所有摄像机又重新开了起来。', choices:[
+      { label:'接下单挑', hint:'赢了大涨，输了也会被看见', apply:function() { var won = Math.random() < 0.58; changeDraftStock(won ? 2 : -1); if (won) addProfileDelta('fame', 1); else addSeasonMod('formVariance', 1, -10, 10); return won ? '你连续打成两个关键回合，球探席明显躁动起来。<br><br>效果：人气+1；选秀行情明显上升。' : '你强行接管比赛，却在最后两个回合失误。<br><br>效果：选秀行情下降；状态波动+1。'; } },
+      { label:'按战术打完', hint:'不抢镜，展示执行力', apply:function() { addProfileDelta('coachTrust', 1); changeDraftStock(1); return '你没有把它当单挑，而是连续做出正确传球。主教练在报告上圈出了你的名字。<br><br>效果：教练信任+1；选秀行情小幅上升。'; } }
+    ]},
+    { id:'viral_interview', stage:'pre', title:'采访突然走红', scene:'你在训练馆门口的一段即兴采访突然登上热搜。经纪人建议趁热再录一段完整回应。', choices:[
+      { label:'趁热回应', hint:'扩大曝光，也增加压力', apply:function() { addProfileDelta('fame', 2); addSeasonMod('mediaPressure', 1, -10, 10); if (Math.random() < 0.35) changeDraftStock(1); return '第二段采访的播放量继续上涨，你的名字第一次冲出球探圈。<br><br>效果：人气+2；媒体压力+1。'; } },
+      { label:'回训练馆', hint:'让热度自然过去', apply:function() { addSeasonMod('formVariance', -1, -10, 10); addProfileDelta('coachTrust', 1); return '你没有继续追热点。第二天球探收到的是你加练到深夜的消息。<br><br>效果：状态波动-1；教练信任+1。'; } }
+    ]},
+    { id:'team_promise', stage:'pre', title:'口头承诺', scene:'一支球队私下暗示会在自己的顺位选你，条件是你取消后面的所有试训。经纪人提醒：口头承诺随时可能变化。', choices:[
+      { label:'接受承诺', hint:'锁定下限，但把主动权交出去', apply:function() { var kept = Math.random() < 0.76; changeDraftStock(kept ? 1 : -2); addProfileDelta('loyalty', 1); return kept ? '球队兑现了大部分承诺，你的团队也停止向外放消息。<br><br>效果：忠诚+1；选秀行情稳定上升。' : '交易流言改变了球队计划，原来的承诺开始松动。<br><br>效果：忠诚+1；选秀行情明显下降。'; } },
+      { label:'继续全部试训', hint:'保留选择，承担体能消耗', apply:function() { addProfileDelta('coachTrust', 1); addSeasonMod('staminaLoad', 1, -10, 10); return '你按原计划完成剩余试训。几支球队认可你的职业态度，但连续奔波留下了疲劳。<br><br>效果：教练信任+1；体能负荷+1。'; } }
+    ]},
+    { id:'flight_delay', stage:'pre', title:'航班延误', scene:'前往最后一站试训的航班延误六小时。改签红眼航班还能赶上，推迟则可能错过球队最后的决策会。', choices:[
+      { label:'连夜赶过去', hint:'保住机会，状态未必在线', apply:function() { addSeasonMod('staminaLoad', 1, -10, 10); var sharp = Math.random() < 0.55; changeDraftStock(sharp ? 1 : -1); return sharp ? '你几乎没睡，却在投篮测试里保持了准度。<br><br>效果：体能负荷+1；选秀行情上升。' : '疲劳让你的横移和投篮都慢了半拍。<br><br>效果：体能负荷+1；选秀行情下降。'; } },
+      { label:'申请改期', hint:'保护身体，但球队未必等你', apply:function() { addSeasonMod('formVariance', -1, -10, 10); if (Math.random() < 0.35) changeDraftStock(-1); return '你选择先恢复身体。球队接受了说明，但没有保证会重新安排。<br><br>效果：状态波动-1。'; } }
+    ]},
+    { id:'film_room_test', stage:'pre', title:'临场录像问答', scene:'试训结束前，教练突然暂停一段比赛录像，让你在十秒内说出场上五个人下一步该怎么站位。', choices:[
+      { label:'立刻回答', hint:'相信第一判断', apply:function() { var right = Math.random() < 0.66; changeDraftStock(right ? 1 : -1); return right ? '你的答案和教练的战术板几乎一致。<br><br>效果：选秀行情上升。' : '你看到了第一层机会，却漏掉弱侧轮转。<br><br>效果：选秀行情小幅下降。'; } },
+      { label:'先问战术原则', hint:'展示沟通和学习能力', apply:function() { addProfileDelta('coachTrust', 2); return '你先确认球队的防守原则，再给出完整答案。教练对这种沟通方式很满意。<br><br>效果：教练信任+2。'; } }
+    ]},
+    { id:'family_phone', stage:'post', title:'家人的电话', scene:'选秀结果出来后，家里第一个电话打了进来。电话那头很吵，所有人都在等你说第一句话。', choices:[
+      { label:'把这一刻留给家人', hint:'先离开镜头几分钟', apply:function() { addProfileDelta('loyalty', 2); addProfileDelta('fanSupport', 1); return '你走到走廊尽头，和家人安静地说完这通电话。<br><br>效果：忠诚+2；球迷支持+1。'; } },
+      { label:'开免提一起庆祝', hint:'让镜头记录这一刻', apply:function() { addProfileDelta('fame', 1); addProfileDelta('fanSupport', 2); return '欢呼声通过免提传遍房间，这段画面很快被转发。<br><br>效果：人气+1；球迷支持+2。'; } }
+    ]},
+    { id:'suit_sponsor', stage:'post', title:'西装赞助邀约', scene:'一家新品牌当晚提出赞助，希望你立刻穿着他们的西装接受采访，但经纪人还没来得及审合同。', choices:[
+      { label:'先签短约', hint:'抓住第一笔商业机会', apply:function() { addProfileDelta('businessValue', 2); addProfileDelta('mediaTrust', -1); return '你完成了第一次商业合作，合同细节却被记者追问了整晚。<br><br>效果：商业价值+2；媒体信任-1。'; } },
+      { label:'等团队审核', hint:'少赚一点，避免仓促决定', apply:function() { addProfileDelta('mediaTrust', 1); addProfileDelta('businessValue', 1); return '你没有被当晚的热度催着签字，品牌最终仍保留了合作。<br><br>效果：媒体信任+1；商业价值+1。'; } }
+    ]},
+    { id:'trade_rumor', stage:'post', title:'交易流言', scene:'你的名字刚出现在选秀字幕上，记者就说选中你的球队正在讨论交易。经纪人问你是否要公开回应。', choices:[
+      { label:'不评论流言', hint:'等官方消息', apply:function() { addProfileDelta('mediaTrust', 1); addSeasonMod('mediaPressure', -1, -10, 10); return '你只说自己会为任何球队做好准备，流言没有从你这里得到第二轮热度。<br><br>效果：媒体信任+1；媒体压力-1。'; } },
+      { label:'表达加盟意愿', hint:'先向选中你的球队示好', apply:function() { addProfileDelta('loyalty', 1); addProfileDelta('controversy', 1); return '你的表态赢得一部分球迷，也让潜在交易对象感到尴尬。<br><br>效果：忠诚+1；争议+1。'; } }
+    ]},
+    { id:'veteran_message', stage:'post', title:'老将的短信', scene:'一名球队老将发来短信：欢迎，但轮换位置不会因为顺位自动交给你。', choices:[
+      { label:'约他第二天训练', hint:'直接用行动回应', apply:function() { addProfileDelta('lockerRoomTrust', 2); addSeasonMod('teamChemistry', 1, -10, 10); return '你们约好第二天早上见。第一堂训练课比发布会更早开始。<br><br>效果：更衣室信任+2；球队默契+1。'; } },
+      { label:'回复会靠自己争取', hint:'明确竞争态度', apply:function() { addProfileDelta('leadership', 1); addProfileDelta('controversy', 1); return '老将只回了一个拳头表情。更衣室已经知道你不会安静等待。<br><br>效果：领导力+1；争议+1。'; } }
+    ]},
+    { id:'social_reaction', stage:'post', title:'社交媒体评价', scene:'评论区同时出现“最大遗珠”和“严重高估”两种声音。团队问你要不要转发其中一条。', choices:[
+      { label:'转发支持者', hint:'回应球迷，扩大热度', apply:function() { addProfileDelta('fanSupport', 2); addSeasonMod('mediaPressure', 1, -10, 10); return '支持你的话题迅速聚集起来，新的关注也意味着新的审视。<br><br>效果：球迷支持+2；媒体压力+1。'; } },
+      { label:'关闭评论', hint:'把注意力拉回篮球', apply:function() { addSeasonMod('formVariance', -1, -10, 10); addProfileDelta('mediaTrust', 1); return '你把手机交给团队，回到训练计划。第二天采访时，你的回答明显更平静。<br><br>效果：状态波动-1；媒体信任+1。'; } }
+    ]},
+    { id:'rookie_number', stage:'post', title:'号码选择', scene:'装备经理发来可选号码。你最熟悉的号码不在其中，只能在纪念过去和开启新身份之间做选择。', choices:[
+      { label:'选有纪念意义的号码', hint:'向来路致意', apply:function() { addProfileDelta('loyalty', 1); addProfileDelta('chinaPopularity', 1); return '你选了一个只有家人和老球迷能看懂的号码。它很快有了自己的故事。<br><br>效果：忠诚+1；中国人气+1。'; } },
+      { label:'选一个全新号码', hint:'从 NBA 重新开始', apply:function() { addProfileDelta('fame', 1); addProfileDelta('leadership', 1); return '你决定让新号码只代表 NBA 里的自己。第一批球衣很快开始印刷。<br><br>效果：人气+1；领导力+1。'; } }
+    ]}
+  ];
+
+  window.PERFECT_PLAYER_DRAFT_EVENT_REPORT = { total:DRAFT_RANDOM_EVENTS.length, pre:6, post:6, perRun:2 };
+  window.pickPerfectPlayerDraftEventId = function(stage, seen) {
+    seen = seen || [];
+    var pool = DRAFT_RANDOM_EVENTS.filter(function(event) { return event.stage === stage && seen.indexOf(event.id) < 0; });
+    if (!pool.length) return null;
+    return pool[Math.floor(Math.random() * pool.length)].id;
+  };
+  window.runPerfectPlayerDraftRandomEvent = function(stage, done) {
+    var pending = draftPending();
+    if (!pending || typeof showDraftChoiceModal !== 'function') { if (done) done(); return; }
+    var id = window.pickPerfectPlayerDraftEventId(stage, pending.randomEventIds);
+    var event = DRAFT_RANDOM_EVENTS.find(function(item) { return item.id === id; });
+    if (!event) { if (done) done(); return; }
+    pending.randomEventIds.push(event.id);
+    showDraftChoiceModal('draft_random_' + event.id, event.title, event.scene, event.choices, done);
+  };
+
+  window.render_game_to_text = function () {
+    var active = document.querySelector('.screen.active');
+    var state = typeof STATE !== 'undefined' ? STATE : {};
+    var career = state.career || {};
+    var season = state.season || {};
+    return JSON.stringify({
+      screen: active ? active.id : null,
+      character: window.PERFECT_PLAYER_PROFILE || null,
+      build: { team:state.currentTeam || null, locked:state.lockedCount || 0, candidates:document.querySelectorAll('.br-player').length, pool:window.PERFECT_PLAYER_POOL_REPORT || null },
+      career: { team:state.careerTeam || null, season:career.seasonCount || 0, record:[season.wins || 0, season.losses || 0], profile:career.profile || {}, modifiers:career.nextSeasonMods || {} },
+      draftEvents: window.PERFECT_PLAYER_DRAFT_EVENT_REPORT || null,
+      simulation: window.PERFECT_PLAYER_SIM_REPORT || null
+    });
   };
 
   function registerExpandedEvents() {

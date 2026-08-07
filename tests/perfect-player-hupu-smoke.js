@@ -97,7 +97,26 @@ async function main() {
     assert.deepEqual(await page.evaluate(() => window.PERFECT_PLAYER_POOL_REPORT), {
       teams: 30, current: 360, historical: 90, total: 450
     });
+    const poolSeparation = await page.evaluate(() => ({
+      buildSize: PERFECT_PLAYER_BUILD_DATA.LAL.length,
+      buildHistorical: PERFECT_PLAYER_BUILD_DATA.LAL.filter(player => player._sourceKind === 'historical').length,
+      leagueSize: NBA2K_DATA.LAL.length,
+      leagueHistorical: NBA2K_DATA.LAL.filter(player => player._sourceKind === 'historical').length,
+      lineupHistorical: Object.values(calcTeamLineup('LAL').starters).concat(calcTeamLineup('LAL').bench).filter(player => player._sourceKind === 'historical').length
+    }));
+    assert.equal(poolSeparation.buildSize, 15, '建模候选池应保留每队 15 人');
+    assert.equal(poolSeparation.buildHistorical, 3, '建模候选池应有三名经典球员');
+    assert.ok(poolSeparation.leagueSize >= 10, '正式球队应保留原现役轮换');
+    assert.equal(poolSeparation.leagueHistorical, 0, '正式比赛名单不应注入经典球员');
+    assert.equal(poolSeparation.lineupHistorical, 0, '比赛轮换不应出现经典球员');
     assert.equal(await page.evaluate(() => window.PERFECT_PLAYER_EVENT_REPORT.added), 12, '应扩充 12 个原机制事件');
+    assert.deepEqual(await page.evaluate(() => window.PERFECT_PLAYER_DRAFT_EVENT_REPORT), { total: 12, pre: 6, post: 6, perRun: 2 });
+    const randomDraftIds = await page.evaluate(() => {
+      const ids = [];
+      for (let index = 0; index < 100; index++) ids.push(pickPerfectPlayerDraftEventId('pre', []));
+      return [...new Set(ids)];
+    });
+    assert.ok(randomDraftIds.length >= 4, '选秀事件抽取不应固定：' + randomDraftIds.join(','));
 
     await page.click('#feature-grid .fc-btn');
     await page.waitForSelector('#screen-character.active');
@@ -131,11 +150,11 @@ async function main() {
     await page.screenshot({ path: path.join(outputDir, '02-five-player-build.png'), fullPage: false });
 
     const historicalList = await page.evaluate(() => {
-      const historical = NBA2K_DATA.LAL.filter(player => player._sourceKind === 'historical');
-      renderRosterPlayers('LAL', historical, NBA2K_DATA.LAL);
+      const historical = PERFECT_PLAYER_BUILD_DATA.LAL.filter(player => player._sourceKind === 'historical');
+      renderRosterPlayers('LAL', historical, PERFECT_PLAYER_BUILD_DATA.LAL);
       return historical.map(player => ({ name: player.name, label: player._sourceLabel, photo: player._photoLocal }));
     });
-    assert.equal(historicalList.length, 3, '每队应注入三名历史全明星');
+    assert.equal(historicalList.length, 3, '每队建模池应有三名历史全明星');
     assert.ok(historicalList.every(player => player.label && player.photo), '历史球员应有赛季与本地头像');
     assert.equal(await page.locator('.bp-detail').filter({ hasText: '经典' }).count(), 3, '历史候选应显式标注经典赛季');
 
@@ -160,18 +179,76 @@ async function main() {
       STATE.career.nextSeasonMods.moraleBonus = -2;
       STATE.career.profile.mediaTrust = 2;
       STATE.career.profile.coachTrust = 3;
+      STATE.career.profile.fame = 4;
+      STATE.career.profile.businessValue = 2;
+      STATE.career.profile.controversy = 1;
+      STATE.career.profile.chinaPopularity = 3;
+      STATE.career.profile.loyalty = 2;
+      STATE.career.profile.leadership = 1;
+      STATE.career.profile.lockerRoomTrust = 2;
+      STATE.career.profile.fanSupport = 4;
+      STATE.career.profile.legacyBonus = 1;
+      STATE.career.nextSeasonMods.formVariance = 1;
+      STATE.career.nextSeasonMods.injuryRiskBonus = 2;
+      STATE.career.nextSeasonMods.teamChemistry = 2;
       renderSeasonScreenDOM();
       showScreen('screen-season');
-      return document.getElementById('player-state-strip').textContent.replace(/\s+/g, ' ').trim();
+      return {
+        text: document.getElementById('player-state-strip').textContent.replace(/\s+/g, ' ').trim(),
+        keys: [...document.querySelectorAll('#player-state-strip [data-status-key]')].map(element => element.dataset.statusKey)
+      };
     });
-    assert.ok(states.includes('压力') && states.includes('体能负荷') && states.includes('士气') && states.includes('媒体信任') && states.includes('教练信任'), '原隐藏状态应在赛季页显化');
+    assert.equal(states.keys.length, 18, '应完整展示 11 项生涯属性、6 项赛季修正和压力');
+    ['压力','体能负荷','士气','状态波动','伤病风险','球队默契','媒体压力','人气','商业价值','媒体信任','争议','中国人气','忠诚','领导力','教练信任','更衣室信任','球迷支持','传奇加成'].forEach(label => {
+      assert.ok(states.text.includes(label), '状态面板缺少：' + label);
+    });
+
+    const simulation = await page.evaluate(() => {
+      const previousTeam = STATE.careerTeam;
+      STATE.careerTeam = null;
+      clearLineupCache();
+      const ranked = NBA2K_TEAMS.map(team => {
+        const power = calcTeamPowerWithPlayer(team);
+        return { team, value: power.offense * 0.45 + power.defense * 0.45 + power.depth * 0.10 };
+      }).sort((a, b) => b.value - a.value);
+      const strongVsWeak = samplePerfectPlayerSimulation(ranked[0].team, ranked[ranked.length - 1].team, 800);
+      const even = samplePerfectPlayerSimulation(ranked[5].team, ranked[5].team, 800);
+      STATE.careerTeam = previousTeam;
+      clearLineupCache();
+      return { report: PERFECT_PLAYER_SIM_REPORT, ranked: [ranked[0], ranked[ranked.length - 1]], strongVsWeak, even };
+    });
+    assert.equal(simulation.report.engine, '82-win-possession');
+    assert.ok(simulation.strongVsWeak.winRate > 0.58 && simulation.strongVsWeak.winRate < 0.96, '强弱队胜率应合理拉开：' + JSON.stringify(simulation));
+    assert.ok(simulation.even.winRate > 0.43 && simulation.even.winRate < 0.57, '同强度对局应接近五五开：' + JSON.stringify(simulation.even));
+    assert.ok(simulation.strongVsWeak.avgA > 90 && simulation.strongVsWeak.avgA < 135 && simulation.strongVsWeak.avgB > 85 && simulation.strongVsWeak.avgB < 130, '比分均值应处于现代 NBA 区间：' + JSON.stringify(simulation.strongVsWeak));
+    assert.ok(simulation.strongVsWeak.minScore >= 78 && simulation.strongVsWeak.maxScore <= 180, '比分边界异常：' + JSON.stringify(simulation.strongVsWeak));
+
+    await page.evaluate(() => {
+      STATE._draftPending = { draftStockBonus: 0, randomEventIds: [] };
+      window.__draftRandomDone = 0;
+      runPerfectPlayerDraftRandomEvent('pre', () => { window.__draftRandomDone++; });
+    });
+    await page.waitForSelector('#draft-modal');
+    await page.locator('#draft-modal button').first().click();
+    await page.waitForSelector('#draft-result-modal');
+    await page.click('#draft-result-modal button');
+    await page.waitForFunction(() => window.__draftRandomDone === 1);
+    await page.evaluate(() => runPerfectPlayerDraftRandomEvent('post', () => { window.__draftRandomDone++; }));
+    await page.waitForSelector('#draft-modal');
+    await page.locator('#draft-modal button').first().click();
+    await page.waitForSelector('#draft-result-modal');
+    await page.click('#draft-result-modal button');
+    await page.waitForFunction(() => window.__draftRandomDone === 2);
+    const draftRunIds = await page.evaluate(() => STATE._draftPending.randomEventIds.slice());
+    assert.equal(draftRunIds.length, 2, '每次选秀流程应插入两段随机事件');
+    assert.notEqual(draftRunIds[0], draftRunIds[1], '同一局随机事件不应重复');
     await page.waitForTimeout(450);
     await page.screenshot({ path: path.join(outputDir, '03-visible-player-states.png'), fullPage: false });
 
     const localBadResponses = badResponses.filter(item => item.includes(`127.0.0.1:${port}`));
     assert.deepEqual(localBadResponses, [], '不应有本地 4xx 资源：' + localBadResponses.join(', '));
     assert.deepEqual(errors, [], '浏览器错误：' + errors.join('\n') + '\n4xx：' + badResponses.join('\n'));
-    console.log(JSON.stringify({ ok: true, pool: 450, current: 360, historical: 90, eventsAdded: 12, screenshots: outputDir }, null, 2));
+    console.log(JSON.stringify({ ok: true, pool: 450, current: 360, historical: 90, injuryEventsAdded: 12, draftEvents: 12, simulation, screenshots: outputDir }, null, 2));
   } finally {
     if (browser) await browser.close();
     server.kill();
