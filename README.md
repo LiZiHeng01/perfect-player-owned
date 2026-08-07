@@ -21,6 +21,7 @@ python -m http.server 8035
 - 6 张球员大头照：亚洲 2 张、白人 2 张、黑人 2 张
 - 固定 2025-26 单赛季：属性来源按“随机年份 → 随机球队 → 随机球员”生成
 - 30 支球队各保留 15 名精选球员：12 名现役 + 3 名历史全明星以上球员
+- 现役球员头像沿用虎扑 BuildPlayer 的 `NBA_PLAYER_IMAGES` → NBA player ID → `260x190` 头像接口，并已全部本地缓存
 - 历史球员头像由 NBA CDN 批量抓取并本地化，失败时回退到项目历史头像缓存
 - 头像与游戏数据均从网页本地资源加载
 - `tools/generate_ai_avatars.py` 可使用 DashScope API 重新生成头像；API Key 只从环境变量读取，不写入仓库
@@ -38,7 +39,10 @@ python tools/generate_ai_avatars.py
 
 ```powershell
 python tools/build_perfect_player_pool.py
+python tools/fetch_hupu_current_headshots.py
 python tools/fetch_historical_headshots.py
 ```
 
+虎扑参考页：<https://activity-static.hupu.com/colorbox-activities/activity-project-ai-1783761934042/__ai_app.html>。
+现役头像模板：`https://cdn.nba.com/headshots/nba/latest/260x190/{nbaId}.png`。
 历史头像来源模板：`https://cdn.nba.com/headshots/nba/latest/1040x760/{nbaId}.png`。下载后的静态图片随网页发布，运行时不依赖外部头像接口。

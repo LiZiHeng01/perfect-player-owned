@@ -878,3 +878,283 @@ body::before {
 ::-webkit-scrollbar-track { background: transparent; }
 
 .hidden { display: none !important; }
+
+/* ============================================================
+   Hupu BuildPlayer visual contract
+   菜单与流程页沿用虎扑活动的窄栏、米白、橙色卡片体系。
+   ============================================================ */
+:root {
+  --bg: #faf5eb;
+  --bg-card: #fffaf2;
+  --bg-card2: #fff5e8;
+  --bg-deep: #fff0e0;
+  --border: #f0e0cc;
+  --border-light: #e8d5bc;
+  --text: #2d1f0e;
+  --text-dim: #8a7a66;
+  --text-muted: #baa992;
+  --orange: #ff6b35;
+  --orange-deep: #c94d1e;
+  --orange-light: #ff8a5c;
+  --orange-dim: rgba(255,107,53,.10);
+  --orange-bg: rgba(255,107,53,.06);
+  --gold: #f7a600;
+  --green: #2ec4b6;
+  --red: #e63946;
+  --shadow: 0 2px 12px rgba(45,31,14,.08);
+  --shadow-lg: 0 4px 24px rgba(45,31,14,.12);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font-display: 'Fredoka', 'Nunito', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-body: 'Nunito', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body {
+  background: #fff;
+  color: var(--text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+#pp-app {
+  max-width: 560px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 0 0 32px;
+  background: var(--bg);
+  box-shadow: 0 0 34px rgba(45,31,14,.08);
+}
+
+.screen { padding: 0; }
+.screen.active { animation: popIn .3s ease; }
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 20px 10px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(250,245,235,.92);
+  border-bottom: 0;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: clamp(17px,4.5vw,22px);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 1px;
+}
+.nav-logo .hl { color: var(--orange); font-size: 1.1em; }
+.nav-pos-toggle, .nav-pos-btn { display: none; }
+
+.hero {
+  text-align: center;
+  padding: min(5vh,40px) 20px 20px;
+  position: relative;
+  margin-top: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(255,107,53,.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(11px,3vw,14px);
+  color: var(--orange);
+  font-weight: 700;
+  letter-spacing: 3px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.hero-headline {
+  font-size: clamp(32px,8vw,48px);
+  font-weight: 700;
+  line-height: 1.1;
+  font-family: var(--font-display);
+  color: var(--text);
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: currentColor;
+  letter-spacing: 0;
+}
+.hero-desc {
+  font-size: clamp(13px,3.5vw,16px);
+  color: var(--text-dim);
+  margin: 10px auto 0;
+  line-height: 1.5;
+  max-width: 320px;
+}
+
+.feature-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 16px 20px;
+}
+.feature-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 20px 20px;
+  cursor: pointer;
+  transition: all .15s;
+  position: relative;
+}
+.feature-card:active { transform: scale(.97); }
+.feature-card.selected { border-color: var(--orange); background: var(--orange-bg); }
+.feature-card.disabled-card {
+  opacity: .7;
+  filter: grayscale(.3);
+  cursor: default;
+  pointer-events: none;
+  border-style: dashed !important;
+}
+.feature-card .fc-tag {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+.feature-card .fc-tag.gold { background: var(--orange-dim); color: var(--orange); }
+.feature-card .fc-tag.new { background: rgba(46,196,182,.12); color: var(--green); }
+.feature-card .fc-title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.feature-card .fc-sub {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.feature-card .fc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 12px 24px;
+  background: var(--orange);
+  color: #fff;
+  border: 0;
+  border-radius: 12px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .1s;
+  box-shadow: 0 4px 0 #c94d1e, 0 6px 12px rgba(255,107,53,.25);
+}
+.feature-card .fc-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #c94d1e, 0 3px 8px rgba(255,107,53,.2); }
+.feature-card .fc-btn:disabled { opacity: .4; box-shadow: none; transform: none; }
+.feature-card .fc-btn.fc-btn-continue { margin-top: 10px; background: #2f6fed; box-shadow: 0 4px 0 #1d4fb8; }
+.fc-footer {
+  margin-top: 10px;
+  padding: 0 16px;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+.menu-footer-actions { margin-top: 16px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.debug-btn button.btn-help { min-height: 44px; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 24px;
+  border: 0;
+  border-radius: 12px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .1s;
+  min-height: 48px;
+  width: 100%;
+}
+.btn:active { transform: scale(.96); }
+.btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+.btn-primary { background: var(--orange); color: #fff; box-shadow: 0 4px 0 #c94d1e, 0 6px 12px rgba(255,107,53,.2); }
+.btn-secondary { background: var(--bg-card); color: var(--text); border: 2px solid var(--border); box-shadow: 0 3px 0 var(--border); }
+.btn-help {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--bg-card);
+  color: var(--text);
+  border: 2px solid var(--border);
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 3px 0 var(--border);
+  transition: all .1s ease;
+}
+.btn-help:hover { border-color: var(--orange); color: var(--orange); }
+.btn-help:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--border); }
+
+.section-title { text-align: center; padding: 12px 16px 8px; }
+.section-title h1 {
+  font-family: var(--font-display);
+  font-size: clamp(18px,5vw,24px);
+  font-weight: 700;
+  color: var(--text);
+  display: inline-block;
+  padding-bottom: 8px;
+  border-bottom: 3px solid var(--orange);
+}
+.section-title h1::after { display: none; }
+.section-title .sub { font-size: clamp(12px,3vw,14px); color: var(--text-dim); margin-top: 4px; }
+
+.char-card, .mycard-hero, .profile-panel, .offer-card, .reveal-card, .season-row, .stat-cell, .vitals, .pos-card, .player-card, .build-left, .build-right {
+  background: var(--bg-card);
+  border-color: var(--border);
+  box-shadow: var(--shadow);
+}
+.char-card, .mycard-hero, .profile-panel, .offer-card, .reveal-card { border-radius: var(--radius); }
+.char-preview, .char-avatar-cell, .pos-card, .player-card { border-color: var(--border); }
+.char-avatar-cell.sel, .pos-card.sel, .player-card.sel { border-color: var(--orange); box-shadow: 0 0 0 2px rgba(255,107,53,.18); background: var(--orange-bg); }
+.pos-card.sel .pos-short, .player-card .pc-source { color: var(--orange); }
+.build-progress-row, .build-left, .build-right, .slot-card, .roster-card, .bl-header, .bl-attr-row, .season-top, .vitals, .mycard-hero, .profile-panel, .stat-cell, .season-row { background: var(--bg-card); border-color: var(--border); }
+.build-progress-track { background: var(--border); }
+.build-progress-fill { background: linear-gradient(90deg, var(--orange), var(--orange-light)); }
+.bl-ovr, .mycard-ovr { color: var(--orange); }
+.bl-attr-val.locked, .slot-card .slot-value { color: var(--gold); }
+.modal-overlay { background: rgba(45,31,14,.45); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.modal-content { background: var(--bg); border: 2px solid var(--border); border-radius: var(--radius); box-shadow: 0 8px 48px rgba(45,31,14,.25); }
+.modal-close, .modal-tabs button, .cal-nav { background: var(--bg-card); border-color: var(--border); color: var(--text); }
+.modal-tabs button.active { background: var(--bg); color: var(--orange); border-bottom-color: var(--orange); }
+.toast, #pp-toast { background: var(--bg-card); border-color: var(--orange); color: var(--text); box-shadow: var(--shadow-lg); }
+
+@media (max-width: 560px) {
+  body { background: var(--bg); }
+  #pp-app { width: 100%; box-shadow: none; }
+}

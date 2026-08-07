@@ -45,6 +45,12 @@ TEAM_ALIASES = {
 
 NBA_NAME_ALIASES = {
     "earvinjohnson": "magicjohnson",
+    "nicolasclaxton": "nicclaxton",
+    "mohamedbamba": "mobamba",
+    "craigporter": "craigporterjr",
+    "marvinbagley": "marvinbagleyiii",
+    "robertwilliams": "robertwilliamsiii",
+    "jimmybutler": "jimmybutleriii",
 }
 
 SEASONS = [
@@ -195,8 +201,17 @@ def player_record(row: dict[str, str], source: dict, history: dict | None, nba_i
     if fallback_photo and not (ROOT / fallback_photo).exists():
         fallback_photo = ""
     history_photo = fallback_photo
+    current_photo = ""
+    if source["kind"] == "current" and nba_id:
+        current_photo = f"assets/images/Player/hupu-current/{slug(english)}.png"
     if source["kind"] == "historical" and nba_id:
         history_photo = f"assets/images/Player/historical-nba/{slug(english)}.png"
+    photo_url = ""
+    if nba_id:
+        # 虎扑 BuildPlayer 的 getPlayerHeadshotStyle 使用 NBA player ID，
+        # 现役头像固定走 260x190；历史名宿继续使用已缓存的高清图。
+        size = "260x190" if source["kind"] == "current" else "1040x760"
+        photo_url = f"https://cdn.nba.com/headshots/nba/latest/{size}/{nba_id}.png"
     honors = honor_snapshot(history, source["year"], row)
     identity = (history or {}).get("realId") or norm(english) or norm(name)
     return {
@@ -213,9 +228,10 @@ def player_record(row: dict[str, str], source: dict, history: dict | None, nba_i
         "age": number(row.get("age"), 24),
         "yearsLeague": number(row.get("yearsLeague")),
         "image": number(row.get("image")),
-        "photoLocal": history_photo,
+        "photoLocal": current_photo or history_photo,
         "fallbackPhotoLocal": fallback_photo,
-        "photoSource": "nba-cdn" if nba_id else ("local-historical-cache" if history_photo else "initial-fallback"),
+        "photoUrl": photo_url,
+        "photoSource": "hupu-buildplayer-nba-cdn" if source["kind"] == "current" and nba_id else ("nba-cdn" if nba_id else ("local-historical-cache" if history_photo else "initial-fallback")),
         "nbaId": nba_id or 0,
         "attrs": {
             "pass": number(row.get("skillPass"), 55),
@@ -299,7 +315,8 @@ def main() -> None:
         "teams": teams,
         "warnings": warnings,
         "photoPolicy": {
-            "primary": "NBA CDN headshot by NBA player id",
+            "current": "Hupu BuildPlayer NBA_PLAYER_IMAGES -> NBA CDN 260x190 headshot",
+            "historical": "Local NBA CDN 1040x760 cache",
             "fallback": "assets/data/historical/headshots local cache",
         },
     }

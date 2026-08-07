@@ -92,6 +92,10 @@ async function main() {
     assert.equal(team.players.length, 15, `${team.name} 应有 15 名精选球员`);
     assert.equal(team.currentCount, 12, `${team.name} 应保持 80% 现役球员`);
     assert.equal(team.historicalCount, 3, `${team.name} 应保持 20% 历史全明星球员`);
+    team.players.filter(player => player.source && player.source.kind === 'current').forEach(player => {
+      assert.ok(player.photoUrl && /\/260x190\/\d+\.png$/.test(player.photoUrl), `${player.name} 应使用虎扑同款 260x190 头像地址`);
+      assert.ok(player.photoLocal && fs.existsSync(path.join(root, player.photoLocal)), `${player.name} 现役头像应已本地化`);
+    });
     team.players.filter(player => player.source && player.source.kind === 'historical').forEach(player => {
       assert.ok(player.photoLocal && fs.existsSync(path.join(root, player.photoLocal)), `${player.name} 历史头像应已本地化`);
     });
@@ -126,6 +130,14 @@ async function main() {
     // 等待主菜单
     await page.waitForSelector('#screen-menu.active', { timeout: 15000 });
     assert.ok(await page.isVisible('#btn-new-game'), '新建生涯按钮可见');
+    assert.equal(await page.locator('.feature-card').count(), 2, '首页应保持虎扑两张模式卡布局');
+    assert.equal(await page.locator('.feature-card.selected').count(), 1, '生涯模式卡应为选中态');
+    const menuStyle = await page.$eval('#pp-app', el => {
+      const style = getComputedStyle(el);
+      return { maxWidth: style.maxWidth, background: style.backgroundColor };
+    });
+    assert.equal(menuStyle.maxWidth, '560px', '首页应使用虎扑窄栏宽度');
+    assert.equal(menuStyle.background, 'rgb(250, 245, 235)', '首页应使用虎扑米白底色');
     assert.strictEqual(await page.locator('#btn-conquest').count(), 0, '征服联盟入口应已移除');
     assert.strictEqual(await page.locator('#screen-honors').count(), 0, '征服联盟页面应已移除');
 

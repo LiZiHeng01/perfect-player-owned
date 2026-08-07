@@ -17,22 +17,38 @@
   <!-- ============ 主菜单 ============ -->
   <section class="screen active" id="screen-menu">
     <div class="navbar">
-      <div class="nav-logo"><span class="nav-ball" aria-hidden="true">🏀</span> BUILD<span class="hl">-A-</span>PLAYER</div>
-      <div class="nav-era" id="menu-era-label">虎扑单赛季 · 2025-26</div>
+      <div class="nav-logo">BUILD<span class="hl">-A-</span>PLAYER</div>
+      <div class="nav-pos-toggle" aria-label="篮球模式">
+        <button class="nav-pos-btn active" type="button">🏀</button>
+      </div>
     </div>
     <div class="hero">
-      <div class="hero-title">BASKETBALL CAREER · BUILD YOUR LEGEND</div>
+      <div class="hero-title">Spin the wheel · Build your player</div>
       <div class="hero-headline">打造我的传奇球星</div>
-      <div class="hero-desc">统一篮球风格 · 虎扑单赛季 · 属性随机：年份 → 球队 → 球员</div>
+      <div class="hero-desc">从现役球员中夺取属性，打造属于我的球星</div>
     </div>
-    <div class="era-grid" id="era-grid"></div>
-    <div class="menu-actions">
-      <button class="btn btn-primary" id="btn-new-game">🃏 新建生涯</button>
-      <button class="btn btn-secondary" id="btn-continue">▶ 继续生涯</button>
-      <button class="btn btn-help" id="btn-help">📖 玩法说明</button>
-      <button class="btn btn-danger-ghost" id="btn-reset">重置存档</button>
+    <div class="feature-grid" id="feature-grid">
+      <div class="feature-card selected" id="current-mode-card">
+        <span class="fc-tag gold">Current</span>
+        <div class="fc-title">生涯模式</div>
+        <div class="fc-sub">从现役球员中夺取属性，组建我的球员</div>
+        <button class="fc-btn" id="btn-new-game" type="button">🎮 进入活动</button>
+        <button class="fc-btn fc-btn-continue" id="btn-continue" type="button" style="display:none;">▶ 继续活动</button>
+      </div>
+      <div class="feature-card disabled-card">
+        <span class="fc-tag new">NEW</span>
+        <div class="fc-title">传奇模式</div>
+        <div class="fc-sub">从历史名宿中组建我的球员</div>
+        <button class="fc-btn" type="button" disabled>即将上线，敬请期待</button>
+      </div>
     </div>
-    <div class="fc-footer">基于「重生之NBA2K系统」历史球员库 · 比赛模拟引擎</div>
+    <div class="fc-footer" aria-label="2025-26 单赛季；现役 80%；历史全明星以上 20%"></div>
+    <div class="debug-btn menu-footer-actions">
+      <button class="btn-help" id="btn-help" type="button">📖 玩法说明</button>
+      <button class="btn-help" id="btn-other-builds" type="button">👥 查看其他JRs建模</button>
+    </div>
+    <button class="btn btn-danger-ghost" id="btn-reset" type="button" style="display:none;">重置存档</button>
+    <div class="nav-era" id="menu-era-label" aria-hidden="true" style="display:none;">2025-26</div>
   </section>
 
   <!-- ============ 角色创建（名字 + 随机真人风格头像） ============ -->

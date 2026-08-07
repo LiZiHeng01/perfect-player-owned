@@ -235,9 +235,15 @@
     if (!player) return '';
     const avatar = typeof player.avatar === 'string' ? player.avatar.trim() : '';
     if (avatar && (avatar.startsWith('data:image') || avatar.startsWith('blob:') || /^https?:\/\//i.test(avatar) || avatar.includes('images/'))) return avatar;
+    const photoUrl = typeof player.photoUrl === 'string' ? player.photoUrl.trim() : '';
+    // 虎扑 BuildPlayer 的现役球员头像：NBA_PLAYER_IMAGES -> NBA CDN 260x190。
+    // 优先使用该地址，失败时再回退到项目内缓存，保持离线/限流场景可玩。
     const photoLocal = typeof player.photoLocal === 'string' ? player.photoLocal.trim() : '';
     const photo = typeof player.photo === 'string' ? player.photo.trim() : '';
+    if (photoLocal && /assets\/images\/Player\/hupu-current\//i.test(photoLocal) && !/IMG0000\.png$/i.test(photoLocal)) return photoLocal;
+    if (photoUrl && /\/260x190\//i.test(photoUrl)) return photoUrl;
     if (photoLocal && !/IMG0000\.png$/i.test(photoLocal)) return photoLocal;
+    if (photoUrl && /^https?:\/\//i.test(photoUrl)) return photoUrl;
     if (photo && (photo.startsWith('data:image') || photo.startsWith('blob:') || /^https?:\/\//i.test(photo))) return photo;
     const nameKey = player.nameEn || player.altName || player.name || '';
     const map = (typeof window.NBA_PLAYER_IMAGES === 'object' && window.NBA_PLAYER_IMAGES) ? window.NBA_PLAYER_IMAGES : {};
@@ -1192,19 +1198,18 @@
   function renderMenu() {
     const c = PP.career;
     PP.era = SINGLE_SEASON.year;
-    $('menu-era-label').textContent = SINGLE_SEASON.label;
-    $('era-grid').innerHTML = `
-      <div class="era-card sel single-season-card">
-        <div class="era-year">虎扑单赛季</div>
-        <div class="era-label">2025-26 · 属性随机：年份 → 球队 → 球员</div>
-      </div>`;
+    const eraLabel = $('menu-era-label');
+    if (eraLabel) eraLabel.textContent = SINGLE_SEASON.label;
     const cont = $('btn-continue');
-    cont.disabled = !c;
-    cont.textContent = c
-      ? (c.singleSeasonComplete
-        ? `▶ 查看单赛季结果（${c.playerName} · OVR ${c.ovr}）`
-        : `▶ 继续单赛季（${c.playerName} · OVR ${c.ovr}）`)
-      : '▶ 继续单赛季';
+    if (cont) {
+      cont.disabled = !c;
+      cont.style.display = c ? 'inline-flex' : 'none';
+      cont.textContent = c
+        ? (c.singleSeasonComplete
+          ? `▶ 查看单赛季结果（${c.playerName} · OVR ${c.ovr}）`
+          : `▶ 继续单赛季（${c.playerName} · OVR ${c.ovr}）`)
+        : '▶ 继续单赛季';
+    }
   }
 
   function renderCharacter() {
@@ -2534,6 +2539,10 @@
       helpPage = 0;
       renderHelp();
       $('helpModal').style.display = 'flex';
+    });
+    const otherBuilds = $('btn-other-builds');
+    if (otherBuilds) otherBuilds.addEventListener('click', () => {
+      showToast('其他 JRs 建模功能将在虎扑活动接口接入后开放');
     });
     $('help-close').addEventListener('click', () => { $('helpModal').style.display = 'none'; });
     $('helpPrevBtn').addEventListener('click', () => { if (helpPage > 0) { helpPage--; renderHelp(); } });
