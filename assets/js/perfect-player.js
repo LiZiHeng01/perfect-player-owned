@@ -1,7 +1,7 @@
 /* ============================================================
  * 完美球员 (Build-A-Player) — 模式主逻辑
  * ------------------------------------------------------------
- * 玩法框架：虎扑《我创造的完美球员》（抽队→选人→锁属性→赛季→季后赛→休赛期）
+ * 玩法框架：虎扑《我创造的完美球员》（随机年份→球队→球员→锁属性→单赛季）
  * 数据层：  本项目的 历史球员库 + 比赛模拟引擎（sim.js / core.js）
  * 增强：    随机事件系统、媒体压力/热度/球迷支持等数值 UI 明确化、历史球员头像
  * ============================================================ */
@@ -140,6 +140,8 @@
     { year: 1996, label: '1995-96', sub: '96黄金一代' },
     { year: 1984, label: '1983-84', sub: '黑白双雄' }
   ];
+  const SINGLE_SEASON = { year: 2025, label: '虎扑单赛季 · 2025-26' };
+  const ATTRIBUTE_POOL_URL = 'assets/data/perfect-player-pool.json?v=20260807';
 
   // 真人风格球员大头照（由 tools/generate_ai_avatars.py 生成，顺序固定以兼容旧存档）
   const AI_AVATAR_META = [
@@ -169,8 +171,11 @@
       lockedAttrs: {},
       lockCount: 0,
       usedPlayers: new Set(),
-      showTeam: null
+      showTeam: null,
+      sourceRoll: null,
+      sourceHistory: []
     },
+    attributePool: null,
     career: null,
     season: null,
     leagueReady: false,
@@ -311,6 +316,64 @@
     }
   }
 
+  async function ensureAttributePool() {
+    if (PP.attributePool && PP.attributePool.teams && Object.keys(PP.attributePool.teams).length >= 30) return;
+    const response = await fetch(ATTRIBUTE_POOL_URL, { cache: 'no-store' });
+    if (!response.ok) throw new Error('精选球员池加载失败：HTTP ' + response.status);
+    const payload = await response.json();
+    if (!payload || !payload.teams || Object.keys(payload.teams).length < 30) {
+      throw new Error('精选球员池不完整');
+    }
+    PP.attributePool = payload;
+  }
+
+  function sourcePlayerKey(player) {
+    if (!player) return '';
+    return String(player.uid || `${player.source && player.source.code || 0}:${player.teamId || 0}:${player.id || player.name || ''}`);
+  }
+
+  function sourceKindLabel(player) {
+    if (!player || !player.source) return '当前名单';
+    return player.source.kind === 'historical' ? '历史全明星+' : '现役';
+  }
+
+  function sourcePlayerLabel(player) {
+    return player && player.source && player.source.label ? player.source.label : '2025-26';
+  }
+
+  function sourcePoolTeams() {
+    return PP.attributePool && PP.attributePool.teams ? PP.attributePool.teams : null;
+  }
+
+  function sourceSeasonPool() {
+    const teams = sourcePoolTeams();
+    if (!teams) return [];
+    const seen = {};
+    Object.keys(teams).forEach(id => {
+      (teams[id].players || []).forEach(player => {
+        const source = player.source || {};
+        const year = parseNum(source.year, 0);
+        if (year && !seen[year]) seen[year] = { year, label: source.label || `${year}-${String((year + 1) % 100).padStart(2, '0')}` };
+      });
+    });
+    return Object.values(seen).sort((a, b) => b.year - a.year);
+  }
+
+  function setSelectedSourcePlayer(player) {
+    const b = PP.build;
+    b.selectedPlayer = player || null;
+    if (!player) return;
+    const source = player.source || {};
+    b.sourceRoll = {
+      ...(b.sourceRoll || {}),
+      playerKey: sourcePlayerKey(player),
+      playerName: player.nameCn || player.name || '',
+      playerYear: parseNum(source.year, 0),
+      playerLabel: source.label || '',
+      playerKind: sourceKindLabel(player)
+    };
+  }
+
   function eraRosterByTeam() {
     const out = {};
     Object.keys(LEAGUE.teams || {}).forEach(id => {
@@ -333,16 +396,40 @@
       lockedAttrs: {},
       lockCount: 0,
       usedPlayers: new Set(),
-      showTeam: null
+      showTeam: null,
+      sourceRoll: null,
+      sourceHistory: []
     };
   }
 
   function spinTeam() {
+    const pool = sourcePoolTeams();
+    if (pool) {
+      const seasons = sourceSeasonPool();
+      const requested = pick(seasons.length ? seasons : [{ year: 2025, label: '2025-26' }]);
+      const allIds = Object.keys(pool).filter(id => (pool[id].players || []).length >= 5);
+      const matchingIds = allIds.filter(id => (pool[id].players || []).some(p => parseNum(p.source && p.source.year, 0) === requested.year));
+      const eligibleIds = matchingIds.length ? matchingIds : allIds;
+      if (!eligibleIds.length) return null;
+      let id = pick(eligibleIds);
+      let guard = 0;
+      while (id === PP.build.team && eligibleIds.length > 1 && guard++ < 8) id = pick(eligibleIds);
+      const roster = (pool[id].players || []).slice(0, 15);
+      const fresh = roster.filter(p => !PP.build.usedPlayers.has(sourcePlayerKey(p)));
+      const matching = (fresh.length ? fresh : roster).filter(p => parseNum(p.source && p.source.year, 0) === requested.year);
+      const candidates = matching.length ? matching : (fresh.length ? fresh : roster);
+      PP.build.team = id;
+      PP.build.showTeam = id;
+      PP.build.roster = roster;
+      PP.build.swapsLeft = 3;
+      PP.build.sourceRoll = { requestedYear: requested.year, requestedLabel: requested.label, teamId: id };
+      setSelectedSourcePlayer(pick(candidates));
+      return PP.build.selectedPlayer;
+    }
     const teams = eraRosterByTeam();
-    const usedKey = p => PP.build.team + ':' + String(p.id);
     const allIds = Object.keys(teams).filter(id => teams[id].length >= 5);
     // 优先抽仍有未用过球员的球队
-    const freshIds = allIds.filter(id => teams[id].some(p => !PP.build.usedPlayers.has(id + ':' + String(p.id))));
+    const freshIds = allIds.filter(id => teams[id].some(p => !PP.build.usedPlayers.has(sourcePlayerKey(p))));
     const ids = freshIds.length ? freshIds : allIds;
     if (!ids.length) return null;
     let id = pick(ids);
@@ -353,19 +440,20 @@
     PP.build.roster = teams[id].slice(0, 15);
     PP.build.swapsLeft = 3;
     PP.build.selectedPlayer = null;
-    return teams[id][0];
+    PP.build.sourceRoll = { requestedYear: PP.era, requestedLabel: (ERAS.find(e => e.year === PP.era) || ERAS[0]).label, teamId: id };
+    setSelectedSourcePlayer(teams[id][0]);
+    return PP.build.selectedPlayer;
   }
 
   function swapPlayer() {
     const roster = PP.build.roster;
     if (!roster.length || PP.build.swapsLeft <= 0) return null;
     const used = PP.build.usedPlayers;
-    const usedKey = p => PP.build.team + ':' + String(p.id);
-    const cands = roster.filter(p => !used.has(usedKey(p)) && p !== PP.build.selectedPlayer);
+    const cands = roster.filter(p => !used.has(sourcePlayerKey(p)) && p !== PP.build.selectedPlayer);
     if (!cands.length) return null;
     const p = pick(cands);
     PP.build.swapsLeft--;
-    PP.build.selectedPlayer = p;
+    setSelectedSourcePlayer(p);
     return p;
   }
 
@@ -387,7 +475,26 @@
     const penalty = getPosPenalty(PP.position, srcPos, attrKey);
     const val = clamp(Math.round(rawVal * penalty), 25, 99);
     b.lockedAttrs[attrKey] = val;
-    b.usedPlayers.add(b.team + ':' + String(p.id));
+    b.usedPlayers.add(sourcePlayerKey(p));
+    const source = p.source || {};
+    b.sourceHistory.push({
+      attrKey,
+      attrName: ATTR_CN[attrKey],
+      value: val,
+      rawValue: rawVal,
+      penalty: Number(penalty.toFixed(3)),
+      requestedYear: parseNum(b.sourceRoll && b.sourceRoll.requestedYear, 0),
+      requestedLabel: b.sourceRoll && b.sourceRoll.requestedLabel || '',
+      teamId: parseNum(b.team, 0),
+      teamName: teamMeta(b.team).z || teamMeta(b.team).n || '',
+      playerId: sourcePlayerKey(p),
+      playerName: p.nameCn || p.name || '',
+      playerYear: parseNum(source.year, 0),
+      playerLabel: source.label || '',
+      playerKind: sourceKindLabel(p),
+      sourceCode: parseNum(source.code, 0),
+      nbaId: parseNum(p.nbaId, 0)
+    });
     b.lockCount = Object.keys(b.lockedAttrs).length;
     const penTxt = penalty < 1 ? `（跨位置衰减 ${Math.round((1 - penalty) * 100)}%）` : '';
     showToast(`${ATTR_CN[attrKey]} 已锁定：${val} ${penTxt}`);
@@ -419,9 +526,12 @@
       ovr,
       archetype,
       similar: findSimilarPlayers(attrs13, PP.position),
+      attributeSources: b.sourceHistory.slice(),
+      sourcePool: { current: 12, historical: 3, perTeam: 15 },
       teamId: null,
       age: 22,
       seasonCount: 0,
+      singleSeasonComplete: false,
       contract: 4,
       totalStats: emptyStats(),
       playoffStats: emptyStats(),
@@ -448,7 +558,10 @@
   }
 
   function findSimilarPlayers(attrs13, pos) {
-    const teams = eraRosterByTeam();
+    const pool = sourcePoolTeams();
+    const teams = pool
+      ? Object.fromEntries(Object.keys(pool).map(tid => [tid, pool[tid].players || []]))
+      : eraRosterByTeam();
     const avg = POS_AVG[pos] || POS_AVG.SF;
     const myZ = {};
     ATTR_KEYS.forEach(k => { myZ[k] = parseNum(attrs13[k], 55) - avg[k]; });
@@ -1056,7 +1169,7 @@
   }
 
   /* ==================== UI：屏幕切换与渲染入口 ==================== */
-  const SCREENS = ['screen-menu', 'screen-character', 'screen-position', 'screen-build', 'screen-reveal', 'screen-career', 'screen-season', 'screen-playoffs', 'screen-offseason', 'screen-mycard'];
+  const SCREENS = ['screen-menu', 'screen-character', 'screen-position', 'screen-build', 'screen-reveal', 'screen-career', 'screen-season', 'screen-playoffs', 'screen-mycard'];
 
   function showScreen(id) {
     SCREENS.forEach(s => {
@@ -1078,21 +1191,20 @@
 
   function renderMenu() {
     const c = PP.career;
-    $('menu-era-label').textContent = (ERAS.find(e => e.year === PP.era) || ERAS[0]).label;
-    $('era-grid').innerHTML = ERAS.map(e => `
-      <div class="era-card ${PP.era === e.year ? 'sel' : ''}" data-era="${e.year}">
-        <div class="era-year">${e.label}</div>
-        <div class="era-label">${e.sub}</div>
-      </div>`).join('');
-    Array.from($('era-grid').children).forEach(el => {
-      el.addEventListener('click', () => {
-        PP.era = parseNum(el.dataset.era, 2025);
-        renderMenu();
-      });
-    });
+    PP.era = SINGLE_SEASON.year;
+    $('menu-era-label').textContent = SINGLE_SEASON.label;
+    $('era-grid').innerHTML = `
+      <div class="era-card sel single-season-card">
+        <div class="era-year">虎扑单赛季</div>
+        <div class="era-label">2025-26 · 属性随机：年份 → 球队 → 球员</div>
+      </div>`;
     const cont = $('btn-continue');
     cont.disabled = !c;
-    cont.textContent = c ? `▶ 继续生涯（${c.playerName} · OVR ${c.ovr} · 第${c.seasonCount + 1}季）` : '▶ 继续生涯';
+    cont.textContent = c
+      ? (c.singleSeasonComplete
+        ? `▶ 查看单赛季结果（${c.playerName} · OVR ${c.ovr}）`
+        : `▶ 继续单赛季（${c.playerName} · OVR ${c.ovr}）`)
+      : '▶ 继续单赛季';
   }
 
   function renderCharacter() {
@@ -1130,7 +1242,7 @@
   }
 
   function renderPosition() {
-    $('position-era-sub').textContent = `${(ERAS.find(e => e.year === PP.era) || ERAS[0]).label} · 历史模式 · 自选位置`;
+    $('position-era-sub').textContent = `${SINGLE_SEASON.label} · 属性随机来源 · 自选位置`;
     $('pos-grid').innerHTML = POS_LIST.map(p => `
       <div class="pos-card ${PP.position === p ? 'sel' : ''}" data-pos="${p}">
         <span class="pos-emoji">${p === 'PG' ? '🧠' : p === 'SG' ? '🎯' : p === 'SF' ? '🦅' : p === 'PF' ? '🪨' : '🗼'}</span>
@@ -1169,7 +1281,7 @@
     $('bl-attrs').innerHTML = attrRows;
     $('bl-ovr').textContent = b.lockCount ? calcOVR(b.lockedAttrs, PP.position) : '--';
     const footer = b.lockCount < 13
-      ? `<div>抽到球队 → 挑选球员 → 锁定 1 项属性（跨位置有衰减）</div>`
+      ? `<div>随机年份 → 随机球队 → 随机球员 → 锁定 1 项属性（跨位置有衰减）</div>`
       : `<div style="color:var(--gold);">全部属性已锁定！即将揭晓…</div>`;
     $('bl-footer').innerHTML = footer;
     // 右侧
@@ -1181,23 +1293,32 @@
     const b = PP.build;
     const box = $('br-slot-area');
     if (!b.team) {
-      box.innerHTML = `<div class="slot-card"><div class="slot-hint">点击「抽取球队」开始：随机抽到一支球队，从该队球员身上锁定一项属性。</div><button class="btn btn-primary" id="btn-spin-team">🎰 抽取球队</button></div>`;
+      box.innerHTML = `<div class="slot-card"><div class="slot-hint">点击「开始随机」：按 年份 → 球队 → 球员，从精选池锁定一项属性。</div><button class="btn btn-primary" id="btn-spin-team">🎰 开始随机</button></div>`;
       $('btn-spin-team').addEventListener('click', () => { spinTeam(); renderBuild(); });
       return;
     }
     const meta = teamMeta(b.team);
     const remaining = ATTR_KEYS.filter(k => b.lockedAttrs[k] == null);
+    const roll = b.sourceRoll || {};
+    const selectedName = b.selectedPlayer ? (b.selectedPlayer.nameCn || b.selectedPlayer.name) : '待选择';
+    const selectedSource = b.selectedPlayer ? `${sourceKindLabel(b.selectedPlayer)} · ${sourcePlayerLabel(b.selectedPlayer)}` : '精选名单';
     box.innerHTML = `
       <div class="slot-card">
         <div class="slot-team">
           ${teamLogoHtml(meta, 44)}
           <div>
             <div class="slot-team-name">${esc(meta.z || meta.n)}</div>
-            <div class="slot-team-sub">${meta.a} · 队伍强度 ${meta.r || '--'} · 还需锁定 ${remaining.length} 项</div>
+            <div class="slot-team-sub">${meta.a} · 精选 12 现役 + 3 历史全明星+ · 还需锁定 ${remaining.length} 项</div>
           </div>
         </div>
+        <div class="slot-source-chain">
+          <span class="source-chip">年份 ${esc(roll.requestedLabel || '随机')}</span><b>→</b>
+          <span class="source-chip">球队 ${esc(meta.z || meta.n)}</span><b>→</b>
+          <span class="source-chip">球员 ${esc(selectedName)}</span>
+        </div>
+        <div class="slot-source-note">球员来源：${esc(selectedSource)}${roll.playerYear && roll.playerYear !== roll.requestedYear ? ` · 抽中记录年份 ${roll.playerLabel}` : ''}</div>
         <div class="slot-controls">
-          <button class="btn btn-secondary btn-small" id="btn-reroll-team">🎲 重抽球队</button>
+          <button class="btn btn-secondary btn-small" id="btn-reroll-team">🎲 重抽年份+球队</button>
           <button class="btn btn-secondary btn-small" id="btn-swap-player" ${b.swapsLeft <= 0 ? 'disabled' : ''}>🔄 换球员（剩${b.swapsLeft}）</button>
         </div>
         ${b.selectedPlayer ? `<div class="slot-hint">已选择 ${esc(b.selectedPlayer.nameCn || b.selectedPlayer.name)}，点击下方属性锁定：</div>` : `<div class="slot-hint">点击下方球员卡片选择来源，再点属性锁定。</div>`}
@@ -1216,18 +1337,20 @@
     if (!b.team) { box.innerHTML = ''; return; }
     const roster = b.roster;
     const cards = roster.map(p => {
-      const sel = b.selectedPlayer && String(b.selectedPlayer.id) === String(p.id);
-      const used = b.usedPlayers.has(b.team + ':' + String(p.id));
+      const playerKey = sourcePlayerKey(p);
+      const sel = b.selectedPlayer && sourcePlayerKey(b.selectedPlayer) === playerKey;
+      const used = b.usedPlayers.has(playerKey);
       const t13 = projectToThirteen(p.attrs || {});
       const top3 = ATTR_KEYS.filter(k => b.lockedAttrs[k] == null)
         .map(k => ({ k, v: t13[k] }))
         .sort((x, y) => y.v - x.v)
         .slice(0, 3);
       const attrsTxt = top3.map(x => `${ATTR_CN[x.k]}${x.v}`).join(' / ');
-      return `<div class="player-card ${sel ? 'sel' : ''} ${used ? 'used' : ''}" data-pid="${esc(p.id)}" ${used ? 'style="opacity:.35;"' : ''}>
+      return `<div class="player-card ${sel ? 'sel' : ''} ${used ? 'used' : ''}" data-pid="${esc(playerKey)}" ${used ? 'style="opacity:.35;"' : ''}>
         ${avatarHtml(p, 'pc-img', 56)}
         <div class="pc-name">${esc(p.nameCn || p.name)}</div>
         <div class="pc-pos">${ID_POS[parseNum(p.pos, 3)] || '--'} · OVR ${parseNum(p.rating, 0)}</div>
+        <div class="pc-source">${esc(sourceKindLabel(p))} · ${esc(sourcePlayerLabel(p))}</div>
         <div class="pc-attrs">${attrsTxt}</div>
         ${used ? '<div class="pc-lock">已用过</div>' : (sel ? '<div class="pc-lock">✓ 已选择</div>' : '')}
       </div>`;
@@ -1237,9 +1360,9 @@
       if (el.style.opacity === '0.35') return;
       el.addEventListener('click', () => {
         const pid = String(el.dataset.pid);
-        const p = b.roster.find(x => String(x.id) === pid);
+        const p = b.roster.find(x => sourcePlayerKey(x) === pid);
         if (!p) return;
-        b.selectedPlayer = p;
+        setSelectedSourcePlayer(p);
         renderBuild();
         const t13 = projectToThirteen(p.attrs || {});
         const avail = ATTR_KEYS.filter(k => b.lockedAttrs[k] == null);
@@ -1299,10 +1422,11 @@
       <div class="reveal-card">
         ${avatarHtml0}
         <div class="reveal-name">${esc(c.playerName)}</div>
-        <div class="reveal-pos">${c.position} ${POSITIONS[c.position]} · ${(ERAS.find(e => e.year === c.era) || ERAS[0]).label}</div>
+        <div class="reveal-pos">${c.position} ${POSITIONS[c.position]} · ${SINGLE_SEASON.label}</div>
         <div class="reveal-ovr">${c.ovr}</div>
         <div class="reveal-grade">${grade}</div>
         <div class="reveal-archetype">🏷️ ${c.archetype}</div>
+        <div class="slot-source-note" style="margin:10px 0 0;">🏀 虎扑单赛季 · 13 项属性均来自随机 年份 → 球队 → 球员 · 每队 12 现役 + 3 历史全明星+</div>
         <div class="reveal-attrs">${attrRows}</div>
         <div class="similar-title">🏀 相似球员（按属性画像）</div>
         <div class="similar-list">${similar}</div>
@@ -1877,6 +2001,11 @@
 
   function showSeasonResults() {
     const s = PP.season;
+    const c = PP.career;
+    c.singleSeasonComplete = true;
+    c.seasonCount = 1;
+    s.singleSeasonComplete = true;
+    saveGame();
     const avg = seasonAverages();
     const po = s.playoffStats || emptyStats();
     const poAvg = po.games ? {
@@ -1892,7 +2021,7 @@
       <div class="po-champ">
         <div class="pc-trophy">${isChamp ? '🏆' : '📊'}</div>
         <div class="pc-title">${s.wins}-${s.losses} · ${resultLabel}</div>
-        <div class="pc-sub">第 ${PP.career.seasonCount + 1} 季结束</div>
+         <div class="pc-sub">虎扑单赛季已结束 · 不进入下一赛季</div>
       </div>
       <div class="season-body-card">
         <div class="sb-head"><h3>常规赛场均</h3></div>
@@ -1909,9 +2038,14 @@
         </div>
       </div>` : ''}
       ${awards ? `<div class="season-body-card"><div class="sb-head"><h3>赛季荣誉</h3></div>${awards}</div>` : ''}
-      <button class="btn btn-primary" id="btn-go-offseason">☀️ 进入休赛期</button>`;
+      <button class="btn btn-primary" id="btn-single-season-done">🏁 完成本赛季</button>`;
     $('playoff-body').innerHTML = html;
-    $('btn-go-offseason').addEventListener('click', () => startOffseason());
+    $('btn-single-season-done').addEventListener('click', () => {
+      saveGame();
+      renderMenu();
+      showScreen('screen-menu');
+      showToast('单赛季已完成，可新建下一位球员');
+    });
   }
 
   function computeSeasonAwards() {
@@ -1985,13 +2119,14 @@
     const mods = c.seasonMods;
     Object.keys(mods).forEach(k => { mods[k] = Math.round(parseNum(mods[k], 0) * 0.5); });
     c.currentStamina = 100;
+    c.seasonCount = 1;
+    c.singleSeasonComplete = true;
+    s.singleSeasonComplete = true;
   }
 
   /* ==================== 休赛期 ==================== */
   function startOffseason() {
-    showScreen('screen-offseason');
-    $('offseason-season-label').textContent = `第 ${PP.career.seasonCount + 1} 季结束 · 准备第 ${PP.career.seasonCount + 2} 季`;
-    renderOffseason();
+    showToast('当前为虎扑单赛季模式，不进入休赛期');
   }
 
   function renderOffseason() {
@@ -2107,6 +2242,10 @@
 
   function nextSeason() {
     const c = PP.career;
+    if (c.singleSeasonComplete) {
+      showToast('当前为单赛季模式，没有下一赛季');
+      return;
+    }
     c.seasonCount++;
     PP.season = null;
     PP.leagueReady = false;
@@ -2197,7 +2336,7 @@
   function renderMyCard() {
     const c = PP.career;
     const v = computeVitals();
-    $('mycard-age-label').textContent = `${c.age} 岁 · 第 ${c.seasonCount + 1} 季 · ${(ERAS.find(e => e.year === c.era) || ERAS[0]).label}`;
+    $('mycard-age-label').textContent = `${c.age} 岁 · ${c.singleSeasonComplete ? '单赛季已完成' : '单赛季进行中'} · ${SINGLE_SEASON.label}`;
     const avg = careerAverages(c);
     const seasonAvg = PP.season ? seasonAverages() : null;
     const profDefs = [
@@ -2251,10 +2390,10 @@
 
   /* ==================== 玩法说明 ==================== */
   const HELP_PAGES = [
-    { title: '建球员', content: '选择年代与位置后进入建球员：随机抽取球队，从该队真实历史球员身上锁定一项属性，共 13 项。每队可换人 3 次，跨位置锁定会触发属性衰减。集满 13 项后揭晓总评、模板风格与相似球员。' },
+    { title: '建球员', content: '本项目固定一个虎扑风格单赛季。建球员时每轮按“随机年份 → 随机球队 → 随机球员”抽取属性来源，共锁定 13 项；每队精选 12 名现役 + 3 名历史全明星以上球员，每轮可换球员 3 次，跨位置锁定会触发属性衰减。' },
     { title: '赛季', content: '选择生涯球队后进入 82 场常规赛。可以逐场模拟或批量快进，比赛由本项目模拟引擎按真实属性规则生成。比赛中途会出现随机事件与周行动，影响媒体压力、热度、球迷支持、体力与士气等数值（均在界面上以 0-100 明确展示）。' },
     { title: '季后赛', content: '常规赛结束后按战绩排名，7-10 名先打附加赛，随后东西部各 8 强进行七场四胜系列赛，直至总决赛。我的系列赛逐场模拟并生成数据。' },
-    { title: '休赛期', content: '每季结束后进入休赛期：处理合同续约/自由市场、触发休赛期随机事件、属性随年龄成长或衰退。当年龄到点或状态下滑，可选择退役，解锁传奇评分与名人堂评价。' }
+    { title: '单赛季结算', content: '季后赛结束后进入最终总结，展示常规赛/季后赛数据、荣誉和冠军结果。完成总结后回到首页；本模式不进入休赛期，也没有下一赛季入口。' }
   ];
   let helpPage = 0;
   function renderHelp() {
@@ -2273,7 +2412,8 @@
     if (PP.busy) return;
     PP.busy = true;
     try {
-      await ensureLeague(PP.era);
+      await Promise.all([ensureLeague(SINGLE_SEASON.year), ensureAttributePool()]);
+      PP.era = SINGLE_SEASON.year;
       buildReset();
       PP.playerName = '';
       PP.avatar = '';
@@ -2288,6 +2428,10 @@
   }
 
   function beginBuild() {
+    if (!PP.attributePool) {
+      showToast('精选球员池尚未加载完成');
+      return;
+    }
     spinTeam();
     renderBuild();
     showScreen('screen-build');
@@ -2300,6 +2444,7 @@
 
   function beginCareer() {
     if (!PP.career.teamId) { showToast('请先选择生涯球队'); return; }
+    PP.career.era = SINGLE_SEASON.year;
     const launch = async () => {
       try {
         await ensureLeague(PP.career.era);
@@ -2327,10 +2472,11 @@
     if (!data) { showToast('暂无存档'); return; }
     const launch = async () => {
       try {
-        PP.era = data.era || PP.era;
+        PP.era = SINGLE_SEASON.year;
         PP.career = data.career;
+        PP.career.era = SINGLE_SEASON.year;
         PP.season = data.season || null;
-        await ensureLeague(PP.era);
+        await ensureLeague(SINGLE_SEASON.year);
         if (PP.season && !PP.season.isPlayoffs) {
           prepareSeasonState();
           if (!PP.season.schedule) PP.season.schedule = buildSchedule(82);
@@ -2356,6 +2502,28 @@
     };
     launch();
   }
+
+  // 给通用网页游戏检查器提供轻量可读状态；真实界面仍以 DOM 渲染为准。
+  window.render_game_to_text = function () {
+    const b = PP.build || {};
+    const c = PP.career;
+    const s = PP.season;
+    return JSON.stringify({
+      screen: PP.screen,
+      build: {
+        teamId: b.team,
+        lockCount: b.lockCount || 0,
+        remaining: ATTR_KEYS.filter(k => b.lockedAttrs && b.lockedAttrs[k] == null).length,
+        selectedPlayer: b.selectedPlayer ? (b.selectedPlayer.nameCn || b.selectedPlayer.name) : null,
+        sourceRoll: b.sourceRoll || null
+      },
+      career: c ? { playerName: c.playerName, ovr: c.ovr, teamId: c.teamId, seasonCount: c.seasonCount, singleSeasonComplete: !!c.singleSeasonComplete } : null,
+      season: s ? { gameNum: s.games ? s.games.length : 0, wins: s.wins, losses: s.losses, isPlayoffs: !!s.isPlayoffs } : null
+    });
+  };
+  window.advanceTime = window.advanceTime || function (ms) {
+    return new Promise(resolve => setTimeout(resolve, Math.max(0, Math.min(parseNum(ms, 0), 1000))));
+  };
 
   /* ==================== 初始化与事件绑定 ==================== */
   function init() {
@@ -2422,8 +2590,9 @@
     // 自动读档
     const data = loadGame();
     if (data && data.career) {
-      PP.era = data.era || PP.era;
+      PP.era = SINGLE_SEASON.year;
       PP.career = data.career;
+      PP.career.era = SINGLE_SEASON.year;
       PP.season = data.season || null;
       renderMenu();
     }

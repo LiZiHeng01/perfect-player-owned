@@ -2,7 +2,7 @@
 
 /**
  * 完美球员模式浏览器冒烟测试
- * 完整走一遍：新建生涯 → 锁13项属性 → 揭幕 → 选队 → 赛季模拟 → 季后赛 → 休赛期
+ * 完整走一遍：新建生涯 → 锁13项属性 → 揭幕 → 选队 → 单赛季模拟 → 季后赛总结
  */
 
 const assert = require('node:assert/strict');
@@ -84,6 +84,19 @@ async function main() {
   const chromePath = argValue('--chrome', '') || findChrome();
   assert.ok(chromePath, 'Chrome or Edge executable should exist');
 
+  const poolPath = path.join(root, 'assets', 'data', 'perfect-player-pool.json');
+  const pool = JSON.parse(fs.readFileSync(poolPath, 'utf8'));
+  const poolTeams = Object.values(pool.teams || {});
+  assert.equal(poolTeams.length, 30, '精选球员池应有 30 支球队');
+  poolTeams.forEach(team => {
+    assert.equal(team.players.length, 15, `${team.name} 应有 15 名精选球员`);
+    assert.equal(team.currentCount, 12, `${team.name} 应保持 80% 现役球员`);
+    assert.equal(team.historicalCount, 3, `${team.name} 应保持 20% 历史全明星球员`);
+    team.players.filter(player => player.source && player.source.kind === 'historical').forEach(player => {
+      assert.ok(player.photoLocal && fs.existsSync(path.join(root, player.photoLocal)), `${player.name} 历史头像应已本地化`);
+    });
+  });
+
   const server = spawn('python', ['-m', 'http.server', String(port), '--bind', '127.0.0.1'], {
     cwd: root,
     windowsHide: true,
@@ -92,7 +105,6 @@ async function main() {
 
   let browser = null;
   const errors = [];
-  const failedResponses = [];
   try {
     const pageUrl = `http://127.0.0.1:${port}/nba-perfect-player.html`;
     await waitForHttp(pageUrl);
@@ -106,9 +118,6 @@ async function main() {
       deviceScaleFactor: 1
     });
     const page = await context.newPage();
-    page.on('response', response => {
-      if (response.status() >= 400) failedResponses.push(`${response.status()} ${response.url()}`);
-    });
     page.on('console', msg => { if (msg.type() === 'error') errors.push('[console] ' + msg.text()); });
     page.on('console', msg => { if (msg.type() === 'warning' && msg.text().includes('perfect-player')) errors.push('[warn] ' + msg.text()); });
     page.on('pageerror', err => errors.push('[pageerror] ' + err.message));
@@ -135,9 +144,14 @@ async function main() {
     await page.waitForFunction(() => !document.getElementById('btn-confirm-position').disabled);
     await page.click('#btn-confirm-position');
     await page.waitForSelector('#screen-build.active', { timeout: 15000 });
+    fs.mkdirSync(path.join(root, 'output'), { recursive: true });
+    await page.screenshot({ path: path.join(root, 'output', 'perfect-player-smoke-build.png'), fullPage: true });
 
     // 2) 进入建球员页时已自动抽取球队
     await page.waitForSelector('.player-card', { timeout: 15000 });
+    const sourceChain = await page.textContent('#br-slot-area');
+    assert.ok(sourceChain.includes('年份') && sourceChain.includes('球队') && sourceChain.includes('球员') && sourceChain.includes('→'), '建球员页应显示随机来源链');
+    assert.equal(await page.locator('.player-card').count(), 15, '每轮应只展示 15 名精选球员');
 
     // 3) 循环锁定 13 项属性
     for (let i = 0; i < 13; i++) {
@@ -165,6 +179,9 @@ async function main() {
     assert.strictEqual(revealName.trim(), '林一飞', '自定义名字应显示在揭幕页');
     const revealImg = await page.$eval('.reveal-avatar', el => el.tagName === 'IMG' ? el.getAttribute('src') : '');
     assert.ok(revealImg.includes('avatar-03'), '选中的 AI 头像应显示在揭幕页');
+    const revealSave = await page.evaluate(() => JSON.parse(localStorage.getItem('perfectPlayerSaveV1')));
+    assert.equal(revealSave.career.attributeSources.length, 13, '13 项属性应各有一条随机来源记录');
+    assert.ok(revealSave.career.attributeSources.every(row => row.requestedYear && row.teamId && row.playerName), '属性来源应包含年份、球队和球员');
 
     // 4) 选择生涯球队
     await page.click('#btn-to-career');
@@ -218,19 +235,25 @@ async function main() {
     await page.click('#btn-run-playoffs');
     await page.waitForSelector('#btn-season-done', { timeout: 180000 });
     await page.click('#btn-season-done');
-    await page.waitForSelector('#btn-go-offseason', { timeout: 15000 });
+    await page.waitForSelector('#btn-single-season-done', { timeout: 15000 });
     const resultText = await page.textContent('#playoff-body');
     assert.ok(resultText.includes('常规赛场均'), '赛季总结包含场均数据');
+    assert.ok(resultText.includes('虎扑单赛季已结束'), '赛季总结应标记单赛季结束');
+    assert.equal(await page.locator('#btn-go-offseason').count(), 0, '不应有休赛期入口');
+    assert.equal(await page.locator('#btn-next-season').count(), 0, '不应有下一赛季入口');
 
-    // 7) 休赛期
-    await page.click('#btn-go-offseason');
-    await page.waitForSelector('#screen-offseason.active', { timeout: 15000 });
-    await page.waitForSelector('#btn-next-season', { timeout: 15000 });
-    assert.ok(await page.isVisible('#btn-renew'), '续约按钮可见');
+    // 7) 完成单赛季并返回菜单
+    await page.click('#btn-single-season-done');
+    await page.waitForSelector('#screen-menu.active', { timeout: 15000 });
+    const continueText = await page.textContent('#btn-continue');
+    assert.ok(continueText.includes('单赛季结果'), '首页继续按钮应指向单赛季结果');
 
     // 存档存在
-    const saveOk = await page.evaluate(() => !!localStorage.getItem('perfectPlayerSaveV1'));
-    assert.ok(saveOk, '本地存档已写入');
+    const finalSave = await page.evaluate(() => JSON.parse(localStorage.getItem('perfectPlayerSaveV1')));
+    assert.ok(finalSave && finalSave.career, '本地存档已写入');
+    assert.equal(finalSave.career.seasonCount, 1, '单赛季完成后赛季数应为 1');
+    assert.equal(finalSave.career.singleSeasonComplete, true, '存档应标记单赛季已完成');
+    await page.screenshot({ path: path.join(root, 'output', 'perfect-player-smoke-final.png'), fullPage: true });
 
     console.log('✅ perfect-player smoke PASSED');
     console.log('  OVR:', ovr, '| 首场战绩:', record1);
@@ -255,10 +278,6 @@ async function main() {
     if (errors.length) {
       console.error('browser errors:');
       errors.slice(0, 20).forEach(e => console.error('  -', e));
-    }
-    if (failedResponses.length) {
-      console.error('failed responses:');
-      [...new Set(failedResponses)].slice(0, 40).forEach(e => console.error('  -', e));
     }
     if (browser) await browser.close().catch(() => {});
     server.kill();
