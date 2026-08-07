@@ -3002,7 +3002,7 @@ function renderRosterPlayers(team, shown, allAvailable) {
         <div class="bp-headshot" style="${hsStyle}"></div>
         <div>
           <div class="bp-name">${p.cname || p.name}</div>
-          <div class="bp-detail">${playerPos}${p._sourceKind === 'historical' ? ' · 经典 ' + p._sourceLabel : ''}</div>
+          <div class="bp-detail">${playerPos}${p._sourceKind === 'historical' ? ' · ' + (p._sourceLabel === '生涯巅峰' ? '生涯巅峰' : '经典 ' + p._sourceLabel) : ''}</div>
         </div>
       </div>
       <div class="bp-meta">

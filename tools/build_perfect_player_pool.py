@@ -274,9 +274,32 @@ def main() -> None:
     for source in SEASONS:
         rows_by_source[source["code"]] = load_csv(DATA_DIR / source["file"])
 
+    # rosters19.csv (labeled 1957-58) is NOT a real season roster — it is an
+    # all-time compilation that mixes every era's legends at INFLATED ratings
+    # (Jordan 101, Duncan DEF 104, LeBron 100) under a bogus 1957-58 label.
+    # Using it as a normal season made modern legends resolve to that fake card.
+    # We keep it only as a LAST-RESORT source for genuine early-era players who
+    # appear in no real season file; everyone else uses their real-season peak.
+    ALLTIME_CODE = 19
+
     current_by_team: dict[int, list[dict]] = defaultdict(list)
-    # Global peak lookup: identity -> best historical season record.
+    # Global peak lookup: identity -> best REAL-season historical record.
     historical_peak: dict[str, dict] = {}
+    # Fallback lookup from the all-time file, used only for identities missing above.
+    alltime_peak: dict[str, dict] = {}
+
+    def consider_peak(store: dict, record: dict) -> None:
+        # Peak = highest per-season RATING (2K ATT/DEF avg, a genuine per-year
+        # ability snapshot), tie -> EARLIER year (the prime, not a late-career
+        # defensive echo), tie -> honors. Why not cumulative starScore: it always
+        # favored late seasons, so legends showed up in end-of-career form
+        # (e.g. 加内特/皮尔斯 as 2009-10 Celtics instead of their real primes).
+        key = record["identity"]
+        old = store.get(key)
+        cand = (record["rating"], -record["source"]["year"], record["starScore"])
+        if old is None or cand > (old["rating"], -old["source"]["year"], old["starScore"]):
+            store[key] = record
+
     for source in SEASONS:
         for index, row in enumerate(rows_by_source[source["code"]], start=1):
             tid = team_id(row)
@@ -289,16 +312,17 @@ def main() -> None:
                 continue
             if not is_star(record["honors"], record["rating"]):
                 continue
-            # Dedupe globally by player identity (NOT per-team), keeping only the
-            # single peak season. Why: the same legend appeared once per team and
-            # even once per season, so Vince Carter/Duncan/etc. showed up many times.
-            # Peak = highest starScore, tie -> higher rating, tie -> earlier year.
-            key = record["identity"]
-            old = historical_peak.get(key)
-            if old is None or (
-                record["starScore"], record["rating"], -record["source"]["year"]
-            ) > (old["starScore"], old["rating"], -old["source"]["year"]):
-                historical_peak[key] = record
+            consider_peak(alltime_peak if source["code"] == ALLTIME_CODE else historical_peak, record)
+
+    # Fill in legends who appear nowhere in real seasons (their prime predates or
+    # falls between our roster files). The all-time card has placeholder metadata
+    # and a bogus 1957-58 label, so relabel it honestly as "生涯巅峰" (Career Peak)
+    # rather than pinning e.g. 德里克-罗斯 to 1957.
+    for key, record in alltime_peak.items():
+        if key not in historical_peak:
+            record["source"] = dict(record["source"])
+            record["source"]["label"] = "生涯巅峰"
+            historical_peak[key] = record
 
     # Current players are the live 2025-26 rosters; any historical entry that is the
     # same person as a current player must be dropped (a legend still playing is
@@ -321,7 +345,9 @@ def main() -> None:
     warnings: list[str] = []
     for tid, label in TEAM_NAMES.items():
         current = sorted(current_by_team[tid], key=lambda p: (-p["rating"], p["nameEn"]))
-        history = sorted(historical_by_team[tid], key=lambda p: (-p["starScore"], -p["rating"], p["nameEn"]))
+        # Top-3 legends per team by peak rating (then honors), so each team keeps
+        # its highest-ability primes rather than its most-decorated late seasons.
+        history = sorted(historical_by_team[tid], key=lambda p: (-p["rating"], -p["starScore"], p["nameEn"]))
         current_take = current[:12]
         history_take = history[:3]
         if len(current_take) < 12:
