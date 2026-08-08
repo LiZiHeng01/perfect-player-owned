@@ -29,7 +29,7 @@ const groups = [
   "White European-descended with fair skin",
   "Black African-descended with rich dark skin",
   "White European-descended with light olive skin",
-  "Latino with warm tan skin",
+  "Afro-Latino with deep brown skin and clearly African-descended facial features",
   "Black African-descended with medium-dark skin",
   "White European-descended with fair skin and faint freckles",
 ];

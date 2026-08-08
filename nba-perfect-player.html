@@ -18406,7 +18406,7 @@ function rngNext() {
 
 function nextGeneratedRookiePortrait() {
   if (_rookiePortraitQueue.length === 0) {
-    for (var i = 1; i <= 50; i++) _rookiePortraitQueue.push(i);
+    for (var i = 1; i <= 100; i++) _rookiePortraitQueue.push(i);
     for (var j = _rookiePortraitQueue.length - 1; j > 0; j--) {
       var swapIndex = Math.floor(rngNext() * (j + 1));
       var temp = _rookiePortraitQueue[j];
