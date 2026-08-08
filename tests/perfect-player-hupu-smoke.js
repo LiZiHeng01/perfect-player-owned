@@ -217,6 +217,96 @@ async function main() {
     assert.ok(seasonPoolProbe.uniqueDraws.length >= 100, '赛季日常事件抽取应有足够多样性：' + seasonPoolProbe.uniqueDraws.length);
     assert.equal(seasonPoolProbe.hasRequires, false, '新增开局事件必须全部可直接抽取');
     assert.ok(seasonPoolProbe.choiceCounts.every(count => count >= 2), '每条新增赛季事件都应至少有两个选择');
+    const stateAwareEventProbe = await page.evaluate(() => {
+      const savedCareer = STATE.career;
+      const savedSeason = STATE.season;
+      const savedTeam = STATE.careerTeam;
+      const savedOvr = STATE.finalOVR;
+      const pool = STAGED_BRANCH_EVENTS.filter(event => event.id && event.id.startsWith('pp_season_'));
+      function runScenario(options) {
+        const wins = options.streak === 'W' ? options.streakLen : 8;
+        const losses = options.streak === 'L' ? options.streakLen : 4;
+        const gamesPlayed = options.gamesPlayed || wins + losses;
+        STATE.career = Object.assign({}, savedCareer, {
+          seasonCount: options.seasonCount == null ? 1 : options.seasonCount,
+          contract: options.contract == null ? 3 : options.contract,
+          branches: {},
+          profile: Object.assign({}, savedCareer.profile || {}, { fame: options.fame || 0, controversy: options.controversy || 0 }),
+          nextSeasonMods: Object.assign({}, savedCareer.nextSeasonMods || {}, {
+            staminaLoad: options.staminaLoad || 0,
+            injuryRiskBonus: options.injuryRiskBonus || 0,
+            teamChemistry: options.teamChemistry || 0,
+            mediaPressure: options.mediaPressure || 0
+          })
+        });
+        STATE.careerTeam = 'LAL';
+        STATE.finalOVR = options.ovr || 82;
+        const recentWon = options.streak === 'W';
+        STATE.season = {
+          isPlayoffs: false,
+          wins,
+          losses,
+          standings: { LAL: { wins, losses, streak: options.streak, streakLen: options.streakLen } },
+          games: Array.from({ length: gamesPlayed }, (_, index) => ({
+            result: { won: index >= gamesPlayed - options.streakLen ? recentWon : index % 2 === 0 },
+            stats: { pts: options.poor ? 8 : 24, fgm: options.poor ? 3 : 9, fga: 18, tov: options.poor ? 6 : 2 },
+            game: { home: options.home, day: Math.max(0, options.day - gamesPlayed + index + 1) }
+          })),
+          schedule: Array.from({ length: 82 }, () => ({})),
+          playerStats: { games: gamesPlayed, pts: gamesPlayed * 24 },
+          events: {}
+        };
+        const game = { home: options.home, day: options.day, opponent: 'BOS' };
+        const result = { won: options.won };
+        const stats = options.poor ? { pts: 8, fgm: 3, fga: 18, tov: 6 } : { pts: 30, fgm: 11, fga: 19, tov: 2 };
+        const state = getSeasonEventState(game, result, stats);
+        const eligible = pool.filter(event => isSeasonEventStateEligible(event, state));
+        const draws = Array.from({ length: 300 }, () => pickSeasonStateAwareEvent(eligible, state));
+        const lossPress = STAGED_BRANCH_EVENTS.find(event => event.id === 'media_first_press');
+        const teammateSlump = STAGED_BRANCH_EVENTS.find(event => event.id === 'teammate_slump');
+        return {
+          state,
+          contexts: [...new Set(eligible.map(event => event.contextId).filter(Boolean))],
+          drawnContexts: [...new Set(draws.map(event => event && event.contextId).filter(Boolean))],
+          eligibleIds: eligible.map(event => event.id),
+          lossPressEligible: isSeasonEventStateEligible(lossPress, state),
+          teammateSlumpEligible: isSeasonEventStateEligible(teammateSlump, state),
+          fatigueWeight: getSeasonEventStateWeight(pool.find(event => event.id === 'pp_season_recovery_lab'), state),
+          neutralWeight: getSeasonEventStateWeight(pool.find(event => event.id === 'pp_season_weather_delay'), state)
+        };
+      }
+      try {
+        return {
+          generatedTagged: pool.filter(event => event.id.includes('_library_')).every(event => !!event.contextId && !!event.topicId),
+          winStreak: runScenario({ streak:'W', streakLen:4, home:true, won:true, day:60 }),
+          losingStreak: runScenario({ streak:'L', streakLen:3, home:false, won:false, day:60, poor:true }),
+          deadline: runScenario({ streak:'W', streakLen:1, home:true, won:true, day:105 }),
+          spotlight: runScenario({ streak:'W', streakLen:1, home:true, won:true, day:60, fame:10 }),
+          fatigue: runScenario({ streak:'W', streakLen:1, home:false, won:true, day:60, staminaLoad:5, injuryRiskBonus:3 }),
+          roadWin: runScenario({ streak:'W', streakLen:1, home:false, won:true, day:60 })
+        };
+      } finally {
+        STATE.career = savedCareer;
+        STATE.season = savedSeason;
+        STATE.careerTeam = savedTeam;
+        STATE.finalOVR = savedOvr;
+      }
+    });
+    assert.ok(stateAwareEventProbe.generatedTagged, '扩充事件必须保留主题和赛况标签');
+    assert.ok(stateAwareEventProbe.winStreak.contexts.includes('streak') && !stateAwareEventProbe.winStreak.contexts.includes('slump'), '连胜时只能进入连胜池，不能出现连败事件：' + JSON.stringify(stateAwareEventProbe.winStreak));
+    assert.ok(!stateAwareEventProbe.winStreak.drawnContexts.includes('slump'), '连胜抽样不得抽到连败文案');
+    assert.ok(stateAwareEventProbe.losingStreak.contexts.includes('slump') && !stateAwareEventProbe.losingStreak.contexts.includes('streak'), '连败时只能进入连败池，不能出现连胜事件');
+    assert.ok(!stateAwareEventProbe.losingStreak.drawnContexts.includes('streak'), '连败抽样不得抽到连胜文案');
+    assert.ok(!stateAwareEventProbe.winStreak.contexts.includes('deadline') && stateAwareEventProbe.deadline.contexts.includes('deadline'), '交易截止日事件必须只在截止日窗口出现');
+    assert.ok(!stateAwareEventProbe.winStreak.contexts.includes('national') && stateAwareEventProbe.spotlight.contexts.includes('national'), '全国直播事件必须匹配球星关注度或焦点赛程');
+    assert.ok(!stateAwareEventProbe.winStreak.eligibleIds.includes('pp_season_locker_music'), '连胜期间不得出现明确写着连败的更衣室事件');
+    assert.ok(!stateAwareEventProbe.winStreak.eligibleIds.includes('pp_season_home_booing'), '主场赢球且表现出色时不得出现主场嘘声事件');
+    assert.equal(stateAwareEventProbe.winStreak.lossPressEligible, false, '赢球后不得出现输球发布会');
+    assert.equal(stateAwareEventProbe.losingStreak.lossPressEligible, true, '输球后应允许出现输球发布会');
+    assert.equal(stateAwareEventProbe.winStreak.teammateSlumpEligible, false, '连胜且更衣室正常时不得出现队友低谷');
+    assert.equal(stateAwareEventProbe.losingStreak.teammateSlumpEligible, true, '连败时应允许出现队友低谷');
+    assert.ok(stateAwareEventProbe.roadWin.eligibleIds.includes('pp_season_team_dinner'), '客场赢球后才允许出现客场赢球聚餐事件');
+    assert.ok(stateAwareEventProbe.fatigue.fatigueWeight > stateAwareEventProbe.fatigue.neutralWeight, '疲劳和伤病风险升高时恢复类事件权重应提高');
     assert.deepEqual(await page.evaluate(() => window.PERFECT_PLAYER_EVENT_LIBRARY_REPORT), {
       generated: 179, topics: 30, contexts: 6
     });
@@ -302,7 +392,7 @@ async function main() {
     await page.screenshot({ path: path.join(outputDir, '01-character.png'), fullPage: false });
 
     await page.evaluate(() => {
-      const event = STAGED_BRANCH_EVENTS.find(item => item.id === 'pp_season_library_privacy_leak_national');
+      const event = STAGED_BRANCH_EVENTS.find(item => item.id === 'pp_season_library_privacy_leak_streak');
       showSeasonBranchEvent(event, () => {});
     });
     await page.waitForSelector('#season-branch-modal');

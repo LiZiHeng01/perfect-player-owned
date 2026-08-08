@@ -3,7 +3,7 @@
 
   var contexts = [
     { id:'home', tag:'主场训练日', opening:'主场训练结束后，球馆里只剩工作人员', result:'这次处理很快在主场更衣室里形成了新的默契。' },
-    { id:'road', tag:'客场背靠背', opening:'客场背靠背的清晨，球队刚从机场赶到酒店', result:'密集行程放大了这次选择的影响。' },
+    { id:'road', tag:'客场比赛日', opening:'客场比赛日的清晨，球队刚从机场赶到酒店', result:'客场行程放大了这次选择的影响。' },
     { id:'streak', tag:'连胜期间', opening:'三连胜后，全队气氛轻松，但教练提醒大家别放松', result:'连胜没有掩盖问题，你的态度被队友记住了。' },
     { id:'slump', tag:'连败之后', opening:'连续失利后，更衣室里每个人说话都格外谨慎', result:'连败压力下的决定，让球队重新认识了你。' },
     { id:'national', tag:'全国直播前', opening:'全国直播前，媒体和工作人员挤满了球馆通道', result:'聚光灯让这次普通决定获得了更多关注。' },
@@ -49,6 +49,8 @@
       if (topicIndex === topics.length - 1 && contextIndex === contexts.length - 1) return;
       definitions.push({
         id: 'library_' + topic.id + '_' + context.id,
+        topicId: topic.id,
+        contextId: context.id,
         title: '赛季事件：' + context.tag + '·' + topic.title,
         scene: context.opening + '，' + topic.scene,
         body: topic.body,

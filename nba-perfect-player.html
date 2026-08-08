@@ -9978,9 +9978,119 @@ var SEASON_BRANCH_EVENT_CONFIG = {
   recentWindow: 40
 };
 
+function getSeasonEventState(game, result, stats) {
+  var season = STATE.season || {};
+  var career = STATE.career || {};
+  var profile = career.profile || {};
+  var mods = career.nextSeasonMods || {};
+  var games = season.games || [];
+  var standing = season.standings && season.standings[STATE.careerTeam] || {};
+  var gamesPlayed = games.length;
+  var recent = games.slice(-5).filter(function(entry) { return entry && entry.result; });
+  var recentWins = recent.filter(function(entry) { return !!entry.result.won; }).length;
+  var recentPlayerGames = recent.filter(function(entry) { return entry.stats; });
+  var recentPts = recentPlayerGames.length ? recentPlayerGames.reduce(function(sum, entry) { return sum + (Number(entry.stats.pts) || 0); }, 0) / recentPlayerGames.length : 0;
+  var seasonPpg = season.playerStats && season.playerStats.games
+    ? (Number(season.playerStats.pts) || 0) / season.playerStats.games
+    : recentPts;
+  var fgPct = stats && stats.fga ? (Number(stats.fgm) || 0) / stats.fga : null;
+  var currentPts = stats ? Number(stats.pts) || 0 : null;
+  var won = !!(result && result.won);
+  var home = game && game.home != null ? !!game.home : true;
+  var day = game && Number.isFinite(Number(game.day)) ? Number(game.day) : 0;
+  var streakType = standing.streak || '';
+  var streakLen = Number(standing.streakLen) || 0;
+  var mentalPressure = typeof getMentalPressure === 'function' ? getMentalPressure() : 0;
+  var isRookie = (career.seasonCount || 0) === 0;
+  var poorPerformance = !!stats && ((currentPts < Math.max(12, seasonPpg * 0.7)) || (fgPct != null && fgPct < 0.36) || (Number(stats.tov) || 0) >= 5);
+  var hotPerformance = !!stats && ((currentPts >= Math.max(28, seasonPpg * 1.25)) || (fgPct != null && fgPct >= 0.56));
+  var deadlineWindow = (day >= 96 && day <= 118) || (gamesPlayed >= 47 && gamesPlayed <= 61);
+  var nationalSpotlight = (Number(profile.fame) || 0) >= 7 || (STATE.finalOVR || 0) >= 88 || (gamesPlayed >= 12 && gamesPlayed % 11 === 0);
+  var contractYears = Number(career.contract);
+  return {
+    gamesPlayed: gamesPlayed,
+    home: home,
+    road: !home,
+    won: won,
+    lost: !won,
+    day: day,
+    streak: streakType === 'W' && streakLen >= 3,
+    slump: streakType === 'L' && streakLen >= 2,
+    streakLen: streakLen,
+    recentWins: recentWins,
+    winPct: gamesPlayed ? (Number(season.wins) || 0) / gamesPlayed : 0.5,
+    poorPerformance: poorPerformance,
+    hotPerformance: hotPerformance,
+    recentPts: recentPts,
+    seasonPpg: seasonPpg,
+    highFatigue: (Number(mods.staminaLoad) || 0) >= 3,
+    highPressure: mentalPressure >= 8,
+    injuryConcern: (Number(mods.injuryRiskBonus) || 0) >= 2 || !!(season.events && season.events.injuryGamesLeft > 0),
+    lowChemistry: (Number(mods.teamChemistry) || 0) <= -2,
+    highControversy: (Number(profile.controversy) || 0) >= 4,
+    highFame: (Number(profile.fame) || 0) >= 7,
+    nationalSpotlight: nationalSpotlight,
+    deadlineWindow: deadlineWindow,
+    isRookie: isRookie,
+    contractYear: Number.isFinite(contractYears) && contractYears <= 1
+  };
+}
+
+function isSeasonEventStateEligible(ev, state) {
+  if (!ev || !state) return true;
+  var contextId = ev.contextId || '';
+  if (contextId === 'home' && !state.home) return false;
+  if (contextId === 'road' && !state.road) return false;
+  if (contextId === 'streak' && !state.streak) return false;
+  if (contextId === 'slump' && !state.slump) return false;
+  if (contextId === 'national' && !state.nationalSpotlight) return false;
+  if (contextId === 'deadline' && !state.deadlineWindow) return false;
+  if (ev.stateContext === 'rookie_wall' && (!state.isRookie || state.gamesPlayed < 18)) return false;
+  if (ev.stateContext === 'home_struggle' && (!state.home || (!state.lost && !state.poorPerformance))) return false;
+  if (ev.stateContext === 'road_win' && (!state.road || !state.won)) return false;
+  if (ev.stateContext === 'loss_press' && !state.lost) return false;
+  if (ev.stateContext === 'teammate_slump' && !state.slump && !state.lowChemistry) return false;
+  var topic = ev.topicId || '';
+  if (topic === 'trade_source' && !state.deadlineWindow) return false;
+  if (topic === 'extension_talk' && !state.contractYear) return false;
+  if (topic === 'coach_callout' && !state.slump && !state.poorPerformance && !state.lowChemistry) return false;
+  if (topic === 'medical_opinion' && !state.injuryConcern && !state.highFatigue) return false;
+  if ((topic === 'tv_feature' || topic === 'brand_script') && !state.highFame && !state.nationalSpotlight) return false;
+  return true;
+}
+
+function getSeasonEventStateWeight(ev, state) {
+  var weight = 1;
+  var topic = ev && ev.topicId || '';
+  if (ev && ev.contextId && ev.contextId !== 'home' && ev.contextId !== 'road') weight *= 1.3;
+  if (state.slump && ['locker_music','players_meeting','switch_defense','late_pass','coach_callout'].indexOf(topic) >= 0) weight *= 1.8;
+  if (state.streak && ['team_dinner','rookie_advice','veteran_rest','fan_letter'].indexOf(topic) >= 0) weight *= 1.5;
+  if ((state.highFatigue || state.injuryConcern) && ['rookie_wall','recovery_lab','recovery_slot','sleep_tracker','medical_opinion','weight_room'].indexOf(topic) >= 0) weight *= 2;
+  if ((state.highPressure || state.highControversy) && ['quote_context','rumor_clip','local_radio','tv_feature','privacy_leak','agent_plan'].indexOf(topic) >= 0) weight *= 1.8;
+  if (state.lowChemistry && ['locker_music','practice_argument','players_meeting','switch_defense','flight_seat'].indexOf(topic) >= 0) weight *= 1.8;
+  if (state.poorPerformance && ['empty_gym','film_session','shot_map','late_pass','free_throw','coach_callout'].indexOf(topic) >= 0) weight *= 2;
+  if (state.hotPerformance && ['shot_map','late_pass','free_throw','coach_callout'].indexOf(topic) >= 0) weight *= 0.35;
+  return Math.max(0.15, weight);
+}
+
+function pickSeasonStateAwareEvent(pool, state) {
+  if (!pool || !pool.length) return null;
+  var total = pool.reduce(function(sum, ev) {
+    return sum + getBranchEventWeight(ev) * getSeasonEventStateWeight(ev, state);
+  }, 0);
+  var roll = Math.random() * total;
+  for (var i = 0; i < pool.length; i++) {
+    roll -= getBranchEventWeight(pool[i]) * getSeasonEventStateWeight(pool[i], state);
+    if (roll <= 0) return pool[i];
+  }
+  return pool[pool.length - 1];
+}
+
 function checkSeasonBranchEvent(game, result, stats) {
   if (!STATE.career || !STATE.season || STATE.season.isPlayoffs) return null;
   var c = STATE.career;
+  var eventState = getSeasonEventState(game, result, stats);
+  c._lastSeasonEventState = eventState;
   c.branchHistory = c.branchHistory || [];
   c.branchSeasonEvents = c.branchSeasonEvents || {};
   var seasonKey = c.seasonCount || 0;
@@ -10058,7 +10168,8 @@ function checkSeasonBranchEvent(game, result, stats) {
   var pool = getBranchEventSource().filter(function(ev) {
     if (getEventPhases(ev).indexOf('season') < 0) return false;
     if (c.branchSeasonEvents[ev.branch]) return false;
-    try { return !ev.requires || ev.requires({ game: game, result: result, stats: stats }); }
+    if (!isSeasonEventStateEligible(ev, eventState)) return false;
+    try { return !ev.requires || ev.requires({ game: game, result: result, stats: stats, state: eventState }); }
     catch(e) { return false; }
   });
   // 每个赛季前 12 场优先抽日常独立事件，避免每次开局都固定出现
@@ -10072,7 +10183,7 @@ function checkSeasonBranchEvent(game, result, stats) {
   var freshPool = pool.filter(function(ev) { return recentIds.indexOf(ev.id) < 0; });
   if (freshPool.length > 0) pool = freshPool;
   if (pool.length === 0) return null;
-  var picked = pickBranchEvent(pool, false);
+  var picked = pickSeasonStateAwareEvent(pool, eventState);
   if (!picked) return null;
   c._lastSeasonBranchGame = (STATE.season.games || []).length;
   c.branchSeasonEvents[picked.branch] = true;
@@ -12369,6 +12480,7 @@ const STAGED_BRANCH_EVENTS = [
   {
     id: 'media_first_press',
     branch: 'media', phase: 'season', slot: 'main', weight: 12,
+    stateContext: 'loss_press',
     title: '媒体：输球发布会',
     scenes: [
       '更衣室的门还没关，记者已经围上来。你刚打出一场想删掉的比赛，输球原因却在镜头前被拆成一百个问题。',
@@ -14261,6 +14373,7 @@ const STAGED_BRANCH_EVENTS = [
   {
     id: 'teammate_slump',
     branch: 'teammate_bond', phase: 'season', slot: 'main', weight: 12,
+    stateContext: 'teammate_slump',
     title: '队友：队友低谷',
     scenes: [
       '{队友}连续几场投不进，采访区的问题越来越尖。你主动去更衣室找他，把那些问题挡在门外。他一个人坐在柜子前，鞋带解了一半。'

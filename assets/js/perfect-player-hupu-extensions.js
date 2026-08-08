@@ -564,6 +564,7 @@
       draftProjection: state._draftPending ? window.getPerfectPlayerDraftProjection() : null,
       draftEvents: window.PERFECT_PLAYER_DRAFT_EVENT_REPORT || null,
       seasonEvents: window.PERFECT_PLAYER_SEASON_EVENT_REPORT || null,
+      seasonEventState: career._lastSeasonEventState || null,
       simulation: window.PERFECT_PLAYER_SIM_REPORT || null
     });
   };
@@ -620,7 +621,7 @@
   function registerExpandedSeasonEvents() {
     if (typeof STAGED_BRANCH_EVENTS === 'undefined') return;
     var definitions = [
-      { id:'rookie_wall', title:'赛季日常：撞上新秀墙', scene:'连续客场后的早晨，你第一次感觉双腿完全没有弹性。训练师说这就是新秀墙，教练下午仍安排了高强度对抗。', body:'你必须在保持竞争力和保护身体之间做决定。', choices:[
+      { id:'rookie_wall', stateContext:'rookie_wall', title:'赛季日常：撞上新秀墙', scene:'连续客场后的早晨，你第一次感觉双腿完全没有弹性。训练师说这就是新秀墙，教练下午仍安排了高强度对抗。', body:'你必须在保持竞争力和保护身体之间做决定。', choices:[
         { label:'申请减量恢复', hint:'恢复状态，但可能被认为不够硬', profile:{coachTrust:-1}, mods:{staminaLoad:-2,formVariance:-1}, result:'你和训练师完成了单独恢复，比赛日终于找回腿部力量。教练嘴上没说什么，但少给了你一组对抗。<br><br>效果：体能负荷-2；状态波动-1；教练信任-1。' },
         { label:'咬牙完成训练', hint:'争取教练认可，承担疲劳风险', profile:{coachTrust:2}, mods:{staminaLoad:2}, result:'你完成了最后一组折返跑。队友为你鼓掌，训练师却把冰袋直接塞进你手里。<br><br>效果：教练信任+2；体能负荷+2。' }
       ]},
@@ -640,7 +641,7 @@
         { label:'留下签完', hint:'回报现场球迷', profile:{fanSupport:2,fame:1}, mods:{staminaLoad:1}, result:'最后一个孩子抱着球衣跑开时，大巴司机无奈地看了表。<br><br>效果：球迷支持+2；人气+1；体能负荷+1。' },
         { label:'让球队安排下次活动', hint:'守住赛程节奏', profile:{mediaTrust:1}, mods:{staminaLoad:-1}, result:'你请工作人员登记联系方式，球队后来补办了一场签名会。<br><br>效果：媒体信任+1；体能负荷-1。' }
       ]},
-      { id:'locker_music', title:'赛季日常：更衣室歌单', scene:'连败期间，更衣室安静得只剩鞋带摩擦声。队友把音响递给你：今天你来选。', body:'一张歌单不会直接赢球，但能决定大家带着什么情绪走出门。', choices:[
+      { id:'locker_music', contextId:'slump', title:'赛季日常：更衣室歌单', scene:'连败期间，更衣室安静得只剩鞋带摩擦声。队友把音响递给你：今天你来选。', body:'一张歌单不会直接赢球，但能决定大家带着什么情绪走出门。', choices:[
         { label:'放大家都会唱的歌', hint:'先把气氛拉回来', profile:{lockerRoomTrust:1}, mods:{teamChemistry:2,moraleBonus:1}, result:'副歌响起时，终于有人笑了。训练开始前，整个更衣室一起唱完最后一句。<br><br>效果：球队默契+2；士气+1；更衣室信任+1。' },
         { label:'保持安静专注', hint:'让每个人面对问题', profile:{leadership:1}, mods:{formVariance:-1}, result:'你把音响放回柜子，只说：先把今天练好。房间没有变热闹，但所有人准时走上训练场。<br><br>效果：领导力+1；状态波动-1。' }
       ]},
@@ -672,7 +673,7 @@
         { label:'自己补齐所有门票', hint:'不让任何人失望', profile:{loyalty:2,businessValue:-1}, mods:{mediaPressure:1}, result:'看台上坐满了熟悉的脸。你花了不少钱，也背上了必须打好的额外压力。<br><br>效果：忠诚+2；商业价值-1；媒体压力+1。' },
         { label:'只邀请最亲近的人', hint:'提前建立边界', profile:{mediaTrust:1,loyalty:-1}, mods:{mediaPressure:-1}, result:'你把规则解释清楚。有人失望，但以后终于没人把赠票当成理所当然。<br><br>效果：媒体信任+1；忠诚-1；媒体压力-1。' }
       ]},
-      { id:'home_booing', title:'赛季日常：主场嘘声', scene:'你连续投丢后，主场第一次响起明显嘘声。暂停回来，下一次触球时声音更大了。', body:'主场的期待有时比客场防守更重。', choices:[
+      { id:'home_booing', stateContext:'home_struggle', title:'赛季日常：主场嘘声', scene:'你连续投丢后，主场第一次响起明显嘘声。暂停回来，下一次触球时声音更大了。', body:'主场的期待有时比客场防守更重。', choices:[
         { label:'继续果断出手', hint:'正面穿过压力', profile:{leadership:1}, mods:{mediaPressure:1,moraleBonus:1}, result:'下一球仍然投了。球进的那一刻，嘘声变成全场起立。<br><br>效果：领导力+1；士气+1；媒体压力+1。' },
         { label:'先用防守和传球回应', hint:'重新把比赛打简单', profile:{coachTrust:1,fanSupport:1}, mods:{formVariance:-1}, result:'你没有和声音较劲，先抢下篮板、送出助攻。几分钟后，球迷重新喊起你的名字。<br><br>效果：教练信任+1；球迷支持+1；状态波动-1。' }
       ]},
@@ -688,7 +689,7 @@
         { label:'先说出球队的问题', hint:'主动承担领袖角色', profile:{leadership:2,controversy:1}, mods:{teamChemistry:1}, result:'你把最难听的话先说了，也把自己的问题放在第一条。会议很长，但没人提前离开。<br><br>效果：领导力+2；球队默契+1；争议+1。' },
         { label:'先听每个人说完', hint:'建立更深的队友信任', profile:{lockerRoomTrust:2}, mods:{teamChemistry:2}, result:'你最后一个发言，只总结大家真正重复的问题。第二天训练明显更安静也更专注。<br><br>效果：更衣室信任+2；球队默契+2。' }
       ]},
-      { id:'trade_question', title:'赛季日常：交易流言追问', scene:'截止日前，记者突然问你是否愿意长期留队。管理层没有给你任何保证，队友就在旁边换衣服。', body:'一句话可能影响球迷、队友和未来谈判。', choices:[
+      { id:'trade_question', contextId:'deadline', title:'赛季日常：交易流言追问', scene:'截止日前，记者突然问你是否愿意长期留队。管理层没有给你任何保证，队友就在旁边换衣服。', body:'一句话可能影响球迷、队友和未来谈判。', choices:[
         { label:'公开表达留队意愿', hint:'先给球队和球迷承诺', profile:{loyalty:2,fanSupport:2}, mods:{mediaPressure:1}, result:'你的回答当晚登上本地头条。球迷更爱你，经纪人却提醒：谈判筹码少了一点。<br><br>效果：忠诚+2；球迷支持+2；媒体压力+1。' },
         { label:'只谈当前比赛', hint:'不给流言更多信息', profile:{mediaTrust:1}, mods:{mediaPressure:-1,teamChemistry:1}, result:'你说今天只关心下一场。答案没有制造标题，也没有让更衣室多想。<br><br>效果：媒体信任+1；媒体压力-1；球队默契+1。' }
       ]},
@@ -696,7 +697,7 @@
         { label:'尝试新方案', hint:'恢复更快，存在适应波动', profile:{coachTrust:1}, mods:{staminaLoad:-2,formVariance:1}, result:'腿部恢复数据明显变好，睡眠却乱了两天。团队决定继续微调。<br><br>效果：体能负荷-2；状态波动+1；教练信任+1。' },
         { label:'坚持传统恢复', hint:'稳定优先', mods:{staminaLoad:-1,formVariance:-1}, result:'你继续冰敷、拉伸和睡眠管理。变化不惊人，但每天都可预测。<br><br>效果：体能负荷-1；状态波动-1。' }
       ]},
-      { id:'team_dinner', title:'赛季日常：客场聚餐账单', scene:'客场赢球后，全队一起吃饭。账单被放到你面前，大家笑着说新合同的人该请客。', body:'更衣室的规矩常常不会写进任何手册。', choices:[
+      { id:'team_dinner', stateContext:'road_win', title:'赛季日常：客场聚餐账单', scene:'客场赢球后，全队一起吃饭。账单被放到你面前，大家笑着说新合同的人该请客。', body:'更衣室的规矩常常不会写进任何手册。', choices:[
         { label:'爽快买单', hint:'用一次聚餐拉近关系', profile:{lockerRoomTrust:2,businessValue:-1}, mods:{teamChemistry:2}, result:'你签下账单，全桌开始喊你的名字。第二天训练，传给你的球明显更多了。<br><br>效果：更衣室信任+2；球队默契+2；商业价值-1。' },
         { label:'提议AA并开个玩笑', hint:'建立边界，也不破坏气氛', profile:{mediaTrust:1}, mods:{teamChemistry:1}, result:'大家笑着掏出手机转账。你没按旧规矩来，但也没有让场面冷掉。<br><br>效果：媒体信任+1；球队默契+1。' }
       ]},
@@ -717,6 +718,9 @@
         phase: 'season',
         slot: 'main',
         weight: 10,
+        topicId: def.topicId || def.id,
+        contextId: def.contextId || null,
+        stateContext: def.stateContext || null,
         title: def.title,
         scenes: [def.scene],
         body: def.body,
