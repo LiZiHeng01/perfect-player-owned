@@ -351,6 +351,52 @@ async function main() {
       return { facts, firstPick: !!got.first_pick, lottery: !!got.lottery_pick, allStar: !!got.all_star, roty: !!got.roty };
     });
     assert.ok(achievementProbe.firstPick && achievementProbe.lottery && achievementProbe.allStar && achievementProbe.roty, '选秀/全明星/最佳新秀成就应能完成：' + JSON.stringify(achievementProbe));
+    const mvpSplitProbe = await page.evaluate(() => {
+      const user = getHupuDisplayName();
+      STATE.career.honors = [];
+      STATE.career.seasons = [];
+      PP_FX.resetAchievements();
+      // 模拟旧版本已经被 FMVP 误解锁的本地状态，确认同步时会修复。
+      PP_FX.getUnlocked().mvp = { at: 1 };
+      PP_FX.getUnlocked().mvp_x3 = { at: 1 };
+      STATE.season.awards = [
+        { act: 'fmvp', label: '👑 总决赛MVP', winner: user, isUser: true }
+      ];
+      const fmvpFacts = PP_FX.syncAchievements();
+      const afterFmvp = PP_FX.getUnlocked();
+      PP_FX.resetAchievements();
+      STATE.season.awards = [
+        { act: 'mvp', label: 'MVP', winner: user, isUser: true }
+      ];
+      const mvpFacts = PP_FX.syncAchievements();
+      const afterMvp = PP_FX.getUnlocked();
+      return {
+        fmvpFacts: { mvp: fmvpFacts.mvp, fmvp: fmvpFacts.fmvp },
+        fmvpUnlocked: { mvp: !!afterFmvp.mvp, fmvp: !!afterFmvp.fmvp },
+        mvpFacts: { mvp: mvpFacts.mvp, fmvp: mvpFacts.fmvp },
+        mvpUnlocked: { mvp: !!afterMvp.mvp, fmvp: !!afterMvp.fmvp },
+        hasSeparateAchievement: PP_FX.ACHIEVEMENTS.some(item => item.id === 'fmvp')
+      };
+    });
+    assert.deepEqual(mvpSplitProbe, {
+      fmvpFacts: { mvp: 0, fmvp: 1 },
+      fmvpUnlocked: { mvp: false, fmvp: true },
+      mvpFacts: { mvp: 1, fmvp: 0 },
+      mvpUnlocked: { mvp: true, fmvp: false },
+      hasSeparateAchievement: true
+    }, 'FMVP 与常规赛 MVP 成就必须完全分开：' + JSON.stringify(mvpSplitProbe));
+    const achievementPanelProbe = await page.evaluate(() => {
+      const got = PP_FX.getUnlocked();
+      got.mvp = { at: 1 };
+      got.fmvp = { at: 1 };
+      PP_FX.openPanel();
+      const text = document.getElementById('pp-ach-panel').textContent.replace(/\s+/g, ' ').trim();
+      return { hasRegularMvp: text.includes('联盟 MVP'), hasFmvp: text.includes('总决赛 MVP'), text };
+    });
+    assert.ok(achievementPanelProbe.hasRegularMvp && achievementPanelProbe.hasFmvp, '成就面板必须分别展示 MVP 与 FMVP：' + achievementPanelProbe.text);
+    await page.locator('#pp-ach-panel .pp-ach-item').filter({ hasText: '总决赛 MVP' }).scrollIntoViewIfNeeded();
+    await page.screenshot({ path: path.join(outputDir, '04-achievements-mvp-fmvp.png'), fullPage: false });
+    await page.evaluate(() => document.getElementById('pp-ach-panel')?.remove());
     await page.waitForTimeout(450);
     await page.screenshot({ path: path.join(outputDir, '03-visible-player-states.png'), fullPage: false });
 

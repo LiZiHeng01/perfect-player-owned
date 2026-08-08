@@ -39,3 +39,9 @@ Original prompt: 完美球员模式 UI风格修改成统一的篮球风格；征
 - `Ranks` 作为巅峰模板 OVR；单项能力值限制在 25–99，避免 ATT/DEF 的模板超出浏览器可玩范围。
 - 德里克·罗斯从伤后/末期版本 OVR 86 修正为巅峰模板 OVR 95，显示为“生涯巅峰”。
 - 150 张历史惊喜卡全部带 `historicalPeak=true` 与 `peakRating`，页面历史卡显示“巅峰”标记。
+
+## 2026-08-08 MVP / FMVP 成就拆分
+
+- `assets/js/perfect-player-enhancements.js` 新增独立 `fmvp` 成就。
+- 成就同步按 `act` 和完整奖项标签区分常规赛 MVP、总决赛 MVP、全明星 MVP，不再用“MVP”子串混判。
+- 对旧版本因 FMVP 误完成的 `mvp` / `mvp_x3` 本地成就，在当前生涯重新同步且没有常规赛 MVP 时自动修复。

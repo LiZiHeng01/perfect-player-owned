@@ -290,6 +290,7 @@
     { id: 'dpoy', icon: '🔒', name: '防守中枢', desc: '当选最佳防守球员', rarity: 'epic' },
     { id: 'sixth_man', icon: '🛋️', name: '超级第六人', desc: '当选最佳第六人', rarity: 'rare' },
     { id: 'mvp', icon: '🏆', name: '联盟 MVP', desc: '荣膺常规赛最有价值球员', rarity: 'legend' },
+    { id: 'fmvp', icon: '👑', name: '总决赛 MVP', desc: '荣膺总决赛最有价值球员', rarity: 'legend' },
     { id: 'mvp_x3', icon: '🐐', name: 'MVP 王朝', desc: '生涯累计 3 座 MVP', rarity: 'legend' },
     // — 球队战绩 —
     { id: 'playoffs', icon: '🎟️', name: '季后赛门票', desc: '首次带队打进季后赛', rarity: 'common' },
@@ -693,7 +694,7 @@
   function syncAchievementState() {
     var s = G(); if (!s) return {};
     var me = displayName();
-    var facts = { mvp:0, dpoy:false, roty:false, sixthman:false, allStar:false, allNBA:false, champion:0 };
+    var facts = { mvp:0, fmvp:0, dpoy:false, roty:false, sixthman:false, allStar:false, allNBA:false, champion:0 };
     var seen = {};
     function keyFor(a, scope) {
       var act = a && a.act ? a.act : '';
@@ -713,7 +714,15 @@
       if (seen[key]) return;
       seen[key] = true;
       var act = a && a.act ? a.act : '';
-      if (act === 'mvp' || label.indexOf('MVP') >= 0) facts.mvp++;
+      // FMVP、全明星 MVP 与常规赛 MVP 必须拆开：之前只判断字符串
+      // 是否包含“MVP”，导致“总决赛MVP”直接完成了联盟 MVP 成就。
+      var labelUpper = label.toUpperCase();
+      var compactLabel = label.replace(/\s+/g, '');
+      var isFmvp = act === 'fmvp' || compactLabel.indexOf('总决赛MVP') >= 0 || labelUpper.indexOf('FMVP') >= 0;
+      var isAllStarMvp = act === 'allStarMvp' || compactLabel.indexOf('全明星MVP') >= 0 || labelUpper.indexOf('ALL-STAR MVP') >= 0;
+      var isRegularMvp = !isFmvp && !isAllStarMvp && (act === 'mvp' || label.indexOf('MVP') >= 0);
+      if (isFmvp) facts.fmvp++;
+      else if (isRegularMvp) facts.mvp++;
       if (act === 'dpoy' || label.indexOf('DPOY') >= 0 || label.indexOf('最佳防守') >= 0) facts.dpoy = true;
       if (act === 'roty' || label.indexOf('最佳新秀') >= 0) facts.roty = true;
       if (act === 'sixthman' || label.indexOf('第六人') >= 0) facts.sixthman = true;
@@ -732,7 +741,16 @@
       if (draft.round === 1 && draft.pick >= 1 && draft.pick <= 14) PP_FX.unlock('lottery_pick');
       if (draft.round === 1 && draft.pick === 1) PP_FX.unlock('first_pick');
     }
+    // 旧版本把 FMVP 的“MVP”子串当成常规赛 MVP，已经存进本地成就的
+    // 误判在当前生涯只有 FMVP 时一并撤回；有真实常规赛 MVP 则保留。
+    if (facts.fmvp > 0 && facts.mvp === 0) {
+      var repaired = false;
+      if (unlocked.mvp) { delete unlocked.mvp; repaired = true; }
+      if (unlocked.mvp_x3) { delete unlocked.mvp_x3; repaired = true; }
+      if (repaired) saveUnlocked(unlocked);
+    }
     if (facts.mvp > 0) PP_FX.unlock('mvp');
+    if (facts.fmvp > 0) PP_FX.unlock('fmvp');
     if (facts.mvp >= 3) PP_FX.unlock('mvp_x3');
     if (facts.dpoy) PP_FX.unlock('dpoy');
     if (facts.roty) PP_FX.unlock('roty');
