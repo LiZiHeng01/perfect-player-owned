@@ -3106,7 +3106,7 @@ function getBuildHistoricalSurprisePool(team) {
 }
 
 // 历史球员是低概率惊喜卡，不再像普通候选一样每轮固定出现。
-const HISTORICAL_SURPRISE_DRAW_CHANCE = 0.10;
+const HISTORICAL_SURPRISE_DRAW_CHANCE = 0.14;
 
 /** 从12名现役池抽一轮固定5张卡；最多插入1张巅峰惊喜卡。巅峰版与现役版视为不同卡。 */
 function drawBuildPlayers(pool, count, team) {
@@ -3151,18 +3151,23 @@ function renderRosterPlayers(team, shown, allPool) {
   if (!rosterArea) return;
   
   const hasHallOfFame = shown.some(p => p._sourceKind === 'historical' && p._historicalTier === 'hall-of-fame');
+  const arrivalHtml = hasHallOfFame
+    ? '<div class="hall-of-fame-arrival"><span>✦</span><b>名人堂球星降临</b><span>✦</span></div>'
+    : '';
   let listHtml = `<div style="display:flex;align-items:center;gap:6px;padding-bottom:4px;flex-wrap:wrap;">
     <span style="font-size:13px;font-weight:700;font-family:var(--font-display);letter-spacing:1px;">${getTeamName(team)}</span>
     <span style="font-size:11px;color:var(--text-dim);">本轮抽取 ${shown.length} 人 · 同轮不重复 · 名人堂惊喜低概率出现</span>
-  </div>${hasHallOfFame ? '<div class="hall-of-fame-arrival"><span>✦</span><b>名人堂球星降临</b><span>✦</span></div>' : ''}<div class="br-roster-list" style="max-height:none;">`;
+  </div>${arrivalHtml}<div class="br-roster-list" style="max-height:none;">`;
   
   shown.forEach((p, drawIndex) => {
     const sel = STATE.selectedPlayer === p || (STATE.selectedPlayer && STATE.selectedPlayer.name === p.name);
     const playerPos = getPlayerMainPos(p);
     const hsStyle = getPlayerHeadshotStyle(p, 32);
     const ovrGrade = getOvrGrade(parseInt(p.ovr) || 50);
+    const historicalCard = p._sourceKind === 'historical';
     const hallOfFame = p._sourceKind === 'historical' && p._historicalTier === 'hall-of-fame';
-    listHtml += `<div class="br-player${hallOfFame ? ' hall-of-fame-card' : ''}${sel ? ' selected' : ''}" data-draw-index="${drawIndex}" onclick="pickPlayerAt(${drawIndex})">
+    const peakAllStar = historicalCard && !hallOfFame;
+    listHtml += `<div class="br-player${historicalCard ? ' historical-effect-card' : ''}${hallOfFame ? ' hall-of-fame-card' : ''}${peakAllStar ? ' peak-all-star-card' : ''}${sel ? ' selected' : ''}" data-draw-index="${drawIndex}" onclick="pickPlayerAt(${drawIndex})">
       <div class="bp-left">
         <div class="bp-headshot" style="${hsStyle}"></div>
         <div>
@@ -3171,7 +3176,7 @@ function renderRosterPlayers(team, shown, allPool) {
         </div>
       </div>
       <div class="bp-meta">
-        ${hallOfFame ? '<span class="hall-of-fame-badge">HOF</span>' : ''}
+        ${hallOfFame ? '<span class="hall-of-fame-badge">HOF</span>' : (peakAllStar ? '<span class="peak-all-star-badge">PEAK</span>' : '')}
         <span class="bp-ovr">${p.ovr}</span>
       </div>
     </div>`;

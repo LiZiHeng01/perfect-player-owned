@@ -296,11 +296,32 @@ body {
 .br-player.hall-of-fame-card .bp-ovr { color: #8a5800; text-shadow: 0 1px 0 #fff2bd; }
 .br-player.hall-of-fame-card.selected { border-color: #ff7a32; background: linear-gradient(110deg,#fff0d5,#ffe7a6); box-shadow: inset 3px 0 0 #ff7a32,0 0 0 2px rgba(255,122,50,.15),0 4px 14px rgba(142,84,9,.22); }
 .hall-of-fame-badge { min-width: 29px; padding: 3px 4px 2px; border: 1px solid #9b6a0b; border-radius: 5px; background: linear-gradient(180deg,#ffe896,#d9a72e); color: #513100; text-align: center; font: 900 8px/1 var(--font-athletic); letter-spacing: .5px; box-shadow: inset 0 1px 0 rgba(255,255,255,.7); }
+.br-player.peak-all-star-card {
+  position: relative; isolation: isolate; overflow: hidden; border-color: #9fb1c3;
+  background: linear-gradient(110deg,#fbfdff,#edf3f8 52%,#fff);
+  box-shadow: inset 2px 0 0 #8ea4ba,0 2px 8px rgba(62,84,107,.11);
+  animation: peakCardReveal .4s ease-out both;
+}
+.br-player.peak-all-star-card::before {
+  content: ""; position: absolute; z-index: 0; top: -75%; bottom: -75%; left: -30%; width: 19%; pointer-events: none;
+  transform: rotate(17deg) translateX(-220%); background: linear-gradient(90deg,transparent,rgba(255,255,255,.72),transparent);
+  animation: peakCardSweep .78s ease-out .12s both;
+}
+.br-player.peak-all-star-card > * { position: relative; z-index: 1; }
+.br-player.peak-all-star-card .bp-headshot { border-color: #9fb3c8; box-shadow: 0 0 0 1px rgba(132,157,181,.24),0 0 7px rgba(92,121,150,.22); }
+.br-player.peak-all-star-card .bp-name { color: #344f69; }
+.br-player.peak-all-star-card .bp-detail { color: #6f859a; }
+.br-player.peak-all-star-card .bp-ovr { color: #425e78; }
+.br-player.peak-all-star-card.selected { border-color: #ff7a32; background: linear-gradient(110deg,#fff5e8,#edf3f8); box-shadow: inset 2px 0 0 #ff7a32,0 2px 9px rgba(73,91,111,.14); }
+.peak-all-star-badge { min-width: 31px; padding: 3px 4px 2px; border: 1px solid #8198af; border-radius: 5px; background: linear-gradient(180deg,#f7fbff,#c9d7e5); color: #405a73; text-align: center; font: 900 7px/1 var(--font-athletic); letter-spacing: .4px; }
 @keyframes hofArrival { from { opacity: 0; transform: translateY(-7px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes hofBannerSweep { to { transform: translateX(130%) skewX(-22deg); } }
 @keyframes hofCardReveal { from { opacity: 0; transform: translateX(13px) scale(.97); } to { opacity: 1; transform: translateX(0) scale(1); } }
 @keyframes hofCardSweep { to { transform: rotate(17deg) translateX(620%); } }
 @keyframes hofCardAura { 0%,100% { box-shadow: inset 3px 0 0 #d4a62f,0 3px 12px rgba(143,95,15,.16); } 50% { box-shadow: inset 3px 0 0 #efc553,0 3px 16px rgba(195,137,24,.3); } }
+@keyframes peakCardReveal { from { opacity: 0; transform: translateX(7px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes peakCardSweep { to { transform: rotate(17deg) translateX(650%); } }
 @media (prefers-reduced-motion: reduce) {
-  .hall-of-fame-arrival,.br-player.hall-of-fame-card,.hall-of-fame-arrival::after,.br-player.hall-of-fame-card::before { animation: none; }
+  .hall-of-fame-arrival,.br-player.hall-of-fame-card,.hall-of-fame-arrival::after,.br-player.hall-of-fame-card::before,
+  .br-player.peak-all-star-card,.br-player.peak-all-star-card::before { animation: none; }
 }

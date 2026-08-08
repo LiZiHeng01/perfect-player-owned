@@ -106,6 +106,7 @@ async function main() {
     30:'Tony Parker|George Gervin|Kawhi Leonard|Tim Duncan|David Robinson'
   };
   assert.equal(teams.length, 30);
+  assert.equal(pool.rules.historicalDrawChance, 0.14, '历史惊喜卡概率应由 10% 小幅提高到 14%');
   const historicalCacheDir = path.join(root, 'assets', 'images', 'Player', 'historical-nba');
   const historicalCachePlaceholders = fs.readdirSync(historicalCacheDir)
     .filter(file => file.endsWith('.png'))
@@ -661,31 +662,52 @@ async function main() {
     assert.ok(await page.locator('.hall-of-fame-card').first().evaluate(node => node.classList.contains('selected')), '名人堂特效卡必须仍可点击选中');
     const hallTextState = JSON.parse(await page.evaluate(() => render_game_to_text()));
     assert.equal(hallTextState.build.hallOfFameCandidates, 5, '文本状态应暴露当前名人堂候选数');
+    assert.equal(hallTextState.build.historicalCandidates, 5, '名人堂卡也应计入全部历史特效卡');
+    assert.equal(hallTextState.build.peakAllStarCandidates, 0, '名人堂预览不应混入普通巅峰卡');
     await page.screenshot({ path: path.join(outputDir, '02c-hall-of-fame-effect.png'), fullPage: false });
-    const noHallEffect = await page.evaluate(() => {
+    const peakAllStarEffect = await page.evaluate(() => {
       const cards = PERFECT_PLAYER_HISTORICAL_SURPRISE_DATA.MEM;
       STATE.currentTeam = 'MEM';
       STATE._drawPlayers = cards;
+      STATE.selectedPlayer = null;
       renderRosterPlayers('MEM', cards, PERFECT_PLAYER_BUILD_DATA.MEM);
-      return { cards:document.querySelectorAll('.hall-of-fame-card').length, arrival:document.querySelectorAll('.hall-of-fame-arrival').length };
+      const first = document.querySelector('.peak-all-star-card');
+      return {
+        historical:document.querySelectorAll('.historical-effect-card').length,
+        hall:document.querySelectorAll('.hall-of-fame-card').length,
+        cards:document.querySelectorAll('.peak-all-star-card').length,
+        badges:document.querySelectorAll('.peak-all-star-badge').length,
+        animation:first ? getComputedStyle(first).animationName : ''
+      };
     });
-    assert.deepEqual(noHallEffect, { cards:0, arrival:0 }, '非名人堂巅峰卡不应误用名人堂特效');
+    assert.deepEqual({ historical:peakAllStarEffect.historical, hall:peakAllStarEffect.hall, cards:peakAllStarEffect.cards, badges:peakAllStarEffect.badges }, { historical:5, hall:0, cards:5, badges:5 }, '非名人堂巅峰卡应全部使用较弱 PEAK 特效且不能误用 HOF');
+    assert.ok(peakAllStarEffect.animation.includes('peakCardReveal') && !peakAllStarEffect.animation.includes('hofCardAura'), '普通巅峰卡只能使用较弱入场动画，不能使用名人堂持续光晕');
+    await page.waitForTimeout(420);
+    await page.locator('.peak-all-star-card').first().click();
+    assert.ok(await page.locator('.peak-all-star-card').first().evaluate(node => node.classList.contains('selected')), '普通巅峰特效卡必须仍可点击选中');
+    const peakTextState = JSON.parse(await page.evaluate(() => render_game_to_text()));
+    assert.deepEqual({ historical:peakTextState.build.historicalCandidates, hall:peakTextState.build.hallOfFameCandidates, peak:peakTextState.build.peakAllStarCandidates }, { historical:5, hall:0, peak:5 }, '文本状态应区分两档历史卡特效');
+    await page.screenshot({ path: path.join(outputDir, '02d-peak-all-star-effect.png'), fullPage: false });
 
     const surpriseRolls = await page.evaluate(() => {
       const originalRandom = Math.random;
       Math.random = () => 0.05;
       const surprise = drawBuildPlayers(PERFECT_PLAYER_BUILD_DATA.LAL, 5, 'LAL');
+      Math.random = () => 0.12;
+      const raisedChance = drawBuildPlayers(PERFECT_PLAYER_BUILD_DATA.LAL, 5, 'LAL');
       Math.random = () => 0.99;
       const normal = drawBuildPlayers(PERFECT_PLAYER_BUILD_DATA.LAL, 5, 'LAL');
       Math.random = originalRandom;
       return {
         surprise: surprise.map(player => player._sourceKind),
+        raisedChance: raisedChance.map(player => player._sourceKind),
         normal: normal.map(player => player._sourceKind),
         surpriseUnique: new Set(surprise.map(player => player._poolUid)).size,
         normalUnique: new Set(normal.map(player => player._poolUid)).size
       };
     });
     assert.equal(surpriseRolls.surprise.filter(kind => kind === 'historical').length, 1, '低概率命中时最多只插入一张历史惊喜卡');
+    assert.equal(surpriseRolls.raisedChance.filter(kind => kind === 'historical').length, 1, '12% 随机值应在提高后的 14% 概率内命中历史卡');
     assert.equal(surpriseRolls.normal.filter(kind => kind === 'historical').length, 0, '未命中时不应固定出现历史球员');
     assert.equal(surpriseRolls.surpriseUnique, 5, '历史惊喜轮次仍需五张独立版本卡');
 

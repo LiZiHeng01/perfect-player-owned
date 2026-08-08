@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-08-08T12:01:21.478697+00:00",
+  "generatedAt": "2026-08-08T12:22:01.974480+00:00",
   "rules": {
     "targetRosterSize": 12,
     "currentTarget": 12,
@@ -14,7 +14,7 @@
     ],
     "currentAndPeakVersionsIndependent": true,
     "historicalMode": "low-probability surprise card",
-    "historicalDrawChance": 0.1,
+    "historicalDrawChance": 0.14,
     "historicalEligibility": "Naismith Hall of Fame player; modern All-Star fallback when a franchise has fewer than five",
     "historicalModernStartYear": 1984,
     "historicalPeakOnly": true,

@@ -181,7 +181,7 @@
   window.PERFECT_PLAYER_DISPLAY_BY_NAME = window.PERFECT_PLAYER_DISPLAY_BY_NAME || {};
   window.PERFECT_PLAYER_BUILD_DATA = window.PERFECT_PLAYER_BUILD_DATA || {};
   window.PERFECT_PLAYER_HISTORICAL_SURPRISE_DATA = window.PERFECT_PLAYER_HISTORICAL_SURPRISE_DATA || {};
-  window.PERFECT_PLAYER_DATA_READY = fetch('assets/data/perfect-player-pool.json?v=20260808-position-versions')
+  window.PERFECT_PLAYER_DATA_READY = fetch('assets/data/perfect-player-pool.json?v=20260808-tiered-effects')
     .then(function (response) {
       if (!response.ok) throw new Error('球员库加载失败：' + response.status);
       return response.json();
@@ -558,7 +558,7 @@
     return JSON.stringify({
       screen: active ? active.id : null,
       character: window.PERFECT_PLAYER_PROFILE || null,
-      build: { team:state.currentTeam || null, locked:state.lockedCount || 0, candidates:document.querySelectorAll('.br-player').length, hallOfFameCandidates:document.querySelectorAll('.br-player.hall-of-fame-card').length, candidatesUnique: (function () { var names = []; document.querySelectorAll('.br-player .bp-name').forEach(function (el) { names.push(el.textContent.trim()); }); return new Set(names).size === names.length; })(), mockAdRerollsLeft: state._mockAdRerollsLeft == null ? 3 : state._mockAdRerollsLeft, pool:window.PERFECT_PLAYER_POOL_REPORT || null },
+      build: { team:state.currentTeam || null, locked:state.lockedCount || 0, candidates:document.querySelectorAll('.br-player').length, historicalCandidates:document.querySelectorAll('.br-player.historical-effect-card').length, hallOfFameCandidates:document.querySelectorAll('.br-player.hall-of-fame-card').length, peakAllStarCandidates:document.querySelectorAll('.br-player.peak-all-star-card').length, candidatesUnique: (function () { var names = []; document.querySelectorAll('.br-player .bp-name').forEach(function (el) { names.push(el.textContent.trim()); }); return new Set(names).size === names.length; })(), mockAdRerollsLeft: state._mockAdRerollsLeft == null ? 3 : state._mockAdRerollsLeft, pool:window.PERFECT_PLAYER_POOL_REPORT || null },
       competition: { team:state.careerTeam || null, rosterSize:state.careerTeam && typeof NBA2K_DATA !== 'undefined' && NBA2K_DATA[state.careerTeam] ? NBA2K_DATA[state.careerTeam].length : 0, historical:state.careerTeam && typeof NBA2K_DATA !== 'undefined' && NBA2K_DATA[state.careerTeam] ? NBA2K_DATA[state.careerTeam].filter(function (p) { return p && p._sourceKind === 'historical'; }).length : 0, source:'NBA2K_DATA (current-only)' },
       career: { team:state.careerTeam || null, season:career.seasonCount || 0, record:[season.wins || 0, season.losses || 0], profile:career.profile || {}, modifiers:career.nextSeasonMods || {} },
       draftProjection: state._draftPending ? window.getPerfectPlayerDraftProjection() : null,

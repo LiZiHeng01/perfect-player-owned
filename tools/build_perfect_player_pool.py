@@ -700,7 +700,7 @@ def main() -> None:
             "historicalPositions": ["PG", "SG", "SF", "PF", "C"],
             "currentAndPeakVersionsIndependent": True,
             "historicalMode": "low-probability surprise card",
-            "historicalDrawChance": 0.1,
+            "historicalDrawChance": 0.14,
             "historicalEligibility": "Naismith Hall of Fame player; modern All-Star fallback when a franchise has fewer than five",
             "historicalModernStartYear": HISTORICAL_MODERN_START_YEAR,
             "historicalPeakOnly": True,
