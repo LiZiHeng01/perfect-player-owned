@@ -80,8 +80,14 @@ async function main() {
       assert.notEqual(fs.statSync(photoPath).size, 12430, player.name + ' 不能使用 NBA 灰色占位头像');
       assert.ok(!['Terry Cummings', 'Norm Nixon', 'Norman Ellard Nixon'].includes(player.nameEn), player.nameEn + ' 不应进入历史惊喜池');
       assert.ok(['hall-of-fame', 'modern-all-star'].includes(player.historicalTier), player.nameEn + ' 历史层级缺失');
+      assert.equal(player.historicalPeak, true, player.nameEn + ' 必须使用巅峰卡');
+      assert.equal(player.peakRating, player.rating, player.nameEn + ' 巅峰评分标记不一致');
     });
   });
+  const derrickRose = teams.find(team => team.id === 6).historicalPlayers.find(player => player.nameEn === 'Derrick Rose');
+  assert.ok(derrickRose, '公牛历史惊喜池应包含 Derrick Rose');
+  assert.ok(derrickRose.rating >= 95, 'Derrick Rose 应使用巅峰评分，不能再是 86：' + derrickRose.rating);
+  assert.equal(derrickRose.source.label, '生涯巅峰', 'Derrick Rose 应标记为生涯巅峰模板');
 
   const port = 8042;
   const server = spawn('python', ['-m', 'http.server', String(port), '--bind', '127.0.0.1'], {
@@ -209,11 +215,13 @@ async function main() {
     const historicalList = await page.evaluate(() => {
       const historical = PERFECT_PLAYER_HISTORICAL_SURPRISE_DATA.LAL;
       renderRosterPlayers('LAL', historical, PERFECT_PLAYER_BUILD_DATA.LAL);
-      return historical.map(player => ({ name: player.name, label: player._sourceLabel, photo: player._photoLocal }));
+      return historical.map(player => ({ name: player.name, label: player._sourceLabel, photo: player._photoLocal, peak: player._historicalPeak, peakRating: player._peakRating }));
     });
     assert.equal(historicalList.length, 5, '每队历史惊喜池应有五名球员');
     assert.ok(historicalList.every(player => player.label && player.photo), '历史球员应有赛季与本地头像');
+    assert.ok(historicalList.every(player => player.peak && player.peakRating > 0), '历史候选必须显式使用巅峰标记');
     assert.equal(await page.locator('.bp-detail').evaluateAll(nodes => nodes.filter(node => /名人堂惊喜|近代全明星惊喜/.test(node.textContent)).length), 5, '历史候选应显式标注惊喜层级');
+    assert.equal(await page.locator('.bp-detail').evaluateAll(nodes => nodes.filter(node => /巅峰/.test(node.textContent)).length), 5, '历史候选界面应显式标注巅峰状态');
 
     const surpriseRolls = await page.evaluate(() => {
       const originalRandom = Math.random;

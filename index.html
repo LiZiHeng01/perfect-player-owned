@@ -3135,7 +3135,7 @@ function renderRosterPlayers(team, shown, allPool) {
         <div class="bp-headshot" style="${hsStyle}"></div>
         <div>
           <div class="bp-name">${p.cname || p.name}</div>
-          <div class="bp-detail">${playerPos}${p._sourceKind === 'historical' ? ' · ' + (p._historicalTier === 'hall-of-fame' ? '名人堂惊喜' : '近代全明星惊喜') : ''}</div>
+          <div class="bp-detail">${playerPos}${p._sourceKind === 'historical' ? ' · ' + (p._historicalTier === 'hall-of-fame' ? '名人堂惊喜' : '近代全明星惊喜') + (p._historicalPeak ? ' · 巅峰' : '') : ''}</div>
         </div>
       </div>
       <div class="bp-meta">

@@ -9,6 +9,7 @@ Original prompt: 完美球员模式 UI风格修改成统一的篮球风格；征
 - 历史惊喜卡只在 10% 抽取轮次出现，每轮最多 1 张；特里·卡明思、诺姆·尼克松明确排除。
 - 每轮固定抽取 5 名球员；同一轮不能重复，重选轮次之间允许再次出现。
 - 广告重选暂时使用模拟广告，最多观看 3 次。
+- 所有历史惊喜卡必须显式标记 `historicalPeak`；优先使用 `rosters19.csv` 的巅峰模板，缺失时使用最高评分赛季。
 
 ## Notes
 
@@ -31,3 +32,10 @@ Original prompt: 完美球员模式 UI风格修改成统一的篮球风格；征
 - The old 260x190 rookie placeholder PNGs were removed; every shipped 2026 rookie asset is a playable JPEG and is checked by the smoke test.
 - Three current-roster players whose NBA CDN images were still silhouettes now use cached ESPN official player-profile headshots, with a runtime URL fallback and placeholder-size regression checks.
 - Headshot lookup accepts player objects as well as names, so roster cards, draft cards, awards, and player detail views share the same local official-photo path.
+
+## 2026-08-08 历史球员巅峰修正
+
+- `tools/build_perfect_player_pool.py` 改为比较每名历史球员的真实采样赛季与 `rosters19.csv` 巅峰模板，模板更强时统一替换。
+- `Ranks` 作为巅峰模板 OVR；单项能力值限制在 25–99，避免 ATT/DEF 的模板超出浏览器可玩范围。
+- 德里克·罗斯从伤后/末期版本 OVR 86 修正为巅峰模板 OVR 95，显示为“生涯巅峰”。
+- 150 张历史惊喜卡全部带 `historicalPeak=true` 与 `peakRating`，页面历史卡显示“巅峰”标记。

@@ -63,9 +63,13 @@ NBA_NAME_ALIASES = {
 }
 
 # The historical surprise cards are deliberately curated instead of using the
-# old "best six by rating" rule.  This keeps the surprise pool recognizable:
+# old "best by rating" rule.  This keeps the surprise pool recognizable:
 # first use actual Naismith Basketball Hall of Fame players, then use a small
 # modern All-Star fallback when a franchise cannot supply five Hall of Famers.
+# Every retained card is a peak card.  The all-time roster (rosters19.csv)
+# contains the game's prime-version attribute template; use that template
+# whenever it is stronger than a sampled season so a player such as Derrick
+# Rose cannot appear as an 86-rated post-injury version.
 # The set is matched against the English identity after normalization below.
 HALL_OF_FAME_NAMES = {
     "Adrian Dantley", "Alex English", "Allen Iverson", "Alonzo Mourning",
@@ -205,6 +209,13 @@ def number(value: object, default: int = 0) -> int:
         return default
 
 
+def draft_year(value: object) -> int:
+    """Extract the four-digit draft year from values such as 200801."""
+    text = str(value or "").strip()
+    match = re.match(r"(19|20)\d{2}", text)
+    return int(match.group(0)) if match else 0
+
+
 def team_id(row: dict[str, str]) -> int:
     name = str(row.get("team", "")).strip()
     name_key = norm(name)
@@ -290,11 +301,11 @@ def is_star(honors: dict[str, int], rating: int) -> bool:
 
 
 def is_historical_candidate(record: dict) -> bool:
-    """Keep a real peak-season card for every franchise's six-card legend pool.
+    """Keep a real peak-season card for every franchise's five-card legend pool.
 
     Several older roster snapshots do not carry cumulative honor columns even
     for players who were clearly rotation stars/all-stars.  A peak rating floor
-    lets the curated six-card slots use those real prime-season rows without
+    lets the curated five-card slots use those real prime-season rows without
     falling back to late-career cards or duplicating a legend.
     """
     return is_star(record["honors"], record["rating"]) or record["rating"] >= 80
@@ -308,7 +319,12 @@ def player_record(row: dict[str, str], source: dict, history: dict | None, nba_i
     strength_bias = {1: -6, 2: -3, 3: 0, 4: 4, 5: 8}.get(pos, 0)
     rating = number(row.get("ATT"), -1)
     defense = number(row.get("DEF"), -1)
-    if rating >= 0 and defense >= 0:
+    # The all-time template has an explicit Ranks/OVR value. Use it instead
+    # of averaging inflated ATT/DEF columns (Derrick Rose is 95 here, not 94).
+    rank_value = number(row.get("Ranks"), -1)
+    if source["code"] == 19 and rank_value > 0:
+        rating = rank_value
+    elif rating >= 0 and defense >= 0:
         rating = round((rating + defense) / 2)
     else:
         values = [number(row.get(k), 55) for k in ("skillPass", "skillShotInterior", "skillShotExterior", "skillShotFree", "skillPhysique", "skillBlock", "skillRebound", "skillSteal")]
@@ -344,6 +360,7 @@ def player_record(row: dict[str, str], source: dict, history: dict | None, nba_i
     resolved_local = current_photo or history_photo
     honors = honor_snapshot(history, source["year"], row)
     identity = (history or {}).get("realId") or norm(english) or norm(name)
+    history_draft_year = number(((history or {}).get("draft") or {}).get("year"), 0)
     historical_teams = {
         number(snapshot.get("teamId"))
         for snapshot in ((history or {}).get("rosterSnapshots") or [])
@@ -366,6 +383,7 @@ def player_record(row: dict[str, str], source: dict, history: dict | None, nba_i
         "rating": max(40, min(99, rating)),
         "age": number(row.get("age"), 24),
         "yearsLeague": number(row.get("yearsLeague")),
+        "draftYear": history_draft_year or draft_year(row.get("draft")),
         "image": number(row.get("image")),
         "photoLocal": resolved_local,
         "fallbackPhotoLocal": fallback_photo,
@@ -405,11 +423,10 @@ def main() -> None:
         rows_by_source[source["code"]] = load_csv(DATA_DIR / source["file"])
 
     # rosters19.csv (labeled 1957-58) is NOT a real season roster — it is an
-    # all-time compilation that mixes every era's legends at INFLATED ratings
+    # all-time compilation that mixes every era's legends at prime ratings
     # (Jordan 101, Duncan DEF 104, LeBron 100) under a bogus 1957-58 label.
-    # Using it as a normal season made modern legends resolve to that fake card.
-    # We keep it only as a LAST-RESORT source for genuine early-era players who
-    # appear in no real season file; everyone else uses their real-season peak.
+    # It is safe for the historical surprise pool only when treated as a
+    # career-peak template, never as a literal 1957-58 season.
     ALLTIME_CODE = 19
 
     current_by_team: dict[int, list[dict]] = defaultdict(list)
@@ -418,8 +435,9 @@ def main() -> None:
     # Vince Carter appear in both Toronto and New Jersey without inventing a
     # random cross-franchise Hall of Famer for teams that need a fifth card.
     historical_peak: dict[str, dict] = {}
-    # rosters19.csv is an all-time compilation, not a real season. It is only
-    # used to fill a player whose prime has no real-season row.
+    # rosters19.csv is an all-time compilation, not a real season. It is kept
+    # separately while the real sampled seasons are scanned, then compared
+    # against each player's best sampled row below.
     alltime_peak: dict[str, dict] = {}
     historical_team_ids: dict[str, set[int]] = defaultdict(set)
 
@@ -459,20 +477,25 @@ def main() -> None:
             target = alltime_peak if source["code"] == ALLTIME_CODE else historical_peak
             consider_peak(target, record)
 
-    # Fill in HOF players whose prime predates the real-season snapshots. The
-    # all-time card has a bogus 1957-58 label, so relabel it honestly as a
-    # career peak when it is used.
+    # Prefer the all-time/prime template whenever it is stronger than the
+    # sampled-season card. This fixes post-injury versions such as Derrick Rose
+    # (86 in a late sampled roster) and keeps every retained historical card in
+    # peak form. The source is relabeled so users never see the fake 1957-58
+    # season attached to an all-time compilation row.
     for key, record in alltime_peak.items():
-        # The all-time compilation often contains the franchise row that is
-        # absent from the sampled real seasons (for example Mark Price's
-        # Cleveland card). Keep its team membership even when the real-season
-        # version is the better attribute snapshot.
         historical_team_ids[key].update(record.get("historicalTeams") or [record["teamId"]])
-        if key in historical_peak:
-            continue
         record["source"] = dict(record["source"])
         record["source"]["label"] = "生涯巅峰"
-        historical_peak[key] = record
+        record["source"]["year"] = 0
+        record["source"]["peakTemplate"] = True
+        record["peakSource"] = "all-time peak template"
+        # A few all-time rows exceed the browser's 99-point attribute scale.
+        # Preserve the prime shape while keeping the playable values bounded.
+        record["attrs"] = {
+            attr_key: max(25, min(99, number(value, 55)))
+            for attr_key, value in (record.get("attrs") or {}).items()
+        }
+        consider_peak(historical_peak, record)
 
     # Current players are the live 2025-26 rosters; any historical entry that is the
     # same person as a current player must be dropped (a legend still playing is
@@ -484,6 +507,13 @@ def main() -> None:
             current_identities.add(rec["identity"])
             current_name_keys.add(norm(rec.get("nameEn")))
             current_name_keys.add(norm(rec.get("altName")))
+
+    # Mark the final historical source explicitly so the browser and the
+    # regression test can prove that every surprise card is peak-form.
+    for record in historical_peak.values():
+        record["historicalPeak"] = True
+        record["peakRating"] = record["rating"]
+        record.setdefault("peakSource", "best sampled season")
 
     historical_by_team: dict[int, dict[str, dict]] = defaultdict(dict)
     for identity, record in historical_peak.items():
@@ -507,7 +537,11 @@ def main() -> None:
         # modern All-Star fallback. This keeps Jordan-era cards visible without
         # throwing away true historical giants such as Kareem or Oscar.
         tier_score = 2 if player.get("historicalTier") == "hall-of-fame" else 1
-        modern_score = 1 if number((player.get("source") or {}).get("year")) >= HISTORICAL_MODERN_START_YEAR else 0
+        source = player.get("source") or {}
+        modern_score = 1 if (
+            number(source.get("year")) >= HISTORICAL_MODERN_START_YEAR
+            or (source.get("peakTemplate") and number(player.get("draftYear")) >= HISTORICAL_MODERN_START_YEAR)
+        ) else 0
         return (-tier_score, -modern_score, -player["rating"], -player["starScore"], player["nameEn"])
 
     global_modern_surprise_pool = sorted(
@@ -570,6 +604,8 @@ def main() -> None:
             "historicalDrawChance": 0.1,
             "historicalEligibility": "Naismith Hall of Fame player; modern All-Star fallback when a franchise has fewer than five",
             "historicalModernStartYear": HISTORICAL_MODERN_START_YEAR,
+            "historicalPeakOnly": True,
+            "historicalPeakSource": "rosters19.csv prime template when available, otherwise highest sampled season rating",
             "historicalExcluded": sorted(HISTORICAL_EXCLUDED_NAMES),
         },
         "seasons": SEASONS,

@@ -141,7 +141,7 @@
     { year: 1984, label: '1983-84', sub: '黑白双雄' }
   ];
   const SINGLE_SEASON = { year: 2025, label: '虎扑单赛季 · 2025-26' };
-  const ATTRIBUTE_POOL_URL = 'assets/data/perfect-player-pool.json?v=20260808';
+  const ATTRIBUTE_POOL_URL = 'assets/data/perfect-player-pool.json?v=20260808-peak';
 
   // 真人风格球员大头照（由 tools/generate_ai_avatars.py 生成，顺序固定以兼容旧存档）
   const AI_AVATAR_META = [
@@ -537,7 +537,7 @@
       archetype,
       similar: findSimilarPlayers(attrs13, PP.position),
       attributeSources: b.sourceHistory.slice(),
-      sourcePool: { current: 12, historical: 3, perTeam: 15 },
+      sourcePool: { current: 12, historical: 5, perTeam: 17 },
       teamId: null,
       age: 22,
       seasonCount: 0,
