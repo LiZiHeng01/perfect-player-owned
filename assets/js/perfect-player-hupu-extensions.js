@@ -566,6 +566,7 @@
       seasonEvents: window.PERFECT_PLAYER_SEASON_EVENT_REPORT || null,
       seasonEventState: career._lastSeasonEventState || null,
       legacyRanking: career.legacy ? { rank:career.legacy.historicalRank || null, score:career.legacy.score || 0, top100:!!career.legacy.top100, animationComplete:!!document.querySelector('.legacy-top100-wrap[data-animation-complete="1"]') } : null,
+      careerArchive: typeof CAREER_ARCHIVE_CACHE !== 'undefined' ? { count:CAREER_ARCHIVE_CACHE.length, open:!!document.getElementById('career-archive-modal'), detail:!!document.querySelector('#career-archive-modal .career-archive-detail-hero'), ranking:CAREER_ARCHIVE_CACHE.map(function(item) { return { id:item.id, name:item.name, score:item.score, historicalRank:item.historicalRank }; }) } : null,
       simulation: window.PERFECT_PLAYER_SIM_REPORT || null
     });
   };

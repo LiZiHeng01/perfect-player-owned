@@ -2736,13 +2736,15 @@ function renderModeSelect() {
     if (c.mode === 'current') {
       var mainBtn = card.querySelector('.fc-btn');
       if (mainBtn) {
-        mainBtn.insertAdjacentHTML('afterend', '<button class="fc-btn" id="continue-activity-btn" style="margin-top:10px;background:#2f6fed;box-shadow:0 4px 0 #1d4fb8;" onclick="event.stopPropagation();manualLoadGame(1)">▶ 继续活动</button>');
+        mainBtn.insertAdjacentHTML('afterend', '<button class="fc-btn" id="continue-activity-btn" style="margin-top:10px;background:#2f6fed;box-shadow:0 4px 0 #1d4fb8;" onclick="event.stopPropagation();manualLoadGame(1)">▶ 继续活动</button>' +
+          '<button class="fc-btn career-archive-home-btn" id="career-archive-btn" onclick="event.stopPropagation();showCareerArchive()">🏛️ 生涯档案馆 <span id="career-archive-count">0</span></button>');
       }
     }
   });
 
   STATE.mode = 'current';
   refreshContinueActivityButton();
+  refreshCareerArchiveButton();
 }
 
 async function startGame() {
@@ -15171,11 +15173,253 @@ function closeLoadMenu() {
   if (modal) modal.remove();
 }
 
+// ==================== 主页 · 生涯档案馆 ====================
+var CAREER_ARCHIVE_KEY = 'perfect_player_career_archive_v1';
+var CAREER_ARCHIVE_CACHE = [];
+var CAREER_ARCHIVE_READY = null;
+var CAREER_ARCHIVE_WRITE_CHAIN = Promise.resolve();
+
+function escapeCareerArchiveHtml(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch) {
+    return ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[ch];
+  });
+}
+
+function normalizeCareerArchiveRecord(record) {
+  if (!record || !record.id) return null;
+  var out = Object.assign({}, record);
+  out.v = 1;
+  out.name = out.name || '未命名球员';
+  out.stats = out.stats || {};
+  out.honors = out.honors || {};
+  out.honorDetails = Array.isArray(out.honorDetails) ? out.honorDetails : [];
+  out.teams = Array.isArray(out.teams) ? out.teams : [];
+  out.score = Number(out.score) || 0;
+  out.historicalRank = Number(out.historicalRank) || calculateLegacyHistoricalRank(out.score, !!out.goat);
+  out.top100 = out.historicalRank <= 100;
+  return out;
+}
+
+function sortCareerArchiveRecords(records) {
+  return (records || []).slice().sort(function(a, b) {
+    return (Number(b.score) || 0) - (Number(a.score) || 0)
+      || (Number(a.historicalRank) || 999) - (Number(b.historicalRank) || 999)
+      || (Number(b.honors && b.honors.championships) || 0) - (Number(a.honors && a.honors.championships) || 0)
+      || (Number(b.honors && b.honors.mvp) || 0) - (Number(a.honors && a.honors.mvp) || 0)
+      || (Number(b.stats && b.stats.points) || 0) - (Number(a.stats && a.stats.points) || 0)
+      || (Number(a.completedAt) || 0) - (Number(b.completedAt) || 0);
+  });
+}
+
+function loadCareerArchive(force) {
+  if (CAREER_ARCHIVE_READY && !force) return CAREER_ARCHIVE_READY;
+  CAREER_ARCHIVE_READY = storageGet(CAREER_ARCHIVE_KEY).then(function(raw) {
+    var payload = raw;
+    if (typeof payload === 'string') {
+      try { payload = JSON.parse(payload); } catch(e) { payload = null; }
+    }
+    var records = Array.isArray(payload) ? payload : (payload && Array.isArray(payload.records) ? payload.records : []);
+    CAREER_ARCHIVE_CACHE = sortCareerArchiveRecords(records.map(normalizeCareerArchiveRecord).filter(Boolean));
+    refreshCareerArchiveButton();
+    return CAREER_ARCHIVE_CACHE;
+  }).catch(function() {
+    CAREER_ARCHIVE_CACHE = [];
+    refreshCareerArchiveButton();
+    return CAREER_ARCHIVE_CACHE;
+  });
+  return CAREER_ARCHIVE_READY;
+}
+
+function refreshCareerArchiveButton() {
+  var count = document.getElementById('career-archive-count');
+  if (count) count.textContent = String(CAREER_ARCHIVE_CACHE.length || 0);
+}
+
+function buildCareerArchiveRecord() {
+  var c = STATE.career || {};
+  var legacy = ensureLegacyRankingDetails(c.legacy || calculateLegacyResult());
+  var ts = c.totalStats || {};
+  var games = Number(ts.games) || 0;
+  var seasons = c.seasons || [];
+  var teams = [];
+  seasons.forEach(function(season) {
+    if (!season || !season.team || teams.some(function(item) { return item.id === season.team; })) return;
+    teams.push({ id:season.team, name:getTeamName(season.team) });
+  });
+  if (!teams.length && STATE.careerTeam) teams.push({ id:STATE.careerTeam, name:getTeamName(STATE.careerTeam) });
+  var honorMap = {};
+  var honorSeen = {};
+  (c.honors || []).forEach(function(honor) {
+    var label = honor && honor.label || '';
+    if (!label || isRookieHonorForLaterSeason(honor)) return;
+    var uniqueKey = String(honor.seasonNum == null ? '' : honor.seasonNum) + '|' + label;
+    if (honorSeen[uniqueKey]) return;
+    honorSeen[uniqueKey] = true;
+    honorMap[label] = (honorMap[label] || 0) + 1;
+  });
+  var honorDetails = Object.keys(honorMap).map(function(label) { return { label:label, count:honorMap[label] }; })
+    .sort(function(a, b) { return b.count - a.count || a.label.localeCompare(b.label, 'zh-CN'); });
+  var draftLabel = c.draft && typeof getDraftPickLabel === 'function' ? getDraftPickLabel(c.draft) : '未记录';
+  return normalizeCareerArchiveRecord({
+    id: STATE.gameId || generateGameId(),
+    completedAt: Date.now(),
+    name: typeof getHupuDisplayName === 'function' ? getHupuDisplayName() : '我的球员',
+    avatar: typeof getHupuAvatarUrl === 'function' ? getHupuAvatarUrl() : '',
+    position: (SIM_CONFIG.POSITIONS && SIM_CONFIG.POSITIONS[STATE.position || STATE.finalPosition]) || STATE.position || STATE.finalPosition || '—',
+    ovr: Number(STATE.finalOVR) || 0,
+    age: Number(c.currentAge) || 0,
+    seasons: seasons.length || Number(legacy.seasonsCount) || 0,
+    teams: teams,
+    longestTeam: legacy.longestTeam ? getTeamName(legacy.longestTeam) : (teams[0] && teams[0].name || '—'),
+    draft: draftLabel,
+    stats: {
+      games: games,
+      points: Number(ts.pts) || 0,
+      rebounds: Number(ts.reb) || 0,
+      assists: Number(ts.ast) || 0,
+      steals: Number(ts.stl) || 0,
+      blocks: Number(ts.blk) || 0,
+      turnovers: Number(ts.tov) || 0,
+      fgm: Number(ts.fgm) || 0,
+      fga: Number(ts.fga) || 0,
+      threeM: Number(ts.threeM) || 0,
+      threeA: Number(ts.threeA) || 0,
+      ftm: Number(ts.ftm) || 0,
+      fta: Number(ts.fta) || 0
+    },
+    honors: {
+      championships: Number(legacy.championships) || 0,
+      mvp: Number(legacy.mvp) || 0,
+      fmvp: Number(legacy.fmvp) || 0,
+      dpoy: Number(legacy.dpoy) || 0,
+      allNBA: Number(legacy.allNBA) || 0,
+      allStar: Number(legacy.allStar) || 0,
+      hof: !!legacy.hof,
+      jerseyTeams: (legacy.jerseyTeams || []).map(function(item) { return getTeamName(item.team); })
+    },
+    honorDetails: honorDetails,
+    score: Number(legacy.score) || 0,
+    tier: legacy.tier || '优秀职业球员',
+    historicalRank: legacy.historicalRank,
+    top100: !!legacy.top100,
+    goat: !!legacy.goat
+  });
+}
+
+function saveCareerArchiveRecord(record) {
+  record = normalizeCareerArchiveRecord(record);
+  if (!record) return Promise.resolve([]);
+  CAREER_ARCHIVE_WRITE_CHAIN = CAREER_ARCHIVE_WRITE_CHAIN.then(function() {
+    return loadCareerArchive(true).then(function(records) {
+      var existing = records.find(function(item) { return item.id === record.id; });
+      if (existing && existing.completedAt) record.completedAt = existing.completedAt;
+      var next = records.filter(function(item) { return item.id !== record.id; });
+      next.push(record);
+      CAREER_ARCHIVE_CACHE = sortCareerArchiveRecords(next);
+      return storageSet(CAREER_ARCHIVE_KEY, { v:1, records:CAREER_ARCHIVE_CACHE }).then(function() {
+        refreshCareerArchiveButton();
+        return CAREER_ARCHIVE_CACHE;
+      });
+    });
+  });
+  return CAREER_ARCHIVE_WRITE_CHAIN;
+}
+
+function archiveCompletedCareer() {
+  if (!STATE.career || !STATE.career.retired || !STATE.career.legacy) return Promise.resolve(null);
+  var record;
+  try { record = buildCareerArchiveRecord(); } catch(e) { return Promise.resolve(null); }
+  return saveCareerArchiveRecord(record);
+}
+
+function getCareerArchiveRank(recordId) {
+  for (var i = 0; i < CAREER_ARCHIVE_CACHE.length; i++) if (CAREER_ARCHIVE_CACHE[i].id === recordId) return i + 1;
+  return 0;
+}
+
+function renderCareerArchiveList(records) {
+  records = sortCareerArchiveRecords(records || []);
+  var championships = records.reduce(function(sum, item) { return sum + (Number(item.honors && item.honors.championships) || 0); }, 0);
+  var best = records.length ? records[0] : null;
+  var html = '<div class="career-archive-overview"><span><b>' + records.length + '</b>角色</span><span><b>' + championships + '</b>总冠军</span><span><b>' + (best ? best.score : 0) + '</b>最高历史分</span></div>';
+  if (!records.length) {
+    html += '<div class="career-archive-empty"><span>🏀</span><b>还没有退役角色</b><p>完成一次生涯并进入退役结算后，荣耀与数据会永久记录在这里。</p></div>';
+    return html;
+  }
+  html += '<div class="career-archive-list">';
+  records.forEach(function(record, index) {
+    var h = record.honors || {};
+    var s = record.stats || {};
+    var avatar = escapeCareerArchiveHtml(record.avatar || '');
+    var id = encodeURIComponent(record.id);
+    html += '<button class="career-archive-row" onclick="showCareerArchiveDetail(decodeURIComponent(\'' + id + '\'))">' +
+      '<span class="career-archive-user-rank">#' + (index + 1) + '</span>' +
+      '<img src="' + avatar + '" alt="' + escapeCareerArchiveHtml(record.name) + '头像">' +
+      '<span class="career-archive-row-main"><b>' + escapeCareerArchiveHtml(record.name) + '</b><small>' + escapeCareerArchiveHtml(record.position) + ' · OVR ' + record.ovr + ' · ' + record.seasons + '年</small><em>' + (h.championships || 0) + '冠 · ' + (h.mvp || 0) + 'MVP · ' + Math.round(s.points || 0) + '分</em></span>' +
+      '<span class="career-archive-row-score"><b>' + record.score + '</b><small>历史分</small><em>历史第' + record.historicalRank + '名</em></span>' +
+      '</button>';
+  });
+  html += '</div><div class="career-archive-rule">排名顺序：历史分 → 历史名次 → 总冠军 → MVP → 生涯总得分</div>';
+  return html;
+}
+
+function showCareerArchive() {
+  if (!document.getElementById('screen-menu') || !document.getElementById('screen-menu').classList.contains('active')) return;
+  var existing = document.getElementById('career-archive-modal');
+  if (existing) existing.remove();
+  var html = '<div class="team-picker-overlay" id="career-archive-modal"><div class="team-picker-modal career-archive-modal">' +
+    '<div class="team-picker-header"><span>🏛️ 生涯档案馆</span><button class="team-picker-close" onclick="closeCareerArchive()">✕</button></div>' +
+    '<div class="career-archive-content"><div class="career-archive-loading">正在读取历代角色…</div></div>' +
+    '</div></div>';
+  document.body.insertAdjacentHTML('beforeend', html);
+  loadCareerArchive(true).then(function(records) {
+    var content = document.querySelector('#career-archive-modal .career-archive-content');
+    if (content) content.innerHTML = renderCareerArchiveList(records);
+  });
+}
+
+function showCareerArchiveDetail(recordId) {
+  var record = CAREER_ARCHIVE_CACHE.find(function(item) { return item.id === recordId; });
+  var content = document.querySelector('#career-archive-modal .career-archive-content');
+  if (!record || !content) return;
+  var s = record.stats || {};
+  var h = record.honors || {};
+  var games = Math.max(1, Number(s.games) || 0);
+  function avg(value) { return ((Number(value) || 0) / games).toFixed(1); }
+  function pct(made, attempted) { return attempted ? ((made / attempted) * 100).toFixed(1) + '%' : '—'; }
+  var honors = [
+    ['总冠军',h.championships || 0],['常规赛MVP',h.mvp || 0],['总决赛MVP',h.fmvp || 0],
+    ['DPOY',h.dpoy || 0],['最佳阵容',h.allNBA || 0],['全明星',h.allStar || 0]
+  ];
+  var honorDetails = record.honorDetails.length ? record.honorDetails.map(function(item) { return '<span>' + escapeCareerArchiveHtml(item.label) + (item.count > 1 ? ' ×' + item.count : '') + '</span>'; }).join('') : '<span>无联盟奖项记录</span>';
+  content.innerHTML = '<button class="career-archive-back" onclick="showCareerArchiveListView()">← 返回角色排名</button>' +
+    '<div class="career-archive-detail-hero"><span class="career-archive-detail-rank">#' + getCareerArchiveRank(record.id) + '</span><img src="' + escapeCareerArchiveHtml(record.avatar || '') + '" alt="角色头像"><div><b>' + escapeCareerArchiveHtml(record.name) + '</b><small>' + escapeCareerArchiveHtml(record.position) + ' · OVR ' + record.ovr + ' · ' + record.seasons + '年生涯</small><em>' + escapeCareerArchiveHtml(record.teams.map(function(team) { return team.name; }).join(' → ') || record.longestTeam) + '</em></div><strong>' + record.score + '<small>历史分</small></strong></div>' +
+    '<div class="career-archive-legacy"><span><small>历史地位</small><b>' + escapeCareerArchiveHtml(record.tier) + '</b></span><span><small>历史排名</small><b>第' + record.historicalRank + '名</b></span><span><small>百大结果</small><b>' + (record.top100 ? '正式入选' : '候选区') + '</b></span></div>' +
+    '<div class="career-archive-section-title">荣耀</div><div class="career-archive-honor-grid">' + honors.map(function(item) { return '<span><b>' + item[1] + '</b><small>' + item[0] + '</small></span>'; }).join('') + '</div>' +
+    '<div class="career-archive-honor-details">' + honorDetails + '</div>' +
+    '<div class="career-archive-section-title">生涯数据</div><div class="career-archive-stat-grid">' +
+      '<span><b>' + (s.games || 0) + '</b><small>场次</small></span><span><b>' + Math.round(s.points || 0) + '</b><small>总得分</small></span><span><b>' + Math.round(s.rebounds || 0) + '</b><small>总篮板</small></span><span><b>' + Math.round(s.assists || 0) + '</b><small>总助攻</small></span>' +
+      '<span><b>' + avg(s.points) + '</b><small>场均得分</small></span><span><b>' + avg(s.rebounds) + '</b><small>场均篮板</small></span><span><b>' + avg(s.assists) + '</b><small>场均助攻</small></span><span><b>' + avg(s.steals) + '</b><small>场均抢断</small></span>' +
+      '<span><b>' + avg(s.blocks) + '</b><small>场均盖帽</small></span><span><b>' + pct(s.fgm,s.fga) + '</b><small>投篮命中率</small></span><span><b>' + pct(s.threeM,s.threeA) + '</b><small>三分命中率</small></span><span><b>' + pct(s.ftm,s.fta) + '</b><small>罚球命中率</small></span></div>' +
+    '<div class="career-archive-meta"><span>选秀：' + escapeCareerArchiveHtml(record.draft) + '</span><span>代表球队：' + escapeCareerArchiveHtml(record.longestTeam) + '</span><span>名人堂：' + (h.hof ? '入选' : '未入选') + '</span><span>退役球衣：' + escapeCareerArchiveHtml((h.jerseyTeams || []).join('、') || '无') + '</span></div>';
+}
+
+function showCareerArchiveListView() {
+  var content = document.querySelector('#career-archive-modal .career-archive-content');
+  if (content) content.innerHTML = renderCareerArchiveList(CAREER_ARCHIVE_CACHE);
+}
+
+function closeCareerArchive() {
+  var modal = document.getElementById('career-archive-modal');
+  if (modal) modal.remove();
+}
+
 setTimeout(function() {
   refreshManualSaveMeta().then(function() {
     renderMenuSavePanel();
     refreshContinueActivityButton();
   });
+  loadCareerArchive(false);
 }, 600);
 
 function calcTrainingBreakdown() {
@@ -15410,6 +15654,7 @@ function announcePlayerRetirement() {
   saveCurrentSeasonToCareer();
   c.retired = true;
   c.legacy = calculateLegacyResult();
+  archiveCompletedCareer();
   clearAutoSaveStorage();
   showLegacyModal(0);
 }
@@ -17077,6 +17322,7 @@ function closeLegacyAndShow(next, jerseyIdx) {
 function finishLegacyStory() {
   var modal = document.getElementById('legacy-modal');
   if (modal) modal.remove();
+  archiveCompletedCareer();
   generateCareerPoster();
 }
 
@@ -24258,6 +24504,7 @@ function applyPostCareerIdentityDelta(amount) {
 function finishPostCareer() {
   STATE.career.flags = STATE.career.flags || {};
   STATE.career.flags.postCareerDone = true;
+  archiveCompletedCareer();
   clearAutoSaveStorage();
   showCareerStats(1);
 }

@@ -134,6 +134,7 @@ async function main() {
     await page.waitForFunction(() => window.PERFECT_PLAYER_POOL_REPORT && window.PERFECT_PLAYER_POOL_REPORT.total === 510);
 
     assert.equal(await page.locator('.feature-card').count(), 1, '首页只应有虎扑原生涯入口');
+    assert.equal(await page.locator('#career-archive-btn').count(), 1, '生涯档案馆入口应只挂在主页生涯卡内');
     assert.equal(await page.locator('#screen-achievements').count(), 0, '征服联盟占位页应移除');
     assert.equal(await page.locator('.btn-share-poster').count(), 0, 'JRs 发帖入口应移除');
     const poolReport = await page.evaluate(() => window.PERFECT_PLAYER_POOL_REPORT);
@@ -407,8 +408,103 @@ async function main() {
     assert.ok(seasonEventLimitProbe.uniqueAfterDuplicateMark, '同一事件重复登记时不能产生重复 ID');
     assert.ok(seasonEventLimitProbe.blockedAtCap, '每季达到 5 次后不得继续弹出普通赛季事件');
 
+    const outputDir = path.join(root, 'output', 'perfect-player-hupu-mobile');
+    fs.mkdirSync(outputDir, { recursive: true });
+    const automaticCareerArchiveProbe = await page.evaluate(async () => {
+      const saved = { career:STATE.career, gameId:STATE.gameId, finalOVR:STATE.finalOVR, position:STATE.position, careerTeam:STATE.careerTeam };
+      await storageSet(CAREER_ARCHIVE_KEY, { v:1, records:[] });
+      CAREER_ARCHIVE_READY = null;
+      CAREER_ARCHIVE_CACHE = [];
+      try {
+        STATE.gameId = 'automatic-retired-career';
+        STATE.finalOVR = 94;
+        STATE.position = 'PG';
+        STATE.careerTeam = 'LAL';
+        STATE.career = {
+          retired:true, currentAge:39, seasons:[{seasonNum:1,team:'LAL'}],
+          totalStats:{games:900,pts:22000,reb:5000,ast:7000,stl:1200,blk:300,fgm:8000,fga:16000,threeM:1600,threeA:4300,ftm:4400,fta:5200},
+          honors:[{seasonNum:1,label:'MVP'},{seasonNum:1,label:'总冠军'}], flags:{}, draft:{round:1,pick:5},
+          legacy:{score:150,tier:'NBA历史百大',hof:true,top100:true,goat:false,historicalRank:42,seasonsCount:1,jerseyTeams:[],longestTeam:'LAL',championships:1,mvp:1,fmvp:0,dpoy:0,allNBA:0,allStar:0,points:22000,games:900}
+        };
+        await archiveCompletedCareer();
+        return { count:CAREER_ARCHIVE_CACHE.length, id:CAREER_ARCHIVE_CACHE[0]?.id, games:CAREER_ARCHIVE_CACHE[0]?.stats.games, rank:CAREER_ARCHIVE_CACHE[0]?.historicalRank };
+      } finally {
+        STATE.career = saved.career;
+        STATE.gameId = saved.gameId;
+        STATE.finalOVR = saved.finalOVR;
+        STATE.position = saved.position;
+        STATE.careerTeam = saved.careerTeam;
+        await storageSet(CAREER_ARCHIVE_KEY, { v:1, records:[] });
+        CAREER_ARCHIVE_CACHE = [];
+        CAREER_ARCHIVE_READY = null;
+      }
+    });
+    assert.deepEqual(automaticCareerArchiveProbe, { count:1, id:'automatic-retired-career', games:900, rank:44 }, '角色退役后必须自动把荣耀、数据和百大名次写入档案馆');
+    const careerArchiveSeed = await page.evaluate(async () => {
+      await storageSet(CAREER_ARCHIVE_KEY, { v:1, records:[] });
+      CAREER_ARCHIVE_READY = null;
+      CAREER_ARCHIVE_CACHE = [];
+      const baseStats = { games:1000, points:25000, rebounds:7000, assists:6500, steals:1300, blocks:600, fgm:9000, fga:18000, threeM:1800, threeA:4800, ftm:5200, fta:6100 };
+      function record(id, name, score, rank, rings, mvp, avatar) {
+        return {
+          id, name, score, historicalRank:rank, top100:rank <= 100, tier:rank <= 10 ? '历史前十级别' : 'NBA历史百大',
+          avatar, position:'控球后卫', ovr:96, age:38, seasons:16, teams:[{id:'LAL',name:'洛杉矶湖人'}], longestTeam:'洛杉矶湖人', draft:'首轮第3顺位',
+          completedAt:score * 10, stats:Object.assign({}, baseStats, { points:baseStats.points + score * 10 }),
+          honors:{ championships:rings, mvp, fmvp:rings, dpoy:1, allNBA:9, allStar:12, hof:true, jerseyTeams:['洛杉矶湖人'] },
+          honorDetails:[{label:'总冠军',count:rings},{label:'MVP',count:mvp}]
+        };
+      }
+      await saveCareerArchiveRecord(record('archive-a','林一飞',160,18,2,2,'assets/images/Player/ai-avatars/avatar-01.png'));
+      await saveCareerArchiveRecord(record('archive-b','周天成',188,7,4,3,'assets/images/Player/ai-avatars/avatar-07.png'));
+      await saveCareerArchiveRecord(record('archive-a','林一飞',170,14,3,2,'assets/images/Player/ai-avatars/avatar-01.png'));
+      return { count:CAREER_ARCHIVE_CACHE.length, order:CAREER_ARCHIVE_CACHE.map(item => item.id), buttonCount:document.getElementById('career-archive-count')?.textContent };
+    });
+    assert.deepEqual(careerArchiveSeed, { count:2, order:['archive-b','archive-a'], buttonCount:'2' }, '档案馆应按历史分排名，并用 gameId 更新同一角色而不是重复新增');
+    await page.click('#career-archive-btn');
+    await page.waitForSelector('#career-archive-modal .career-archive-row');
+    const careerArchiveListProbe = await page.evaluate(() => {
+      const modal = document.querySelector('#career-archive-modal .career-archive-modal');
+      const rows = Array.from(document.querySelectorAll('#career-archive-modal .career-archive-row'));
+      return {
+        rows:rows.length,
+        names:rows.map(row => row.querySelector('.career-archive-row-main b')?.textContent),
+        ranks:rows.map(row => row.querySelector('.career-archive-user-rank')?.textContent),
+        rule:document.querySelector('.career-archive-rule')?.textContent || '',
+        singleScreen:!!modal && modal.getBoundingClientRect().top >= -1 && modal.getBoundingClientRect().bottom <= innerHeight + 1,
+        textState:JSON.parse(render_game_to_text()).careerArchive
+      };
+    });
+    assert.deepEqual(careerArchiveListProbe.names, ['周天成','林一飞'], '档案馆应以历史分从高到低排列角色');
+    assert.deepEqual(careerArchiveListProbe.ranks, ['#1','#2'], '档案馆必须显示玩家历代角色内部排名');
+    assert.ok(careerArchiveListProbe.rows === 2 && careerArchiveListProbe.singleScreen && careerArchiveListProbe.rule.includes('历史分'), '档案馆排名列表必须在主页手机单屏内显示：' + JSON.stringify(careerArchiveListProbe));
+    assert.ok(careerArchiveListProbe.textState.open && careerArchiveListProbe.textState.count === 2, '文本状态必须同步档案馆列表');
+    await page.screenshot({ path:path.join(outputDir,'00-career-archive-ranking.png'), fullPage:false });
+    await page.locator('#career-archive-modal .career-archive-row').first().click();
+    const careerArchiveDetailProbe = await page.evaluate(() => {
+      const content = document.querySelector('#career-archive-modal .career-archive-content');
+      return {
+        detail:!!document.querySelector('.career-archive-detail-hero'),
+        text:content?.textContent.replace(/\s+/g,' ').trim() || '',
+        honorCells:document.querySelectorAll('.career-archive-honor-grid span').length,
+        statCells:document.querySelectorAll('.career-archive-stat-grid span').length,
+        textState:JSON.parse(render_game_to_text()).careerArchive
+      };
+    });
+    assert.ok(careerArchiveDetailProbe.detail && careerArchiveDetailProbe.honorCells === 6 && careerArchiveDetailProbe.statCells === 12, '角色详情必须展示完整荣耀和生涯数据');
+    assert.ok(careerArchiveDetailProbe.text.includes('周天成') && careerArchiveDetailProbe.text.includes('历史排名第7名') && careerArchiveDetailProbe.text.includes('总得分'), '角色详情必须写明姓名、历史名次和数据：' + careerArchiveDetailProbe.text);
+    assert.ok(careerArchiveDetailProbe.textState.detail, '文本状态必须同步档案详情页');
+    await page.screenshot({ path:path.join(outputDir,'00b-career-archive-detail.png'), fullPage:false });
+    await page.evaluate(async () => {
+      closeCareerArchive();
+      await storageSet(CAREER_ARCHIVE_KEY, { v:1, records:[] });
+      CAREER_ARCHIVE_CACHE = [];
+      CAREER_ARCHIVE_READY = null;
+      refreshCareerArchiveButton();
+    });
+
     await page.click('#feature-grid .fc-btn');
     await page.waitForSelector('#screen-character.active');
+    assert.equal(await page.locator('#career-archive-btn').isVisible(), false, '生涯档案馆入口只能在主页显示');
     assert.equal(await page.locator('.character-avatar-tab').count(), 3, '角色创建应有亚洲、白人、黑人三个头像分组');
     const availableAvatarPaths = [];
     for (const group of ['亚洲', '白人', '黑人']) {
@@ -438,8 +534,6 @@ async function main() {
     });
     assert.ok(characterBounds.top >= -1 && characterBounds.bottom <= characterBounds.viewport + 1, '角色创建可操作区应在手机单屏内');
 
-    const outputDir = path.join(root, 'output', 'perfect-player-hupu-mobile');
-    fs.mkdirSync(outputDir, { recursive: true });
     await page.screenshot({ path: path.join(outputDir, '01-character.png'), fullPage: false });
 
     await page.evaluate(() => {
