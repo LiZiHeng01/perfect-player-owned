@@ -679,6 +679,8 @@
         { label:'彻底休息一天', hint:'利用意外恢复身体', mods:{staminaLoad:-2,moraleBonus:1}, result:'你睡了一个完整午觉，晚上和队友玩牌。航班恢复时，每个人都轻松了一点。<br><br>效果：体能负荷-2；士气+1。' }
       ]}
     ];
+    var extraDefinitions = window.PERFECT_PLAYER_EXTRA_SEASON_EVENT_DEFINITIONS || [];
+    definitions = definitions.concat(extraDefinitions);
     var added = [];
     definitions.forEach(function (def) {
       var id = 'pp_season_' + def.id;

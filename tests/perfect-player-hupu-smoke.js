@@ -168,16 +168,16 @@ async function main() {
     assert.equal(new Set(generatedRookiePhotos).size, 100, '100 张随机新秀头像应在一轮内不重复');
     assert.ok(generatedRookiePhotos.every(photo => /^assets\/images\/Player\/generated-rookies\/generated-rookie-\d{3}\.png$/.test(photo)), '随机新秀应使用新头像池');
     assert.equal(await page.evaluate(() => window.PERFECT_PLAYER_EVENT_REPORT.added), 12, '应扩充 12 个原机制事件');
-    assert.equal(await page.evaluate(() => window.PERFECT_PLAYER_EVENT_REPORT.seasonAdded), 21, '应新增 21 个可直接抽取的赛季日常事件');
+    assert.equal(await page.evaluate(() => window.PERFECT_PLAYER_EVENT_REPORT.seasonAdded), 200, '可直接抽取的赛季日常事件库应扩充到 200 条');
     assert.deepEqual(await page.evaluate(() => ({
       added: PERFECT_PLAYER_SEASON_EVENT_REPORT.added,
       ids: PERFECT_PLAYER_SEASON_EVENT_REPORT.ids.length,
       config: PERFECT_PLAYER_SEASON_EVENT_REPORT.config,
       openingPoolOnly: PERFECT_PLAYER_SEASON_EVENT_REPORT.openingPoolOnly
     })), {
-      added: 21,
-      ids: 21,
-      config: { chancePercent: 14, cooldownGames: 7, maxPerSeason: 7, maxWithRelationship: 6, openingGames: 12, recentWindow: 10 },
+      added: 200,
+      ids: 200,
+      config: { chancePercent: 14, cooldownGames: 7, maxPerSeason: 7, maxWithRelationship: 6, openingGames: 12, recentWindow: 40 },
       openingPoolOnly: true
     });
     assert.deepEqual(await page.evaluate(() => window.PERFECT_PLAYER_DRAFT_EVENT_REPORT), {
@@ -195,15 +195,24 @@ async function main() {
       for (let index = 0; index < 200; index++) ids.push(pickBranchEvent(pool, false).id);
       return {
         count: pool.length,
+        uniqueIds: new Set(pool.map(event => event.id)).size,
+        uniqueTitles: new Set(pool.map(event => event.title)).size,
+        uniqueScenes: new Set(pool.map(event => (event.scenes || []).join('|'))).size,
         uniqueDraws: [...new Set(ids)],
         hasRequires: pool.some(event => typeof event.requires === 'function'),
         choiceCounts: pool.map(event => event.choices.length)
       };
     });
-    assert.equal(seasonPoolProbe.count, 21, '新秀开局应拥有 21 条独立日常事件，而不是只抽城市/输球发布会');
-    assert.ok(seasonPoolProbe.uniqueDraws.length >= 15, '赛季日常事件抽取应有足够多样性：' + seasonPoolProbe.uniqueDraws.join(','));
+    assert.equal(seasonPoolProbe.count, 200, '赛季日常事件池应有 200 条独立事件');
+    assert.equal(seasonPoolProbe.uniqueIds, 200, '200 条赛季事件 ID 必须全部唯一');
+    assert.equal(seasonPoolProbe.uniqueTitles, 200, '200 条赛季事件标题必须全部唯一');
+    assert.equal(seasonPoolProbe.uniqueScenes, 200, '200 条赛季事件场景必须全部唯一');
+    assert.ok(seasonPoolProbe.uniqueDraws.length >= 100, '赛季日常事件抽取应有足够多样性：' + seasonPoolProbe.uniqueDraws.length);
     assert.equal(seasonPoolProbe.hasRequires, false, '新增开局事件必须全部可直接抽取');
     assert.ok(seasonPoolProbe.choiceCounts.every(count => count >= 2), '每条新增赛季事件都应至少有两个选择');
+    assert.deepEqual(await page.evaluate(() => window.PERFECT_PLAYER_EVENT_LIBRARY_REPORT), {
+      generated: 179, topics: 30, contexts: 6
+    });
     const openingEventProbe = await page.evaluate(() => {
       const savedCareer = STATE.career;
       const savedSeason = STATE.season;
@@ -267,7 +276,7 @@ async function main() {
     await page.screenshot({ path: path.join(outputDir, '01-character.png'), fullPage: false });
 
     await page.evaluate(() => {
-      const event = STAGED_BRANCH_EVENTS.find(item => item.id === 'pp_season_film_detail');
+      const event = STAGED_BRANCH_EVENTS.find(item => item.id === 'pp_season_library_privacy_leak_national');
       showSeasonBranchEvent(event, () => {});
     });
     await page.waitForSelector('#season-branch-modal');
@@ -544,7 +553,7 @@ async function main() {
     const localBadResponses = badResponses.filter(item => item.includes(`127.0.0.1:${port}`));
     assert.deepEqual(localBadResponses, [], '不应有本地 4xx 资源：' + localBadResponses.join(', '));
     assert.deepEqual(errors, [], '浏览器错误：' + errors.join('\n') + '\n4xx：' + badResponses.join('\n'));
-    console.log(JSON.stringify({ ok: true, pool: 510, current: 360, historical: 150, injuryEventsAdded: 12, seasonEventsAdded: 21, draftEvents: 35, simulation, screenshots: outputDir }, null, 2));
+    console.log(JSON.stringify({ ok: true, pool: 510, current: 360, historical: 150, injuryEventsAdded: 12, seasonEventsAdded: 200, draftEvents: 35, simulation, screenshots: outputDir }, null, 2));
   } finally {
     if (browser) await browser.close();
     server.kill();
