@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Build the curated player source pool used by Perfect Player.
 
-Each NBA team receives a compact 15-player pool: 12 current players and
-3 historical All-Star-or-better players whenever the source data contains
+Each NBA team receives a compact 18-player attribute pool: 12 current players and
+6 historical All-Star-or-better players whenever the source data contains
 enough candidates. Historical source rows are kept with their era metadata
 so the browser can draw year -> team -> player for every attribute round.
 """
@@ -43,6 +43,14 @@ TEAM_ALIASES = {
     "夏洛特黄蜂": 12,
 }
 
+# The current Pelicans franchise inherits the New Orleans/Charlotte Hornets
+# history, while the compact historical source rows often classify those cards
+# under Charlotte.  Use that franchise bridge only when a team cannot fill six
+# unique peak cards from its direct rows.
+HISTORICAL_FRANCHISE_FALLBACKS = {
+    29: [12],  # 鹈鹕 ← 山猫/夏洛特黄蜂历史
+}
+
 NBA_NAME_ALIASES = {
     "earvinjohnson": "magicjohnson",
     "nicolasclaxton": "nicclaxton",
@@ -51,6 +59,15 @@ NBA_NAME_ALIASES = {
     "marvinbagley": "marvinbagleyiii",
     "robertwilliams": "robertwilliamsiii",
     "jimmybutler": "jimmybutleriii",
+    "edriceadebayo": "bamadebayo",
+}
+
+# A handful of very early players predate the NBA CDN name/ID mapping. Keep
+# their shipped local headshot as the primary asset instead of turning a local
+# path into a remote URL during pool generation.
+HISTORICAL_PHOTO_OVERRIDES = {
+    "louiedampier": "assets/data/historical/headshots/draft-1967-louiedampier.png",
+    "bobnetolicky": "assets/data/historical/headshots/draft-1967-bobnetolicky.png",
 }
 
 SEASONS = [
@@ -178,6 +195,17 @@ def is_star(honors: dict[str, int], rating: int) -> bool:
     return honor_total > 0 or rating >= 88
 
 
+def is_historical_candidate(record: dict) -> bool:
+    """Keep a real peak-season card for every franchise's six-card legend pool.
+
+    Several older roster snapshots do not carry cumulative honor columns even
+    for players who were clearly rotation stars/all-stars.  A peak rating floor
+    lets the curated six-card slots use those real prime-season rows without
+    falling back to late-career cards or duplicating a legend.
+    """
+    return is_star(record["honors"], record["rating"]) or record["rating"] >= 80
+
+
 def player_record(row: dict[str, str], source: dict, history: dict | None, nba_ids: dict[str, int], index: int) -> dict:
     tid = team_id(row)
     pos = max(1, min(5, number(row.get("positionFirst"), 3)))
@@ -200,6 +228,7 @@ def player_record(row: dict[str, str], source: dict, history: dict | None, nba_i
     fallback_photo = (history or {}).get("photoLocal", "")
     if fallback_photo and not (ROOT / fallback_photo).exists():
         fallback_photo = ""
+    fallback_photo = fallback_photo or HISTORICAL_PHOTO_OVERRIDES.get(english_key, "")
     history_photo = fallback_photo
     current_photo = ""
     if source["kind"] == "current" and nba_id:
@@ -212,13 +241,10 @@ def player_record(row: dict[str, str], source: dict, history: dict | None, nba_i
         # 现役头像固定走 260x190；历史名宿继续使用已缓存的高清图。
         size = "260x190" if source["kind"] == "current" else "1040x760"
         photo_url = f"https://cdn.nba.com/headshots/nba/latest/{size}/{nba_id}.png"
-    # Resolve the best usable image path. Many historical local caches were never
-    # shipped, so a photoLocal that doesn't exist on disk would render blank in the
-    # browser. When the local file is missing, fall back to the NBA CDN URL so the
-    # avatar still loads. (Current players' local cache exists and is kept.)
+    # Keep photoLocal a local relative path. The downloader fills missing CDN
+    # assets later; putting an HTTP URL in photoLocal makes the downloader treat
+    # it as a filesystem path and breaks the local-first avatar contract.
     resolved_local = current_photo or history_photo
-    if resolved_local and not (ROOT / resolved_local).exists():
-        resolved_local = photo_url or ""
     honors = honor_snapshot(history, source["year"], row)
     identity = (history or {}).get("realId") or norm(english) or norm(name)
     return {
@@ -310,7 +336,7 @@ def main() -> None:
             if source["kind"] == "current":
                 current_by_team[tid].append(record)
                 continue
-            if not is_star(record["honors"], record["rating"]):
+            if not is_historical_candidate(record):
                 continue
             consider_peak(alltime_peak if source["code"] == ALLTIME_CODE else historical_peak, record)
 
@@ -345,14 +371,36 @@ def main() -> None:
     warnings: list[str] = []
     for tid, label in TEAM_NAMES.items():
         current = sorted(current_by_team[tid], key=lambda p: (-p["rating"], p["nameEn"]))
-        # Top-3 legends per team by peak rating (then honors), so each team keeps
+        # Top-6 legends per team by peak rating (then honors), so each team keeps
         # its highest-ability primes rather than its most-decorated late seasons.
         history = sorted(historical_by_team[tid], key=lambda p: (-p["rating"], -p["starScore"], p["nameEn"]))
+        if len(history) < 6:
+            used_identities = {p["identity"] for p in history}
+            for fallback_tid in HISTORICAL_FRANCHISE_FALLBACKS.get(tid, []):
+                fallback_pool = sorted(
+                    historical_by_team[fallback_tid],
+                    key=lambda p: (-p["rating"], -p["starScore"], p["nameEn"]),
+                )
+                for source_record in fallback_pool:
+                    if source_record["identity"] in used_identities:
+                        continue
+                    record = dict(source_record)
+                    record["teamId"] = tid
+                    record["uid"] = f"{source_record['uid']}_franchise_{tid}"
+                    record["source"] = dict(source_record["source"])
+                    record["source"]["franchiseFallbackFrom"] = fallback_tid
+                    history.append(record)
+                    used_identities.add(record["identity"])
+                    if len(history) >= 6:
+                        break
+                if len(history) >= 6:
+                    break
+            history = sorted(history, key=lambda p: (-p["rating"], -p["starScore"], p["nameEn"]))
         current_take = current[:12]
-        history_take = history[:3]
+        history_take = history[:6]
         if len(current_take) < 12:
             warnings.append(f"{label}: current={len(current_take)}")
-        if len(history_take) < 3:
+        if len(history_take) < 6:
             warnings.append(f"{label}: historical={len(history_take)}")
         teams[str(tid)] = {
             "id": tid,
@@ -367,10 +415,10 @@ def main() -> None:
         "version": 1,
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "rules": {
-            "targetRosterSize": 15,
+            "targetRosterSize": 18,
             "currentTarget": 12,
-            "historicalTarget": 3,
-            "historicalThreshold": "All-Star or better",
+            "historicalTarget": 6,
+            "historicalThreshold": "Peak rating >= 80 or documented All-Star or better",
         },
         "seasons": SEASONS,
         "teams": teams,

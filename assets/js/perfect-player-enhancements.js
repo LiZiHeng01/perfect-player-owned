@@ -617,7 +617,12 @@
     return true;
   }
 
-  function G() { return (typeof window.STATE !== 'undefined') ? window.STATE : null; }
+  // 主页面的 STATE 是顶层 const，不会自动成为 window.STATE；跨脚本仍可
+  // 通过全局词法绑定访问，旧写法会让所有成就钩子拿到 null。
+  function G() {
+    try { return (typeof STATE !== 'undefined') ? STATE : ((typeof window.STATE !== 'undefined') ? window.STATE : null); }
+    catch (e) { return null; }
+  }
   function displayName() { try { return window.getHupuDisplayName ? getHupuDisplayName() : ''; } catch (e) { return ''; } }
 
   // 累计计数（跨赛季，存在成就存档里的隐藏计数中）
@@ -668,6 +673,7 @@
         PP_FX.toast('传承加成已注入：初始属性共 +' + totalPlus, { gold: true, icon: '🧬', duration: 3200 });
       }, 900);
     }
+    syncAchievementState();
   }
 
   // 2) 选秀定型 → 顺位相关成就
@@ -677,41 +683,79 @@
     if (d.type === 'undrafted') PP_FX.unlock('undrafted');
     if (d.round === 1 && d.pick >= 1 && d.pick <= 14) PP_FX.unlock('lottery_pick');
     if (d.round === 1 && d.pick === 1) PP_FX.unlock('first_pick');
+    syncAchievementState();
   }
 
   // 3) 赛季奖项结算 → 荣誉成就
-  function afterAwards() {
-    var s = G(); if (!s || !s.season || !s.season.awards) return;
+  // 奖项在不同阶段会经历“当前赛季 awards → career.honors → seasons.awards”
+  // 三种形态，且最佳阵容/新秀阵容是列表奖项。统一收集后再判断，避免
+  // 只看 winner 字符串导致全明星和最佳新秀明明显示了却没有成就。
+  function syncAchievementState() {
+    var s = G(); if (!s) return {};
     var me = displayName();
-    s.season.awards.forEach(function (a) {
+    var facts = { mvp:0, dpoy:false, roty:false, sixthman:false, allStar:false, allNBA:false, champion:0 };
+    var seen = {};
+    function keyFor(a, scope) {
+      var act = a && a.act ? a.act : '';
+      var label = a && a.label ? a.label : (typeof a === 'string' ? a : '');
+      var season = a && a.seasonNum != null ? a.seasonNum : '';
+      if (!season && scope.indexOf('season') === 0) season = scope.slice(6);
+      if (!season && scope === 'current' && s.career) season = (s.career.seasonCount || 0) + 1;
+      return season + '|' + act + '|' + label + '|' + (a && a.winner ? a.winner : '');
+    }
+    function take(a, scope, index, trustedUser) {
       if (!a) return;
-      var mine = a.isUser || (me && a.winner === me);
+      var label = typeof a === 'string' ? a : String(a.label || '');
+      if (!label && !(a && a.act)) return;
+      var mine = !!trustedUser || !!(a && a.isUser) || !!(me && a && (a.winner === me || String(a.winner || '').split('、').indexOf(me) >= 0));
       if (!mine) return;
-      switch (a.act) {
-        case 'mvp':
-          PP_FX.unlock('mvp');
-          if (bumpCounter('mvp') >= 3) PP_FX.unlock('mvp_x3');
-          break;
-        case 'dpoy': PP_FX.unlock('dpoy'); break;
-        case 'roty': PP_FX.unlock('roty'); break;
-        case 'sixthman': PP_FX.unlock('sixth_man'); break;
-        case 'allStar': PP_FX.unlock('all_star'); break;
-        case 'allNBA': PP_FX.unlock('all_nba'); break;
-        case 'champion':
-          PP_FX.unlock('champion');
-          if (bumpCounter('champion') >= 3) PP_FX.unlock('champion_x3');
-          break;
-      }
+      var key = keyFor(a, scope);
+      if (seen[key]) return;
+      seen[key] = true;
+      var act = a && a.act ? a.act : '';
+      if (act === 'mvp' || label.indexOf('MVP') >= 0) facts.mvp++;
+      if (act === 'dpoy' || label.indexOf('DPOY') >= 0 || label.indexOf('最佳防守') >= 0) facts.dpoy = true;
+      if (act === 'roty' || label.indexOf('最佳新秀') >= 0) facts.roty = true;
+      if (act === 'sixthman' || label.indexOf('第六人') >= 0) facts.sixthman = true;
+      if (act === 'allStar' || label.indexOf('全明星') >= 0) facts.allStar = true;
+      if (act === 'allNBA' || label.indexOf('最佳阵容') >= 0) facts.allNBA = true;
+      if (act === 'champion' || label.indexOf('总冠军') >= 0) facts.champion++;
+    }
+    (s.season && s.season.awards || []).forEach(function(a, i) { take(a, 'current', i, false); });
+    (s.career && s.career.honors || []).forEach(function(a, i) { take(a, 'career', i, true); });
+    (s.career && s.career.seasons || []).forEach(function(season) {
+      (season && season.awards || []).forEach(function(a, i) { take(a, 'season' + (season.seasonNum || ''), i, false); });
     });
+    var draft = s.career && s.career.draft;
+    if (draft) {
+      if (draft.type === 'undrafted') PP_FX.unlock('undrafted');
+      if (draft.round === 1 && draft.pick >= 1 && draft.pick <= 14) PP_FX.unlock('lottery_pick');
+      if (draft.round === 1 && draft.pick === 1) PP_FX.unlock('first_pick');
+    }
+    if (facts.mvp > 0) PP_FX.unlock('mvp');
+    if (facts.mvp >= 3) PP_FX.unlock('mvp_x3');
+    if (facts.dpoy) PP_FX.unlock('dpoy');
+    if (facts.roty) PP_FX.unlock('roty');
+    if (facts.sixthman) PP_FX.unlock('sixth_man');
+    if (facts.allStar) PP_FX.unlock('all_star');
+    if (facts.allNBA) PP_FX.unlock('all_nba');
+    if (facts.champion > 0) PP_FX.unlock('champion');
+    if (facts.champion >= 3) PP_FX.unlock('champion_x3');
     // 赛季场均里程碑
-    var ps = s.season.playerStats;
+    var ps = s.season && s.season.playerStats;
     if (ps && ps.games >= 40) {
       var g = ps.games;
       var ppg = ps.pts / g, rpg = ps.reb / g;
       if (ppg >= 30) PP_FX.unlock('avg_30');
       if (ppg >= 25 && rpg >= 10) PP_FX.unlock('season_25_10');
     }
+    PP_FX._achievementFacts = facts;
+    return facts;
   }
+
+  PP_FX.syncAchievements = syncAchievementState;
+
+  function afterAwards() { syncAchievementState(); }
 
   // 4) 赛季结束 → 战绩/季后赛/生涯长度成就
   function afterEndOfSeason() {
@@ -725,17 +769,18 @@
     var played = sc + 1;
     if (played >= 5) PP_FX.unlock('season_5');
     if (played >= 10) PP_FX.unlock('season_10');
+    syncAchievementState();
   }
 
   // 5) 夺冠庆祝 → 追加彩带并解锁（防止 awards 未覆盖）
   function afterChampion() {
     PP_FX.unlock('champion');
-    if (getCounter('champion') === 0) bumpCounter('champion');
+    syncAchievementState();
     PP_FX.confetti({ count: 120, colors: ['#f7a600', '#ffd23f', '#ff6b35', '#fff4de'] });
   }
 
   // 6) 退役
-  function afterRetire() { PP_FX.unlock('retire'); }
+  function afterRetire() { PP_FX.unlock('retire'); syncAchievementState(); }
 
   // 7) 单场比赛数据里程碑
   // 关键修复：主引擎的 renderGameCastNew 只定义未调用（快速模拟用点阵图），
@@ -765,6 +810,7 @@
     wrap('calcSeasonAwards', null, afterAwards);
     wrap('showEndOfSeason', null, afterEndOfSeason);
     wrap('showChampionshipCelebration', afterChampion, null);
+    wrap('saveCurrentSeasonToCareer', null, function () { syncAchievementState(); });
     // 退役实际走 announcePlayerRetirement()，showRetirementModal 定义了却从未被调用，
     // 旧 hook 挂在后者上导致 retire 成就永远无法解锁。
     wrap('announcePlayerRetirement', afterRetire, null);
@@ -811,6 +857,7 @@
     install();
     mountEntryButton();
     mountTapSpark();
+    setTimeout(function () { syncAchievementState(); }, 0);
   }
 
   if (document.readyState === 'loading') {

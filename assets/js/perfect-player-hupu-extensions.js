@@ -1,6 +1,14 @@
 (function () {
   'use strict';
 
+  // Browser-test hook used by the game QA harness. The game itself remains
+  // timer-driven; this helper simply lets tests advance through short UI waits.
+  if (typeof window.advanceTime !== 'function') {
+    window.advanceTime = function (ms) {
+      return new Promise(function (resolve) { setTimeout(resolve, Math.max(0, Number(ms) || 0)); });
+    };
+  }
+
   var PROFILE_KEY = 'perfect-player-profile-v1';
   var AVATARS = [
     'assets/images/Player/ai-avatars/avatar-01.png',
@@ -138,6 +146,7 @@
       _sourceYear: player.source ? player.source.year : 2025,
       _sourceLabel: player.source ? player.source.label : '2025-26',
       _photoLocal: player.photoLocal,
+      _photoUrl: player.photoUrl || '',
       _poolUid: player.uid
     };
   }
@@ -151,19 +160,28 @@
       return response.json();
     })
     .then(function (payload) {
-      var report = { teams: 0, current: 0, historical: 0, total: 0 };
+      var report = {
+        teams: 0,
+        teamsWithTarget18: 0,
+        current: 0,
+        historical: 0,
+        total: 0,
+        historicalBuildOnly: true,
+        competitionRosterSource: 'NBA2K_DATA (current-only)'
+      };
       Object.keys(payload.teams || {}).forEach(function (teamId) {
         var sourceTeam = payload.teams[teamId];
         var abbr = TEAM_TO_ABBR[sourceTeam.name];
         if (!abbr || typeof NBA2K_DATA === 'undefined' || !NBA2K_DATA[abbr]) return;
         var converted = (sourceTeam.players || []).map(convertPlayer);
         converted.forEach(function (player) {
-          window.PERFECT_PLAYER_PHOTO_BY_NAME[player.name] = player._photoLocal;
+          window.PERFECT_PLAYER_PHOTO_BY_NAME[player.name] = player._photoLocal || player._photoUrl || '';
           window.PERFECT_PLAYER_DISPLAY_BY_NAME[player.name] = player.cname || player.name;
           report[player._sourceKind] += 1;
         });
         window.PERFECT_PLAYER_BUILD_DATA[abbr] = converted;
         report.teams += 1;
+        if (sourceTeam.currentCount === 12 && sourceTeam.historicalCount === 6) report.teamsWithTarget18 += 1;
         report.total += converted.length;
       });
       window.PERFECT_PLAYER_POOL_REPORT = report;
@@ -304,7 +322,17 @@
     ]}
   ];
 
-  window.PERFECT_PLAYER_DRAFT_EVENT_REPORT = { total:DRAFT_RANDOM_EVENTS.length, pre:10, post:9, perRun:1, stageChance:{ pre:0.5, post:0.4 } };
+  var DRAFT_EVENT_STAGE_CHANCE = { pre: 0.65, post: 0.55 };
+  var DRAFT_EVENT_PRE_COUNT = DRAFT_RANDOM_EVENTS.filter(function(event) { return event.stage === 'pre'; }).length;
+  var DRAFT_EVENT_POST_COUNT = DRAFT_RANDOM_EVENTS.filter(function(event) { return event.stage === 'post'; }).length;
+  var DRAFT_EVENT_MAX_PER_RUN = 2;
+  window.PERFECT_PLAYER_DRAFT_EVENT_REPORT = {
+    total: DRAFT_RANDOM_EVENTS.length,
+    pre: DRAFT_EVENT_PRE_COUNT,
+    post: DRAFT_EVENT_POST_COUNT,
+    perRun: DRAFT_EVENT_MAX_PER_RUN,
+    stageChance: DRAFT_EVENT_STAGE_CHANCE
+  };
   window.pickPerfectPlayerDraftEventId = function(stage, seen) {
     seen = seen || [];
     var pool = DRAFT_RANDOM_EVENTS.filter(function(event) { return event.stage === stage && seen.indexOf(event.id) < 0; });
@@ -314,15 +342,13 @@
   // Probability that a random event actually fires at each draft stage.
   // Why: the draft already runs a long fixed narrative chain (前夜→经纪→试训→结果→合同…),
   // so firing a guaranteed extra modal both pre- and post-draft felt like event spam.
-  // Gating each stage — and hard-capping the whole draft at one random event — keeps the
-  // variety of the pool while cutting the number of popups a player actually sees per run.
-  var DRAFT_EVENT_STAGE_CHANCE = { pre: 0.5, post: 0.4 };
-  var DRAFT_EVENT_MAX_PER_RUN = 1;
+  // Gate each stage and cap the whole draft at two events. The seen-id filter
+  // keeps the pre/post pulls from repeating within one draft run.
 
   window.runPerfectPlayerDraftRandomEvent = function(stage, done) {
     var pending = draftPending();
     if (!pending || typeof showDraftChoiceModal !== 'function') { if (done) done(); return; }
-    // Hard cap: at most one random event across the entire draft run.
+    // Hard cap: at most two random events across the entire draft run.
     if ((pending.randomEventIds || []).length >= DRAFT_EVENT_MAX_PER_RUN) { if (done) done(); return; }
     var chance = DRAFT_EVENT_STAGE_CHANCE[stage];
     if (chance == null) chance = 0.4;
@@ -342,7 +368,8 @@
     return JSON.stringify({
       screen: active ? active.id : null,
       character: window.PERFECT_PLAYER_PROFILE || null,
-      build: { team:state.currentTeam || null, locked:state.lockedCount || 0, candidates:document.querySelectorAll('.br-player').length, pool:window.PERFECT_PLAYER_POOL_REPORT || null },
+      build: { team:state.currentTeam || null, locked:state.lockedCount || 0, candidates:document.querySelectorAll('.br-player').length, candidatesUnique: (function () { var names = []; document.querySelectorAll('.br-player .bp-name').forEach(function (el) { names.push(el.textContent.trim()); }); return new Set(names).size === names.length; })(), mockAdRerollsLeft: state._mockAdRerollsLeft == null ? 3 : state._mockAdRerollsLeft, pool:window.PERFECT_PLAYER_POOL_REPORT || null },
+      competition: { team:state.careerTeam || null, rosterSize:state.careerTeam && typeof NBA2K_DATA !== 'undefined' && NBA2K_DATA[state.careerTeam] ? NBA2K_DATA[state.careerTeam].length : 0, historical:state.careerTeam && typeof NBA2K_DATA !== 'undefined' && NBA2K_DATA[state.careerTeam] ? NBA2K_DATA[state.careerTeam].filter(function (p) { return p && p._sourceKind === 'historical'; }).length : 0, source:'NBA2K_DATA (current-only)' },
       career: { team:state.careerTeam || null, season:career.seasonCount || 0, record:[season.wins || 0, season.losses || 0], profile:career.profile || {}, modifiers:career.nextSeasonMods || {} },
       draftEvents: window.PERFECT_PLAYER_DRAFT_EVENT_REPORT || null,
       simulation: window.PERFECT_PLAYER_SIM_REPORT || null

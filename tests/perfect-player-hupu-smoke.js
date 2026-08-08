@@ -53,9 +53,9 @@ async function main() {
   const teams = Object.values(pool.teams || {});
   assert.equal(teams.length, 30);
   teams.forEach(team => {
-    assert.equal(team.players.length, 15, team.name + ' 应有 15 人');
+    assert.equal(team.players.length, 18, team.name + ' 应有 18 人');
     assert.equal(team.currentCount, 12, team.name + ' 应有 12 名现役');
-    assert.equal(team.historicalCount, 3, team.name + ' 应有 3 名历史球员');
+    assert.equal(team.historicalCount, 6, team.name + ' 应有 6 名历史巅峰球员');
     team.players.forEach(player => {
       assert.ok(fs.existsSync(path.join(root, player.photoLocal)), player.name + ' 缺少本地头像');
     });
@@ -89,13 +89,15 @@ async function main() {
     });
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForSelector('#screen-menu.active');
-    await page.waitForFunction(() => window.PERFECT_PLAYER_POOL_REPORT && window.PERFECT_PLAYER_POOL_REPORT.total === 450);
+    await page.waitForFunction(() => window.PERFECT_PLAYER_POOL_REPORT && window.PERFECT_PLAYER_POOL_REPORT.total === 540);
 
     assert.equal(await page.locator('.feature-card').count(), 1, '首页只应有虎扑原生涯入口');
     assert.equal(await page.locator('#screen-achievements').count(), 0, '征服联盟占位页应移除');
     assert.equal(await page.locator('.btn-share-poster').count(), 0, 'JRs 发帖入口应移除');
-    assert.deepEqual(await page.evaluate(() => window.PERFECT_PLAYER_POOL_REPORT), {
-      teams: 30, current: 360, historical: 90, total: 450
+    const poolReport = await page.evaluate(() => window.PERFECT_PLAYER_POOL_REPORT);
+    assert.deepEqual(poolReport, {
+      teams: 30, teamsWithTarget18: 30, current: 360, historical: 180, total: 540,
+      historicalBuildOnly: true, competitionRosterSource: 'NBA2K_DATA (current-only)'
     });
     const poolSeparation = await page.evaluate(() => ({
       buildSize: PERFECT_PLAYER_BUILD_DATA.LAL.length,
@@ -104,13 +106,15 @@ async function main() {
       leagueHistorical: NBA2K_DATA.LAL.filter(player => player._sourceKind === 'historical').length,
       lineupHistorical: Object.values(calcTeamLineup('LAL').starters).concat(calcTeamLineup('LAL').bench).filter(player => player._sourceKind === 'historical').length
     }));
-    assert.equal(poolSeparation.buildSize, 15, '建模候选池应保留每队 15 人');
-    assert.equal(poolSeparation.buildHistorical, 3, '建模候选池应有三名经典球员');
+    assert.equal(poolSeparation.buildSize, 18, '建模候选池应保留每队 18 人');
+    assert.equal(poolSeparation.buildHistorical, 6, '建模候选池应有六名历史巅峰球员');
     assert.ok(poolSeparation.leagueSize >= 10, '正式球队应保留原现役轮换');
     assert.equal(poolSeparation.leagueHistorical, 0, '正式比赛名单不应注入经典球员');
     assert.equal(poolSeparation.lineupHistorical, 0, '比赛轮换不应出现经典球员');
     assert.equal(await page.evaluate(() => window.PERFECT_PLAYER_EVENT_REPORT.added), 12, '应扩充 12 个原机制事件');
-    assert.deepEqual(await page.evaluate(() => window.PERFECT_PLAYER_DRAFT_EVENT_REPORT), { total: 12, pre: 6, post: 6, perRun: 2 });
+    assert.deepEqual(await page.evaluate(() => window.PERFECT_PLAYER_DRAFT_EVENT_REPORT), {
+      total: 19, pre: 10, post: 9, perRun: 2, stageChance: { pre: 0.65, post: 0.55 }
+    });
     const randomDraftIds = await page.evaluate(() => {
       const ids = [];
       for (let index = 0; index < 100; index++) ids.push(pickPerfectPlayerDraftEventId('pre', []));
@@ -145,8 +149,21 @@ async function main() {
     await page.locator('#br-slot-area .slot-btn').filter({ hasText: '随机球队' }).click();
     await page.waitForSelector('.br-player', { timeout: 6000 });
     assert.equal(await page.locator('.br-player').count(), 5, '虎扑原机制每轮必须只显示五人');
+    const firstBatchNames = await page.$$eval('.br-player .bp-name', nodes => nodes.map(node => node.textContent.trim()));
+    assert.equal(new Set(firstBatchNames).size, 5, '同一轮五名球员不能重复');
+    await page.evaluate(() => {
+      STATE._rerollsLeft = 0;
+      STATE._mockAdRerollsLeft = 3;
+      updateSlotButtons();
+    });
+    await page.locator('#br-slot-area .slot-btn').filter({ hasText: '看广告换球员' }).click();
+    await page.waitForTimeout(850);
+    assert.equal(await page.evaluate(() => STATE._mockAdRerollsLeft), 2, '模拟广告重选应消耗一次且生效');
+    assert.equal(await page.locator('.br-player').count(), 5, '模拟广告重选后仍应显示五人');
+    const adBatchNames = await page.$$eval('.br-player .bp-name', nodes => nodes.map(node => node.textContent.trim()));
+    assert.equal(new Set(adBatchNames).size, 5, '广告重选同一轮五名球员不能重复');
     const localHeadshots = await page.$$eval('.br-player .bp-headshot', elements => elements.map(element => ({ computed: getComputedStyle(element).backgroundImage, inline: element.getAttribute('style'), player: element.closest('.br-player').textContent.trim() })));
-    assert.ok(localHeadshots.every(value => value.computed.includes('/assets/images/Player/')), '候选球员应全部使用本地真人头像：' + JSON.stringify(localHeadshots));
+    assert.ok(localHeadshots.every(value => value.computed.includes('/assets/')), '候选球员应全部使用本地真人头像：' + JSON.stringify(localHeadshots));
     await page.screenshot({ path: path.join(outputDir, '02-five-player-build.png'), fullPage: false });
 
     const historicalList = await page.evaluate(() => {
@@ -154,9 +171,9 @@ async function main() {
       renderRosterPlayers('LAL', historical, PERFECT_PLAYER_BUILD_DATA.LAL);
       return historical.map(player => ({ name: player.name, label: player._sourceLabel, photo: player._photoLocal }));
     });
-    assert.equal(historicalList.length, 3, '每队建模池应有三名历史全明星');
+    assert.equal(historicalList.length, 6, '每队建模池应有六名历史巅峰球员');
     assert.ok(historicalList.every(player => player.label && player.photo), '历史球员应有赛季与本地头像');
-    assert.equal(await page.locator('.bp-detail').filter({ hasText: '经典' }).count(), 3, '历史候选应显式标注经典赛季');
+    assert.equal(await page.locator('.bp-detail').evaluateAll(nodes => nodes.filter(node => /经典|生涯巅峰/.test(node.textContent)).length), 6, '历史候选应显式标注经典赛季');
 
     for (let index = 0; index < 13; index++) {
       await page.evaluate(() => {
@@ -202,6 +219,12 @@ async function main() {
     ['压力','体能负荷','士气','状态波动','伤病风险','球队默契','媒体压力','人气','商业价值','媒体信任','争议','中国人气','忠诚','领导力','教练信任','更衣室信任','球迷支持','传奇加成'].forEach(label => {
       assert.ok(states.text.includes(label), '状态面板缺少：' + label);
     });
+    const liveStateText = await page.evaluate(() => {
+      addProfileDelta('mediaTrust', 3);
+      addSeasonMod('mediaPressure', -2, -10, 10);
+      return document.getElementById('player-state-strip').textContent.replace(/\s+/g, ' ').trim();
+    });
+    assert.ok(liveStateText.includes('+5') && liveStateText.includes('+2'), '状态条应在事件数值变化后立即刷新：' + liveStateText);
 
     const simulation = await page.evaluate(() => {
       const previousTeam = STATE.careerTeam;
@@ -226,14 +249,22 @@ async function main() {
     await page.evaluate(() => {
       STATE._draftPending = { draftStockBonus: 0, randomEventIds: [] };
       window.__draftRandomDone = 0;
+      const originalRandom = Math.random;
+      Math.random = () => 0;
       runPerfectPlayerDraftRandomEvent('pre', () => { window.__draftRandomDone++; });
+      Math.random = originalRandom;
     });
     await page.waitForSelector('#draft-modal');
     await page.locator('#draft-modal button').first().click();
     await page.waitForSelector('#draft-result-modal');
     await page.click('#draft-result-modal button');
     await page.waitForFunction(() => window.__draftRandomDone === 1);
-    await page.evaluate(() => runPerfectPlayerDraftRandomEvent('post', () => { window.__draftRandomDone++; }));
+    await page.evaluate(() => {
+      const originalRandom = Math.random;
+      Math.random = () => 0;
+      runPerfectPlayerDraftRandomEvent('post', () => { window.__draftRandomDone++; });
+      Math.random = originalRandom;
+    });
     await page.waitForSelector('#draft-modal');
     await page.locator('#draft-modal button').first().click();
     await page.waitForSelector('#draft-result-modal');
@@ -242,13 +273,25 @@ async function main() {
     const draftRunIds = await page.evaluate(() => STATE._draftPending.randomEventIds.slice());
     assert.equal(draftRunIds.length, 2, '每次选秀流程应插入两段随机事件');
     assert.notEqual(draftRunIds[0], draftRunIds[1], '同一局随机事件不应重复');
+    const achievementProbe = await page.evaluate(() => {
+      PP_FX.resetAchievements();
+      STATE.career.draft = { type: 'lottery', round: 1, pick: 1 };
+      STATE.season.awards = [
+        { act: 'allStar', label: '全明星', winner: getHupuDisplayName(), isUser: true },
+        { act: 'roty', label: '年度最佳新秀', winner: getHupuDisplayName(), isUser: true }
+      ];
+      const facts = PP_FX.syncAchievements();
+      const got = PP_FX.getUnlocked();
+      return { facts, firstPick: !!got.first_pick, lottery: !!got.lottery_pick, allStar: !!got.all_star, roty: !!got.roty };
+    });
+    assert.ok(achievementProbe.firstPick && achievementProbe.lottery && achievementProbe.allStar && achievementProbe.roty, '选秀/全明星/最佳新秀成就应能完成：' + JSON.stringify(achievementProbe));
     await page.waitForTimeout(450);
     await page.screenshot({ path: path.join(outputDir, '03-visible-player-states.png'), fullPage: false });
 
     const localBadResponses = badResponses.filter(item => item.includes(`127.0.0.1:${port}`));
     assert.deepEqual(localBadResponses, [], '不应有本地 4xx 资源：' + localBadResponses.join(', '));
     assert.deepEqual(errors, [], '浏览器错误：' + errors.join('\n') + '\n4xx：' + badResponses.join('\n'));
-    console.log(JSON.stringify({ ok: true, pool: 450, current: 360, historical: 90, injuryEventsAdded: 12, draftEvents: 12, simulation, screenshots: outputDir }, null, 2));
+    console.log(JSON.stringify({ ok: true, pool: 540, current: 360, historical: 180, injuryEventsAdded: 12, draftEvents: 19, simulation, screenshots: outputDir }, null, 2));
   } finally {
     if (browser) await browser.close();
     server.kill();

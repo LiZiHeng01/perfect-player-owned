@@ -497,6 +497,8 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
     .player-state-label{display:block;margin-top:1px;font-size:8px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .player-state-item.alert .player-state-value{color:var(--red)}
     .player-state-item.good .player-state-value{color:var(--green)}
+    .player-state-strip.live-updated{animation:ppStatePulse .55s ease-out}
+    @keyframes ppStatePulse{0%{box-shadow:0 0 0 0 rgba(255,107,53,.55)}100%{box-shadow:var(--shadow)}}
   </style>
   <!-- VA H5 SDK — 激励视频任务 -->
   <script>
@@ -2194,7 +2196,9 @@ const STATE = {
   currentRoster: [],    // 该队球员列表
   _shownThisTeam: [],   // 当前球队已展示过的球员名
   _rerollsLeft: 3,    // 全局还可换球员次数（整个建球员阶段共3次，不重置）
+  _mockAdRerollsLeft: 3, // 暂代广告奖励：最多看3次，每次直接换一批
   _teamsVisited: [],  // 抽到过的球队列表
+  _drawPlayers: [],   // 当前这一轮展示的5名球员（同轮不重复）
   
   // 选中球员状态
   selectedPlayer: null, // 当前选中球员
@@ -2292,6 +2296,23 @@ function html(id, content) {
   if (el && content !== undefined) el.innerHTML = content;
   return el;
 }
+
+// 事件/选择结果修改数值后立即刷新状态条，不再等到下一年或重新进入赛季页。
+function refreshPlayerStateStripLive() {
+  var current = document.getElementById('player-state-strip');
+  if (!current || typeof renderPlayerStateStrip !== 'function') return;
+  var parent = current.parentNode;
+  if (!parent) return;
+  var htmlText = renderPlayerStateStrip();
+  if (!htmlText) return;
+  current.outerHTML = htmlText;
+  var next = document.getElementById('player-state-strip');
+  if (next) {
+    next.classList.add('live-updated');
+    setTimeout(function() { if (next) next.classList.remove('live-updated'); }, 650);
+  }
+}
+window.refreshPlayerStateStripLive = refreshPlayerStateStripLive;
 
 var _trackedExposureKeys = {};
 function trackEvent(params) {
@@ -2454,7 +2475,7 @@ function initGame() {
     usedPlayers: [], _mustLockAfterSpin: false,
     buildStep: 'select', noPlayerSelected: true,
     currentTeam: null, currentRoster: [],
-    _shownThisTeam: [], _rerollsLeft: 3, _teamsVisited: [],
+    _shownThisTeam: [], _rerollsLeft: 3, _mockAdRerollsLeft: 3, _teamsVisited: [], _drawPlayers: [],
     selectedPlayer: null, _locking: false,
     finalOVR: 0, finalPosition: null, finalArchetype: null,
     careerTeam: null,
@@ -2803,10 +2824,14 @@ function getRerollButtonHtml() {
   }
   var loading = !!window._adRerollLoading;
   var canClick = hasTeam && !loading;
+  var adLeft = Math.max(0, Number(STATE._mockAdRerollsLeft == null ? 3 : STATE._mockAdRerollsLeft));
+  if (adLeft <= 0) {
+    return '<button class="btn btn-sm slot-btn" disabled style="opacity:0.3;background:#222;color:var(--text-dim);">📺 广告重选已用完</button>';
+  }
   return '<button class="btn btn-sm slot-btn" onclick="if(typeof watchAdToReroll===\'function\')watchAdToReroll()"' +
     (canClick ? '' : ' disabled') +
     ' style="' + (canClick ? 'background:linear-gradient(135deg,#3a2a1a,#2a2015);color:#f5d060;border-color:#d4af37;' : 'opacity:0.3;') + '">' +
-    (loading ? '📺 加载中...' : '📺 看广告换球员') +
+    (loading ? '📺 模拟广告播放中...' : '📺 看广告换球员（剩' + adLeft + '次）') +
     '</button>';
 }
 
@@ -2957,49 +2982,52 @@ function getBuildPlayerPool(team) {
   return (window.PERFECT_PLAYER_BUILD_DATA && window.PERFECT_PLAYER_BUILD_DATA[team]) || NBA2K_DATA[team] || [];
 }
 
+/** 从属性抽取池中抽一轮固定5人；同一轮不重复，下一轮允许再次抽到。 */
+function drawBuildPlayers(pool, count) {
+  const source = Array.isArray(pool) ? pool.filter(Boolean) : [];
+  const shuffled = shuffleArr(source.slice());
+  return shuffled.slice(0, Math.min(count || 5, shuffled.length));
+}
+
 /** Show team roster — 5 random players (below the slot machine) */
 function showTeamRoster(team) {
   const rosterArea = document.getElementById('br-roster-area');
   if (!rosterArea) return;
   
   const players = getBuildPlayerPool(team);
-  const available = players.filter(p => !STATE.usedPlayers.includes(p.name));
-  
-  if (available.length === 0) {
-    rosterArea.innerHTML = `<div class="br-hint">❌ 都已选过</div>`;
+  if (!players.length) {
+    STATE._drawPlayers = [];
+    rosterArea.innerHTML = `<div class="br-hint">❌ 球员池加载失败，请重新进入建球员</div>`;
     return;
   }
+
+  const shown = drawBuildPlayers(players, 5);
+  STATE._drawPlayers = shown;
   
-  // 从剩余未展示过的球员中随机抽5人
-  const notShown = available.filter(p => !STATE._shownThisTeam.includes(p.name));
-  const pool = notShown.length > 0 ? notShown : available; // 如果都展示过了，从全部重新抽
-  const shuffled = shuffleArr([...pool]);
-  const shown = shuffled.slice(0, Math.min(5, shuffled.length));
-  
-  // 记录本次展示的球员
+  // 仅保留展示历史用于存档/调试，不参与下一轮抽取过滤，否则抽到第4轮会不足5人。
   shown.forEach(p => {
     if (!STATE._shownThisTeam.includes(p.name)) STATE._shownThisTeam.push(p.name);
   });
   
-  renderRosterPlayers(team, shown, available);
+  renderRosterPlayers(team, shown, players);
 }
 
 /** 渲染球员列表 */
-function renderRosterPlayers(team, shown, allAvailable) {
+function renderRosterPlayers(team, shown, allPool) {
   const rosterArea = document.getElementById('br-roster-area');
   if (!rosterArea) return;
   
   let listHtml = `<div style="display:flex;align-items:center;gap:6px;padding-bottom:4px;flex-wrap:wrap;">
     <span style="font-size:13px;font-weight:700;font-family:var(--font-display);letter-spacing:1px;">${getTeamName(team)}</span>
-    <span style="font-size:11px;color:var(--text-dim);">展示 ${shown.length}人 · 剩余 ${allAvailable.length}人</span>
+    <span style="font-size:11px;color:var(--text-dim);">本轮抽取 ${shown.length} 人 · 同轮不重复</span>
   </div><div class="br-roster-list" style="max-height:none;">`;
   
-  shown.forEach(p => {
-    const sel = STATE.selectedPlayer?.name === p.name;
+  shown.forEach((p, drawIndex) => {
+    const sel = STATE.selectedPlayer === p || (STATE.selectedPlayer && STATE.selectedPlayer.name === p.name);
     const playerPos = getPlayerMainPos(p);
     const hsStyle = getPlayerHeadshotStyle(p.name, 32);
     const ovrGrade = getOvrGrade(parseInt(p.ovr) || 50);
-    listHtml += `<div class="br-player${sel ? ' selected' : ''}" onclick="pickPlayer('${p.name.replace(/'/g, "\\'")}')">
+    listHtml += `<div class="br-player${sel ? ' selected' : ''}" data-draw-index="${drawIndex}" onclick="pickPlayerAt(${drawIndex})">
       <div class="bp-left">
         <div class="bp-headshot" style="${hsStyle}"></div>
         <div>
@@ -3034,16 +3062,13 @@ function rerollTeamPlayers() {
   if (STATE._rerollsLeft <= 0 || !STATE.currentTeam) return;
   
   const players = getBuildPlayerPool(STATE.currentTeam);
-  const available = players.filter(p => !STATE.usedPlayers.includes(p.name));
-  
-  const notShown = available.filter(p => !STATE._shownThisTeam.includes(p.name));
-  if (notShown.length === 0) {
+  if (!players.length) {
     return;
   }
   
   STATE._rerollsLeft--;
-  const shuffled = shuffleArr([...notShown]);
-  const shown = shuffled.slice(0, Math.min(5, shuffled.length));
+  const shown = drawBuildPlayers(players, 5);
+  STATE._drawPlayers = shown;
   
   shown.forEach(p => {
     if (!STATE._shownThisTeam.includes(p.name)) STATE._shownThisTeam.push(p.name);
@@ -3052,20 +3077,34 @@ function rerollTeamPlayers() {
   STATE.selectedPlayer = null;
   renderLeftAttrs();
   updateSlotButtons();
-  renderRosterPlayers(STATE.currentTeam, shown, available);
+  renderRosterPlayers(STATE.currentTeam, shown, players);
+}
+
+function pickPlayerAt(drawIndex) {
+  if (STATE._locking || !STATE.currentTeam) return;
+  const players = Array.isArray(STATE._drawPlayers) ? STATE._drawPlayers : [];
+  const player = players[Number(drawIndex)];
+  if (!player) return;
+  STATE.selectedPlayer = player;
+  document.querySelectorAll('.br-player').forEach(function(row) {
+    row.classList.toggle('selected', Number(row.getAttribute('data-draw-index')) === Number(drawIndex));
+  });
+  renderLeftAttrs();
 }
 
 function pickPlayer(name) {
-  
   if (STATE._locking || !STATE.currentTeam) return;
-  const players = getBuildPlayerPool(STATE.currentTeam);
+  const players = Array.isArray(STATE._drawPlayers) && STATE._drawPlayers.length
+    ? STATE._drawPlayers : getBuildPlayerPool(STATE.currentTeam);
   const player = players.find(p => p.name === name);
   if (!player) return;
   
   STATE.selectedPlayer = player;
   
   document.querySelectorAll('.br-player').forEach(r => {
-    r.classList.toggle('selected', r.textContent.includes(player.cname || player.name));
+    r.classList.toggle('selected', r.getAttribute('data-draw-index') != null
+      ? STATE._drawPlayers[Number(r.getAttribute('data-draw-index'))] === player
+      : r.textContent.includes(player.cname || player.name));
   });
   
   renderLeftAttrs();
@@ -9463,6 +9502,7 @@ function getCareerProfile() {
 function addProfileDelta(key, delta) {
   var p = getCareerProfile();
   p[key] = Math.max(-20, Math.min(99, (p[key] || 0) + (delta || 0)));
+  refreshPlayerStateStripLive();
   return p[key];
 }
 
@@ -9472,6 +9512,7 @@ function addSeasonMod(key, delta, minVal, maxVal) {
   var min = minVal == null ? -10 : minVal;
   var max = maxVal == null ? 10 : maxVal;
   mods[key] = Math.max(min, Math.min(max, mods[key] + (delta || 0)));
+  refreshPlayerStateStripLive();
   return mods[key];
 }
 
@@ -14574,6 +14615,9 @@ function manualLoadGame(slot) {
         // STATE 与 NBA2K_DATA 是 const，只能原地清空后填充，保证所有引用仍然有效
         Object.keys(STATE).forEach(function(k) { delete STATE[k]; });
         Object.assign(STATE, snap.state);
+        // 旧存档没有模拟广告计数和当前抽取快照时，按新规则补齐默认值。
+        if (STATE._mockAdRerollsLeft == null) STATE._mockAdRerollsLeft = 3;
+        if (!Array.isArray(STATE._drawPlayers)) STATE._drawPlayers = [];
         if (STATE.season && STATE.season._processedDays && !(STATE.season._processedDays instanceof Set)) {
           STATE.season._processedDays = new Set((Array.isArray(STATE.season._processedDays) ? STATE.season._processedDays : []).map(Number));
         }
@@ -23712,42 +23756,26 @@ function openAdTeamPicker() {
 
 var _adRerollLoading = false;      // 换人广告防连点
 
-/** 更换球员用完时：看广告获得 1 次更换机会 */
+/** 更换球员用完时：暂用模拟广告，最多3次，完成后立即换一批5人 */
 async function watchAdToReroll() {
   if (_adRerollLoading) return;
-  if (!adSdkAvailable()) {
-    showAdToast('功能暂不可用，请稍后再试');
+  if (!STATE.currentTeam) return;
+  var adLeft = Math.max(0, Number(STATE._mockAdRerollsLeft == null ? 3 : STATE._mockAdRerollsLeft));
+  if (adLeft <= 0) {
+    showAdToast('模拟广告次数已用完');
+    updateSlotButtons();
     return;
   }
-
   _adRerollLoading = true;
   updateSlotButtons();
-
-  var result = null;
-  try {
-    result = await VaFuSDK.completeRewardVideoTask({ activityId: AD_ACTIVITY_ID });
-  } catch (e) {
-    _adRerollLoading = false;
-    updateSlotButtons();
-    return;
-  }
+  // 保留一点播放反馈，但不请求真实广告 SDK，方便静态 GitHub Pages 直接试玩。
+  await new Promise(function(resolve) { setTimeout(resolve, 700); });
   _adRerollLoading = false;
-
-  if (result && result.ok) {
-    STATE._rerollsLeft = (STATE._rerollsLeft || 0) + 1;
-    await fetchAdTeamTask();
-    updateSlotButtons();
-    showAdToast('✅ 观看完成，获得一次更换球员机会！');
-  } else if (result && (result.code === 'LOGIN_REQUIRED' || result.code === 'APP_REQUIRED')) {
-    updateSlotButtons();
-    return;
-  } else if (result && result.code === 'NOT_REWARDED') {
-    updateSlotButtons();
-    showAdToast('需完成观看才能获得更换机会');
-  } else {
-    updateSlotButtons();
-    showAdToast('获取广告失败，请稍后再试');
-  }
+  STATE._mockAdRerollsLeft = adLeft - 1;
+  STATE._rerollsLeft = (STATE._rerollsLeft || 0) + 1;
+  rerollTeamPlayers();
+  showAdToast('✅ 模拟广告完成，已换一批球员（广告剩' + STATE._mockAdRerollsLeft + '次）');
+  updateSlotButtons();
 }
 
 // 从其他页面（如登录 / 唤起 App）返回时刷新任务状态
