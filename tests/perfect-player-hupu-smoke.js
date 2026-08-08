@@ -73,6 +73,38 @@ async function main() {
     assert.notEqual(fs.statSync(localPath).size, 12430, player.name || ('2026 顺位 ' + player.pick) + ' 不能使用 1040x760 灰色占位图');
   });
   const teams = Object.values(pool.teams || {});
+  const expectedHistoricalLineups = {
+    1:'Bob Cousy|John Havlicek|Larry Bird|Kevin McHale|Bill Russell',
+    2:'Jason Kidd|Vince Carter|Julius Erving|Buck Williams|Brook Lopez',
+    3:'Walt Frazier|Allan Houston|Carmelo Anthony|Dave Debusschere|Patrick Ewing',
+    4:'Allen Iverson|Hal Greer|Julius Erving|Charles Barkley|Wilt Chamberlain',
+    5:'Kyle Lowry|DeMar DeRozan|Kawhi Leonard|Chris Bosh|Marc Gasol',
+    6:'Derrick Rose|Michael Jordan|Scottie Pippen|Dennis Rodman|Artis Gilmore',
+    7:'Mark Price|Kyrie Irving|LeBron James|Kevin Love|Brad Daugherty',
+    8:'Isiah Thomas|Joe Dumars|Grant Hill|Dennis Rodman|Ben Wallace',
+    9:'Mark Jackson|Reggie Miller|Paul George|Jermaine ONeal|Mel Daniels',
+    10:'Oscar Robertson|Sidney Moncrief|Marques Johnson|Giannis Antetokounmpo|Kareem Abdul-Jabbar',
+    11:'Lenny Wilkens|Pete Maravich|Dominique Wilkins|Bob Pettit|Dikembe Mutombo',
+    12:'Kemba Walker|Eddie Jones|Glen Rice|Larry Johnson|Alonzo Mourning',
+    13:"Tim Hardaway|Dwyane Wade|LeBron James|Chris Bosh|Shaquille O'Neal",
+    14:'Anfernee Hardaway|Nick Anderson|Tracy McGrady|Rashard Lewis|Dwight Howard',
+    15:'Gilbert Arenas|Earl Monroe|Bernard King|Elvin Hayes|Wes Unseld',
+    16:'Lafayette Lever|David Thompson|Alex English|Dan Issel|Nikola Jokic',
+    17:'Sam Cassell|Anthony Edwards|Jimmy Butler|Kevin Garnett|Karl-Anthony Towns',
+    18:'Shai Gilgeous-Alexander|Ray allen|Kevin Durant|Shawn Kemp|Jack Sikma',
+    19:'Damian Lillard|Clyde Drexler|Jerome Kersey|LaMarcus Aldridge|Bill Walton',
+    20:'John Stockton|Donovan Mitchell|Adrian Dantley|Karl Malone|Rudy Gobert',
+    21:'Stephen Curry|Klay Thompson|Kevin Durant|Draymond Green|Wilt Chamberlain',
+    22:'Chris Paul|Paul George|Kawhi Leonard|Blake Griffin|Bob McAdoo',
+    23:'Earvin Johnson|Kobe Bryant|LeBron James|Anthony Davis|Kareem Abdul-Jabbar',
+    24:"Steve Nash|Devin Booker|Shawn Marion|Charles Barkley|Amar'e Stoudemire",
+    25:'Oscar Robertson|Mitch Richmond|Peja Stojaković|Chris Webber|DeMarcus Cousins',
+    26:'Luka Dončić|Rolando Blackman|Mark Aguirre|Dirk Nowitzki|Tyson Chandler',
+    27:'Calvin Murphy|James Harden|Tracy McGrady|Elvin Hayes|Hakeem Olajuwon',
+    28:'Mike Conley|Tony Allen|Rudy Gay|Zach Randolph|Marc Gasol',
+    29:'Chris Paul|Jrue Holiday|Brandon Ingram|Zion Williamson|Anthony Davis',
+    30:'Tony Parker|George Gervin|Kawhi Leonard|Tim Duncan|David Robinson'
+  };
   assert.equal(teams.length, 30);
   const historicalCacheDir = path.join(root, 'assets', 'images', 'Player', 'historical-nba');
   const historicalCachePlaceholders = fs.readdirSync(historicalCacheDir)
@@ -84,6 +116,8 @@ async function main() {
     assert.equal(team.historicalPlayers.length, 5, team.name + ' 应有 5 张历史惊喜卡');
     assert.equal(team.currentCount, 12, team.name + ' 应有 12 名现役');
     assert.equal(team.historicalCount, 5, team.name + ' 应有 5 名历史惊喜球员');
+    assert.deepEqual(team.historicalPlayers.map(player => player.pos).sort(), [1, 2, 3, 4, 5], team.name + ' 历史惊喜池必须覆盖 PG/SG/SF/PF/C');
+    assert.equal(team.historicalPlayers.map(player => player.nameEn).join('|'), expectedHistoricalLineups[team.id], team.name + ' 历史五位置名单必须与指定版本一致');
     team.players.forEach(player => {
       assert.ok(fs.existsSync(path.join(root, player.photoLocal)), player.name + ' 缺少本地头像');
     });
@@ -97,6 +131,12 @@ async function main() {
       assert.equal(player.peakRating, player.rating, player.nameEn + ' 巅峰评分标记不一致');
     });
   });
+  const lakers = pool.teams['23'];
+  const currentLeBron = lakers.players.find(player => player.nameEn === 'LeBron James');
+  const peakLeBron = lakers.historicalPlayers.find(player => player.nameEn === 'LeBron James');
+  assert.ok(currentLeBron && peakLeBron, '湖人应同时保留现役版和巅峰版 LeBron James');
+  assert.notEqual(currentLeBron.uid, peakLeBron.uid, '现役版和巅峰版必须是两张独立球员卡');
+  assert.equal(pool.rules.currentAndPeakVersionsIndependent, true, '球员池必须声明现役/巅峰版本独立');
   const derrickRose = teams.find(team => team.id === 6).historicalPlayers.find(player => player.nameEn === 'Derrick Rose');
   assert.ok(derrickRose, '公牛历史惊喜池应包含 Derrick Rose');
   assert.ok(derrickRose.rating >= 95, 'Derrick Rose 应使用巅峰评分，不能再是 86：' + derrickRose.rating);
@@ -580,8 +620,8 @@ async function main() {
     await page.waitForTimeout(850);
     assert.equal(await page.evaluate(() => STATE._mockAdRerollsLeft), 2, '模拟广告重选应消耗一次且生效');
     assert.equal(await page.locator('.br-player').count(), 5, '模拟广告重选后仍应显示五人');
-    const adBatchNames = await page.$$eval('.br-player .bp-name', nodes => nodes.map(node => node.textContent.trim()));
-    assert.equal(new Set(adBatchNames).size, 5, '广告重选同一轮五名球员不能重复');
+    const adBatchCards = await page.evaluate(() => STATE._drawPlayers.map(player => player._poolUid));
+    assert.equal(new Set(adBatchCards).size, 5, '广告重选同一轮五张版本卡不能重复');
     const localHeadshots = await page.$$eval('.br-player .bp-headshot', elements => elements.map(element => ({ computed: getComputedStyle(element).backgroundImage, inline: element.getAttribute('style'), player: element.closest('.br-player').textContent.trim() })));
     assert.ok(localHeadshots.every(value => value.computed.includes('/assets/')), '候选球员应全部使用本地真人头像：' + JSON.stringify(localHeadshots));
     await page.screenshot({ path: path.join(outputDir, '02-five-player-build.png'), fullPage: false });
@@ -607,13 +647,34 @@ async function main() {
       return {
         surprise: surprise.map(player => player._sourceKind),
         normal: normal.map(player => player._sourceKind),
-        surpriseUnique: new Set(surprise.map(player => player.name)).size,
-        normalUnique: new Set(normal.map(player => player.name)).size
+        surpriseUnique: new Set(surprise.map(player => player._poolUid)).size,
+        normalUnique: new Set(normal.map(player => player._poolUid)).size
       };
     });
     assert.equal(surpriseRolls.surprise.filter(kind => kind === 'historical').length, 1, '低概率命中时最多只插入一张历史惊喜卡');
     assert.equal(surpriseRolls.normal.filter(kind => kind === 'historical').length, 0, '未命中时不应固定出现历史球员');
-    assert.equal(surpriseRolls.surpriseUnique, 5, '历史惊喜轮次仍需五人且同轮不重复');
+    assert.equal(surpriseRolls.surpriseUnique, 5, '历史惊喜轮次仍需五张独立版本卡');
+
+    const dualVersionDraw = await page.evaluate(() => {
+      const originalRandom = Math.random;
+      const originalShuffle = window.shuffleArr;
+      const originalHistorical = PERFECT_PLAYER_HISTORICAL_SURPRISE_DATA.LAL;
+      const current = PERFECT_PLAYER_BUILD_DATA.LAL.find(player => player.name === 'LeBron James');
+      const peak = originalHistorical.find(player => player.name === 'LeBron James');
+      window.shuffleArr = items => items.slice();
+      PERFECT_PLAYER_HISTORICAL_SURPRISE_DATA.LAL = [peak].concat(originalHistorical.filter(player => player !== peak));
+      Math.random = () => 0.05;
+      const rest = PERFECT_PLAYER_BUILD_DATA.LAL.filter(player => player !== current).slice(0, 4);
+      const cards = drawBuildPlayers([current].concat(rest), 5, 'LAL');
+      renderRosterPlayers('LAL', cards, PERFECT_PLAYER_BUILD_DATA.LAL);
+      Math.random = originalRandom;
+      window.shuffleArr = originalShuffle;
+      PERFECT_PLAYER_HISTORICAL_SURPRISE_DATA.LAL = originalHistorical;
+      return cards.filter(player => player.name === 'LeBron James').map(player => ({ kind:player._sourceKind, uid:player._poolUid }));
+    });
+    assert.deepEqual(dualVersionDraw.map(card => card.kind).sort(), ['current', 'historical'], '同一轮应允许现役版与巅峰版同时出现');
+    assert.equal(new Set(dualVersionDraw.map(card => card.uid)).size, 2, '同名球员两个版本必须保持独立卡 ID');
+    await page.screenshot({ path: path.join(outputDir, '02b-current-and-peak-versions.png'), fullPage: false });
 
     for (let index = 0; index < 13; index++) {
       await page.evaluate(() => {

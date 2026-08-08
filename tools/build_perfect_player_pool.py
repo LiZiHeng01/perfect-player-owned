@@ -135,6 +135,42 @@ HISTORICAL_LEGACY_NAME_FIXES = {
 
 HISTORICAL_MODERN_START_YEAR = 1984
 
+# One real franchise representative for each basketball position.  Names are
+# resolved to the player's best peak card below; the slot position is explicit
+# because several combo forwards/guards changed primary position by season.
+HISTORICAL_POSITION_LINEUPS = {
+    1: ["Bob Cousy", "John Havlicek", "Larry Bird", "Kevin McHale", "Bill Russell"],
+    2: ["Jason Kidd", "Vince Carter", "Julius Erving", "Buck Williams", "Brook Lopez"],
+    3: ["Walt Frazier", "Allan Houston", "Carmelo Anthony", "Dave DeBusschere", "Patrick Ewing"],
+    4: ["Allen Iverson", "Hal Greer", "Julius Erving", "Charles Barkley", "Wilt Chamberlain"],
+    5: ["Kyle Lowry", "DeMar DeRozan", "Kawhi Leonard", "Chris Bosh", "Marc Gasol"],
+    6: ["Derrick Rose", "Michael Jordan", "Scottie Pippen", "Dennis Rodman", "Artis Gilmore"],
+    7: ["Mark Price", "Kyrie Irving", "LeBron James", "Kevin Love", "Brad Daugherty"],
+    8: ["Isiah Thomas", "Joe Dumars", "Grant Hill", "Dennis Rodman", "Ben Wallace"],
+    9: ["Mark Jackson", "Reggie Miller", "Paul George", "Jermaine O'Neal", "Mel Daniels"],
+    10: ["Oscar Robertson", "Sidney Moncrief", "Marques Johnson", "Giannis Antetokounmpo", "Kareem Abdul-Jabbar"],
+    11: ["Lenny Wilkens", "Pete Maravich", "Dominique Wilkins", "Bob Pettit", "Dikembe Mutombo"],
+    12: ["Kemba Walker", "Eddie Jones", "Glen Rice", "Larry Johnson", "Alonzo Mourning"],
+    13: ["Tim Hardaway", "Dwyane Wade", "LeBron James", "Chris Bosh", "Shaquille O'Neal"],
+    14: ["Anfernee Hardaway", "Nick Anderson", "Tracy McGrady", "Rashard Lewis", "Dwight Howard"],
+    15: ["Gilbert Arenas", "Earl Monroe", "Bernard King", "Elvin Hayes", "Wes Unseld"],
+    16: ["Lafayette Lever", "David Thompson", "Alex English", "Dan Issel", "Nikola Jokic"],
+    17: ["Sam Cassell", "Anthony Edwards", "Jimmy Butler", "Kevin Garnett", "Karl-Anthony Towns"],
+    18: ["Shai Gilgeous-Alexander", "Ray Allen", "Kevin Durant", "Shawn Kemp", "Jack Sikma"],
+    19: ["Damian Lillard", "Clyde Drexler", "Jerome Kersey", "LaMarcus Aldridge", "Bill Walton"],
+    20: ["John Stockton", "Donovan Mitchell", "Adrian Dantley", "Karl Malone", "Rudy Gobert"],
+    21: ["Stephen Curry", "Klay Thompson", "Kevin Durant", "Draymond Green", "Wilt Chamberlain"],
+    22: ["Chris Paul", "Paul George", "Kawhi Leonard", "Blake Griffin", "Bob McAdoo"],
+    23: ["Earvin Johnson", "Kobe Bryant", "LeBron James", "Anthony Davis", "Kareem Abdul-Jabbar"],
+    24: ["Steve Nash", "Devin Booker", "Shawn Marion", "Charles Barkley", "Amar'e Stoudemire"],
+    25: ["Oscar Robertson", "Mitch Richmond", "Peja Stojakovic", "Chris Webber", "DeMarcus Cousins"],
+    26: ["Luka Doncic", "Rolando Blackman", "Mark Aguirre", "Dirk Nowitzki", "Tyson Chandler"],
+    27: ["Calvin Murphy", "James Harden", "Tracy McGrady", "Elvin Hayes", "Hakeem Olajuwon"],
+    28: ["Mike Conley", "Tony Allen", "Rudy Gay", "Zach Randolph", "Marc Gasol"],
+    29: ["Chris Paul", "Jrue Holiday", "Brandon Ingram", "Zion Williamson", "Anthony Davis"],
+    30: ["Tony Parker", "George Gervin", "Kawhi Leonard", "Tim Duncan", "David Robinson"],
+}
+
 # A handful of very early players predate the NBA CDN name/ID mapping. Keep
 # their shipped local headshot as the primary asset instead of turning a local
 # path into a remote URL during pool generation.
@@ -171,6 +207,7 @@ def norm(value: object) -> str:
     return "".join(ch for ch in text if ch.isalnum())
 
 
+CURATED_POSITION_KEYS = {norm(name) for lineup in HISTORICAL_POSITION_LINEUPS.values() for name in lineup}
 HALL_OF_FAME_KEYS = {norm(name) for name in HALL_OF_FAME_NAMES}
 MODERN_ALL_STAR_KEYS = {norm(name) for name in MODERN_ALL_STAR_NAMES}
 HISTORICAL_EXCLUDED_KEYS = {norm(name) for name in HISTORICAL_EXCLUDED_NAMES}
@@ -191,7 +228,16 @@ def historical_tier(record: dict) -> str:
     # rosters19 is the all-time compilation and is stamped 1957 even for
     # Jordan-era players. The curated name set is the era guard for that file.
     source = record.get("source") or {}
-    if (source_year >= HISTORICAL_MODERN_START_YEAR or source.get("code") == 19) and keys & MODERN_ALL_STAR_KEYS:
+    modern_card = source_year >= HISTORICAL_MODERN_START_YEAR or (
+        source.get("code") == 19 and number(record.get("draftYear")) >= HISTORICAL_MODERN_START_YEAR
+    )
+    earned_star_honor = any(
+        number((record.get("honors") or {}).get(key)) > 0
+        for key in ("allStar", "allNba1", "allNba2", "allNba3", "mvp", "fmvp", "dpoy")
+    )
+    if keys & CURATED_POSITION_KEYS:
+        return "modern-all-star"
+    if modern_card and (keys & MODERN_ALL_STAR_KEYS or earned_star_honor):
         return "modern-all-star"
     return ""
 
@@ -366,7 +412,13 @@ def player_record(row: dict[str, str], source: dict, history: dict | None, nba_i
         for snapshot in ((history or {}).get("rosterSnapshots") or [])
         if 1 <= number(snapshot.get("teamId")) <= 30
     }
-    historical_teams.add(tid)
+    # rosters19 is a fantasy all-time compilation whose row team is not a
+    # reliable real franchise. Prefer the historical database affiliations so
+    # legends do not leak onto teams they never represented (for example,
+    # Jordan on the Knicks). Real sampled seasons still contribute their row
+    # team, and the all-time row is used only when no history exists at all.
+    if source.get("code") != 19 or not historical_teams:
+        historical_teams.add(tid)
     return {
         "id": number(row.get("id"), index),
         "uid": f"pp_{source['code']}_{tid}_{identity}_{index}",
@@ -497,9 +549,9 @@ def main() -> None:
         }
         consider_peak(historical_peak, record)
 
-    # Current players are the live 2025-26 rosters; any historical entry that is the
-    # same person as a current player must be dropped (a legend still playing is
-    # represented by his current card, never by an old season).
+    # Current and peak cards are intentionally separate versions. A player may
+    # therefore exist in both the 2025-26 current pool and a team's five-card
+    # peak pool; selecting one version must not remove the other.
     current_identities = set()
     current_name_keys = set()
     for records in current_by_team.values():
@@ -517,8 +569,6 @@ def main() -> None:
 
     historical_by_team: dict[int, dict[str, dict]] = defaultdict(dict)
     for identity, record in historical_peak.items():
-        if identity in current_identities or norm(record.get("nameEn")) in current_name_keys:
-            continue
         for franchise_id in sorted(historical_team_ids.get(identity) or {record["teamId"]}):
             if franchise_id not in TEAM_NAMES:
                 continue
@@ -530,7 +580,10 @@ def main() -> None:
                 card["source"]["franchiseCard"] = True
             historical_by_team[franchise_id][identity] = card
 
-    dropped_current = len([identity for identity in historical_peak if identity in current_identities or norm(historical_peak[identity].get("nameEn")) in current_name_keys])
+    dual_version_count = len([
+        identity for identity in historical_peak
+        if identity in current_identities or norm(historical_peak[identity].get("nameEn")) in current_name_keys
+    ])
 
     def historical_sort_key(player: dict) -> tuple:
         # Prefer modern Hall of Famers, then older all-time legends, then the
@@ -544,15 +597,29 @@ def main() -> None:
         ) else 0
         return (-tier_score, -modern_score, -player["rating"], -player["starScore"], player["nameEn"])
 
-    global_modern_surprise_pool = sorted(
-        [
-            player
-            for records in historical_by_team.values()
-            for player in records.values()
-            if player.get("historicalTier") == "modern-all-star"
-        ],
-        key=historical_sort_key,
-    )
+    # Position fallback is only used when a franchise has no eligible card at
+    # that spot.  Keep the same Hall-of-Fame-first ordering as the direct team
+    # pool so the PG/SG/SF/PF/C requirement never lowers the surprise-card bar.
+    global_historical_by_position = {
+        pos: sorted(
+            {
+                player["identity"]: player
+                for records in historical_by_team.values()
+                for player in records.values()
+                if player.get("pos") == pos
+            }.values(),
+            key=historical_sort_key,
+        )
+        for pos in range(1, 6)
+    }
+    curated_candidates = {}
+    for records in historical_by_team.values():
+        for player in records.values():
+            for candidate_name in (player.get("nameEn"), player.get("altName"), player.get("name")):
+                if norm(candidate_name):
+                    old = curated_candidates.get(norm(candidate_name))
+                    if old is None or historical_sort_key(player) < historical_sort_key(old):
+                        curated_candidates[norm(candidate_name)] = player
 
     teams: dict[str, dict] = {}
     warnings: list[str] = []
@@ -561,24 +628,53 @@ def main() -> None:
         # Five-card historical surprise pool per team. These cards are kept out
         # of the normal 12-player draw and injected only at a low probability
         # by the browser, so every round is not forced to contain legends.
-        history = sorted(historical_by_team[tid].values(), key=historical_sort_key)
-        used_identities = {p["identity"] for p in history}
-        if len(history) < 5:
-            for source_record in global_modern_surprise_pool:
-                if source_record["identity"] in used_identities:
-                    continue
-                record = dict(source_record)
+        direct_history = sorted(historical_by_team[tid].values(), key=historical_sort_key)
+        history = []
+        used_identities = set()
+        for pos in range(1, 6):
+            curated_name = HISTORICAL_POSITION_LINEUPS[tid][pos - 1]
+            source_record = curated_candidates.get(norm(curated_name))
+            candidates = [player for player in direct_history if player.get("pos") == pos]
+            for fallback_tid in HISTORICAL_FRANCHISE_FALLBACKS.get(tid, []):
+                candidates.extend(
+                    player
+                    for player in sorted(historical_by_team[fallback_tid].values(), key=historical_sort_key)
+                    if player.get("pos") == pos
+                )
+            used_position_fallback = False
+            if source_record is None:
+                warnings.append(f"{label}: curated {pos} {curated_name} missing")
+                source_record = next(
+                    (player for player in candidates if player["identity"] not in used_identities),
+                    None,
+                )
+            if source_record is None:
+                source_record = next(
+                    (
+                        player
+                        for player in global_historical_by_position[pos]
+                        if player["identity"] not in used_identities
+                    ),
+                    None,
+                )
+                used_position_fallback = True
+            if source_record is None:
+                warnings.append(f"{label}: historical position {pos} missing")
+                continue
+            record = dict(source_record)
+            record["pos"] = pos
+            record["source"] = dict(record["source"])
+            record["source"]["positionCurated"] = True
+            if record["teamId"] != tid:
                 record["teamId"] = tid
-                record["uid"] = f"{source_record['uid']}_surprise_{tid}"
-                record["source"] = dict(source_record["source"])
+                record["uid"] = f"{source_record['uid']}_position_{pos}_surprise_{tid}"
                 record["source"]["franchiseFallback"] = True
-                history.append(record)
-                used_identities.add(record["identity"])
-                if len(history) >= 5:
-                    break
-            history = sorted(history, key=historical_sort_key)
+                if used_position_fallback or norm(source_record.get("nameEn")) != norm(curated_name):
+                    record["source"]["positionFallback"] = True
+            history.append(record)
+            used_identities.add(record["identity"])
         current_take = current[:12]
-        history_take = history[:5]
+        history_take = history
         if len(current_take) < 12:
             warnings.append(f"{label}: current={len(current_take)}")
         if len(history_take) < 5:
@@ -591,7 +687,7 @@ def main() -> None:
             "players": current_take,
             "historicalPlayers": history_take,
         }
-    print(f"historical surprise cards kept={sum(len(v) for v in historical_by_team.values())} dropped_as_current={dropped_current}")
+    print(f"historical surprise cards kept={sum(len(v) for v in historical_by_team.values())} dual_current_peak={dual_version_count}")
 
     payload = {
         "version": 1,
@@ -600,6 +696,8 @@ def main() -> None:
             "targetRosterSize": 12,
             "currentTarget": 12,
             "historicalTarget": 5,
+            "historicalPositions": ["PG", "SG", "SF", "PF", "C"],
+            "currentAndPeakVersionsIndependent": True,
             "historicalMode": "low-probability surprise card",
             "historicalDrawChance": 0.1,
             "historicalEligibility": "Naismith Hall of Fame player; modern All-Star fallback when a franchise has fewer than five",
