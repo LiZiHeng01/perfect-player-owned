@@ -55,7 +55,15 @@
     var grid = document.getElementById('character-avatar-grid');
     var tabs = document.getElementById('character-avatar-tabs');
     var input = document.getElementById('character-name');
-    if (!grid || !tabs || !input) return;
+    if (!grid || !input) return;
+    // 兼容被浏览器/CDN 缓存的旧版入口：旧 DOM 没有头像分组节点时现场补齐，
+    // 不能因为一个辅助节点缺失就让整个头像网格保持空白。
+    if (!tabs) {
+      tabs = document.createElement('div');
+      tabs.className = 'character-avatar-tabs';
+      tabs.id = 'character-avatar-tabs';
+      grid.parentNode.insertBefore(tabs, grid);
+    }
     input.value = window.PERFECT_PLAYER_PROFILE ? window.PERFECT_PLAYER_PROFILE.name : '';
     tabs.innerHTML = AVATAR_GROUPS.map(function (group) {
       return '<button type="button" class="character-avatar-tab' + (group === activeAvatarGroup ? ' active' : '') + '" onclick="selectCharacterAvatarGroup(\'' + group + '\')">' + group + ' · 6</button>';

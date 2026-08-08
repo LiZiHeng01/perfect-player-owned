@@ -2,6 +2,17 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
+  <script>
+    // GitHub Pages 的公开入口只负责转到唯一游戏页，避免 index.html 与主游戏
+    // 复制两份后版本漂移（旧入口曾缺少头像分组节点，导致角色头像区为空）。
+    (function () {
+      var target = new URL('nba-perfect-player.html', window.location.href);
+      target.search = window.location.search;
+      target.hash = window.location.hash;
+      window.location.replace(target.href);
+    })();
+  </script>
+  <noscript><meta http-equiv="refresh" content="0;url=nba-perfect-player.html"></noscript>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Perfect Player · 完美球员</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%80%3C/text%3E%3C/svg%3E">

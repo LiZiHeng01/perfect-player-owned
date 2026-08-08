@@ -110,7 +110,7 @@ async function main() {
   });
   let browser;
   try {
-    const url = `http://127.0.0.1:${port}/nba-perfect-player.html`;
+    const url = `http://127.0.0.1:${port}/index.html`;
     await waitForHttp(url);
     const { chromium } = loadPlaywright();
     browser = await chromium.launch({
@@ -129,6 +129,7 @@ async function main() {
       if (response.status() >= 400) badResponses.push(response.status() + ' ' + response.url());
     });
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.waitForURL(/\/nba-perfect-player\.html(?:[?#]|$)/, { timeout: 10000 });
     await page.waitForSelector('#screen-menu.active');
     await page.waitForFunction(() => window.PERFECT_PLAYER_POOL_REPORT && window.PERFECT_PLAYER_POOL_REPORT.total === 510);
 
@@ -279,6 +280,17 @@ async function main() {
     await page.waitForFunction(() => [...document.querySelectorAll('.character-avatar img')].every(image => image.complete && image.naturalWidth > 0), null, { timeout: 15000 });
     const avatarLoads = await page.$$eval('.character-avatar img', images => images.map(image => image.complete && image.naturalWidth > 0));
     assert.ok(avatarLoads.every(Boolean), '六张头像都应完成加载');
+    const cachedOldEntryRepair = await page.evaluate(() => {
+      document.getElementById('character-avatar-tabs').remove();
+      document.getElementById('character-avatar-grid').innerHTML = '';
+      renderCharacterCreator();
+      return {
+        tabs: document.querySelectorAll('.character-avatar-tab').length,
+        avatars: document.querySelectorAll('.character-avatar img').length
+      };
+    });
+    assert.deepEqual(cachedOldEntryRepair, { tabs: 3, avatars: 6 }, '旧缓存入口缺少分组节点时必须自动恢复头像选择器');
+    await page.waitForFunction(() => [...document.querySelectorAll('.character-avatar img')].every(image => image.complete && image.naturalWidth > 0), null, { timeout: 15000 });
     const characterBounds = await page.$eval('#screen-character', element => {
       const rect = element.getBoundingClientRect();
       return { top: rect.top, bottom: rect.bottom, viewport: innerHeight };
