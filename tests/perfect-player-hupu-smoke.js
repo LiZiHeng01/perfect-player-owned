@@ -499,6 +499,16 @@ async function main() {
     await page.waitForSelector('#draft-modal');
     await page.locator('#draft-modal button').first().click();
     await page.waitForSelector('#draft-result-modal');
+    const firstDraftEventChanges = (await page.locator('#draft-result-modal [data-event-attribute-summary]').textContent()).replace(/\s+/g, ' ').trim();
+    assert.ok(firstDraftEventChanges.includes('本次实际数值变化'), '事件结算必须显示实际属性变化：' + firstDraftEventChanges);
+    assert.ok(firstDraftEventChanges.includes('媒体信任 +1'), '医疗复查事件应显示真实生效的媒体信任变化：' + firstDraftEventChanges);
+    assert.ok(firstDraftEventChanges.includes('选秀行情'), '选秀事件应显示真实生效的选秀行情变化：' + firstDraftEventChanges);
+    const resultModalBounds = await page.$eval('#draft-result-modal .team-picker-modal', element => {
+      const rect = element.getBoundingClientRect();
+      return { top: rect.top, bottom: rect.bottom, viewport: innerHeight };
+    });
+    assert.ok(resultModalBounds.top >= -1 && resultModalBounds.bottom <= resultModalBounds.viewport + 1, '带属性变化的事件结算仍应保持在手机屏幕内');
+    await page.screenshot({ path: path.join(outputDir, '04-event-attribute-changes.png'), fullPage: false });
     await page.click('#draft-result-modal button');
     await page.waitForFunction(() => window.__draftRandomDone === 1);
     await page.evaluate(() => {

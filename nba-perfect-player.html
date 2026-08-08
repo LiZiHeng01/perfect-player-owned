@@ -121,6 +121,13 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 /* 自选球队弹窗 */
 .team-picker-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;padding:12px;animation:fadeIn .2s ease;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 .team-picker-modal{background:var(--bg);border:2px solid var(--border);border-radius:var(--radius);width:100%;max-width:400px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 8px 48px rgba(0,0,0,0.25);animation:slideUp .25s ease}
+.event-result-body{padding:14px 14px 8px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.event-attribute-summary{margin:2px 0 14px;padding:10px;border:1px solid rgba(255,107,53,.32);border-radius:10px;background:linear-gradient(135deg,rgba(255,107,53,.09),rgba(247,166,0,.05))}
+.event-attribute-title{font-size:11px;color:var(--orange);font-weight:800;margin-bottom:7px}
+.event-attribute-list{display:flex;flex-wrap:wrap;gap:6px}
+.event-attribute-chip{display:inline-flex;align-items:center;gap:4px;padding:5px 8px;border-radius:999px;background:var(--bg-card);border:1px solid var(--border);font-size:12px;font-weight:800;color:var(--text)}
+.event-attribute-chip.up strong{color:#18a05e}.event-attribute-chip.down strong{color:#df4b42}
+.event-attribute-empty{font-size:12px;color:var(--text-muted)}
 .team-picker-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
 .team-picker-header span{font-family:var(--font-display);font-size:16px;font-weight:700}
 .legacy-media-card{position:relative;overflow:hidden;border:1px solid var(--border);border-radius:12px;background:var(--bg-card);padding:14px;margin-bottom:14px;box-shadow:var(--shadow)}
@@ -3641,6 +3648,7 @@ function chooseDraftChoice(idx) {
   if (!modal) return;
   var ch = modal.choices[idx];
   if (!ch) return;
+  var beforeAttributes = captureEventAttributeSnapshot();
   var msg = '';
   try { msg = ch.apply ? ch.apply() : ''; } catch(e) { msg = ''; }
   msg = sanitizePlayerFacingText(msg || '');
@@ -3649,7 +3657,8 @@ function chooseDraftChoice(idx) {
   var overlay = document.getElementById('draft-modal');
   if (overlay) overlay.remove();
   STATE._draftModalStep = null;
-  if (msg) showDraftResultModal(modal.title, msg, done);
+  var attributeChanges = diffEventAttributeSnapshot(beforeAttributes);
+  if (msg || attributeChanges.length) showDraftResultModal(modal.title, msg, done, attributeChanges);
   else if (done) done();
 }
 
@@ -3677,7 +3686,7 @@ function closeDraftScene() {
   if (s && s.onNext) s.onNext();
 }
 
-function showDraftResultModal(title, msg, onNext) {
+function showDraftResultModal(title, msg, onNext, attributeChanges) {
   var old = document.getElementById('draft-result-modal');
   if (old) old.remove();
   STATE._draftResultDone = typeof onNext === 'function' ? onNext : null;
@@ -3685,8 +3694,9 @@ function showDraftResultModal(title, msg, onNext) {
   html += '<div class="team-picker-modal">';
   html += '<div class="team-picker-header"><span>' + title + '</span></div>';
   if (typeof renderPerfectPlayerDraftProjection === 'function') html += renderPerfectPlayerDraftProjection(title);
-  html += '<div style="padding:14px 14px 8px;">';
+  html += '<div class="event-result-body">';
   html += formatBranchResultText(msg);
+  html += renderEventAttributeChanges(attributeChanges);
   html += '<button class="btn btn-primary btn-sm" style="width:100%;" onclick="continueDraftResult()">继续</button>';
   html += '</div></div></div>';
   document.body.insertAdjacentHTML('beforeend', html);
@@ -3967,6 +3977,7 @@ function runPostDraftContractFlow(team, done) {
   var p = STATE._draftPending;
   if (!p) { done(); return; }
   if (p.selfPicked) {
+    var beforeAttributes = captureEventAttributeSnapshot();
     setBranchNode('draft_night', 'draft_forced_trade');
     p.contractYears = Math.max(1, (p.contractYears || 1) - 1);
     addProfileDelta('coachTrust', -2);
@@ -3975,7 +3986,7 @@ function runPostDraftContractFlow(team, done) {
     var tn = getTeamName ? getTeamName(team) : team;
     var msg = '你被选中的消息刚上新闻，交易流言就跟着到了。第二天，球队官宣：你最终加盟 ' + tn + '。评论区有人说你聪明，有人说你不够忠诚。<br><br>效果：教练信任-2；球迷支持-3；媒体压力+1；合同年限缩短。';
     recordDraftChoice('draft_forced_trade', '交易官宣', '接受交易', msg);
-    showDraftResultModal('交易官宣', msg, function() { showDraftContractStep(team, done); });
+    showDraftResultModal('交易官宣', msg, function() { showDraftContractStep(team, done); }, diffEventAttributeSnapshot(beforeAttributes));
   } else {
     showDraftContractStep(team, done);
   }
@@ -9668,6 +9679,70 @@ function addSeasonMod(key, delta, minVal, maxVal) {
   return mods[key];
 }
 
+var EVENT_ATTRIBUTE_LABELS = {
+  fame:'人气', businessValue:'商业价值', mediaTrust:'媒体信任', controversy:'争议',
+  chinaPopularity:'中国人气', loyalty:'忠诚', leadership:'领导力', coachTrust:'教练信任',
+  lockerRoomTrust:'更衣室信任', fanSupport:'球迷支持', legacyBonus:'传奇声望',
+  injuryRiskBonus:'伤病风险', formVariance:'状态波动', teamChemistry:'球队默契',
+  moraleBonus:'士气', mediaPressure:'媒体压力', staminaLoad:'体能负荷',
+  draftStockBonus:'选秀行情', mentalPressure:'压力', currentAge:'年龄'
+};
+
+function captureEventAttributeSnapshot() {
+  var snapshot = {};
+  var profile = STATE.career && STATE.career.profile ? STATE.career.profile : {};
+  var mods = STATE.career && STATE.career.nextSeasonMods ? STATE.career.nextSeasonMods : {};
+  ['fame','businessValue','mediaTrust','controversy','chinaPopularity','loyalty','leadership','coachTrust','lockerRoomTrust','fanSupport','legacyBonus'].forEach(function(key) {
+    snapshot['profile.' + key] = Number(profile[key]) || 0;
+  });
+  ['injuryRiskBonus','formVariance','teamChemistry','moraleBonus','mediaPressure','staminaLoad'].forEach(function(key) {
+    snapshot['mods.' + key] = Number(mods[key]) || 0;
+  });
+  (typeof ATTR_KEYS !== 'undefined' ? ATTR_KEYS : []).forEach(function(key) {
+    if (STATE.attrs && STATE.attrs[key] != null) snapshot['attr.' + key] = Number(STATE.attrs[key]) || 0;
+  });
+  if (STATE._draftPending) snapshot['draft.draftStockBonus'] = Number(STATE._draftPending.draftStockBonus) || 0;
+  if (STATE.career && STATE.career.currentAge != null) snapshot['career.currentAge'] = Number(STATE.career.currentAge) || 0;
+  if (typeof getMentalPressure === 'function') snapshot['derived.mentalPressure'] = Number(getMentalPressure()) || 0;
+  return snapshot;
+}
+
+function getEventAttributeLabel(path) {
+  var key = path.split('.').pop();
+  if (path.indexOf('attr.') === 0 && typeof attrCN === 'function') return attrCN(key);
+  return EVENT_ATTRIBUTE_LABELS[key] || key;
+}
+
+function diffEventAttributeSnapshot(before) {
+  if (!before) return null;
+  var after = captureEventAttributeSnapshot();
+  var changes = [];
+  Object.keys(after).forEach(function(path) {
+    if (!Object.prototype.hasOwnProperty.call(before, path)) return;
+    var delta = Math.round((after[path] - before[path]) * 10) / 10;
+    if (Math.abs(delta) < 0.01) return;
+    changes.push({ key:path, label:getEventAttributeLabel(path), delta:delta, value:after[path] });
+  });
+  return changes;
+}
+
+function renderEventAttributeChanges(changes) {
+  var html = '<div class="event-attribute-summary" data-event-attribute-summary>';
+  html += '<div class="event-attribute-title">本次实际数值变化</div>';
+  if (!changes || !changes.length) {
+    html += '<div class="event-attribute-empty">本次无可见属性变化</div>';
+  } else {
+    html += '<div class="event-attribute-list">';
+    changes.forEach(function(change) {
+      var delta = change.delta;
+      var deltaText = (delta > 0 ? '+' : '') + delta;
+      html += '<span class="event-attribute-chip ' + (delta > 0 ? 'up' : 'down') + '">' + change.label + ' <strong>' + deltaText + '</strong></span>';
+    });
+    html += '</div>';
+  }
+  return html + '</div>';
+}
+
 function getBranchStage(branchId) {
   return getBranchState(branchId).stage || 0;
 }
@@ -10058,6 +10133,7 @@ function chooseSeasonBranchEvent(choiceIdx) {
   if (!ev) return;
   var ch = ev.choices[choiceIdx];
   if (!ch || isBranchChoiceLocked(ch)) return;
+  var beforeAttributes = captureEventAttributeSnapshot();
   var msg = ch && ch.apply ? ch.apply() : '';
   msg = applyChoiceBonus(ch, msg);
   recordBranchChoice(ev, ch, msg, 'season');
@@ -10065,18 +10141,20 @@ function chooseSeasonBranchEvent(choiceIdx) {
   if (modal) modal.remove();
   STATE._seasonBranchEvent = null;
   STATE._seasonBranchScenePage = 0;
-  if (msg) showSeasonBranchResultModal(ev.title, msg);
+  var attributeChanges = diffEventAttributeSnapshot(beforeAttributes);
+  if (msg || attributeChanges.length) showSeasonBranchResultModal(ev.title, msg, attributeChanges);
   else finishSeasonBranchEvent();
 }
 
-function showSeasonBranchResultModal(title, msg) {
+function showSeasonBranchResultModal(title, msg, attributeChanges) {
   var existing = document.getElementById('season-branch-result-modal');
   if (existing) existing.remove();
   var html = '<div class="team-picker-overlay" id="season-branch-result-modal">';
   html += '<div class="team-picker-modal">';
   html += '<div class="team-picker-header"><span>' + getPlayerFacingBranchTitle(title) + '</span></div>';
-  html += '<div style="padding:14px 14px 8px;">';
+  html += '<div class="event-result-body">';
   html += formatBranchResultText(fillBranchEventText(msg));
+  html += renderEventAttributeChanges(attributeChanges);
   html += '<button class="btn btn-primary btn-sm" style="width:100%;" onclick="finishSeasonBranchEvent()">继续</button>';
   html += '</div></div></div>';
   document.body.insertAdjacentHTML('beforeend', html);
@@ -10149,6 +10227,7 @@ function chooseOffseasonEvent(choiceIdx) {
   if (!ev) return;
   var ch = ev.choices[choiceIdx];
   if (!ch || isBranchChoiceLocked(ch)) return;
+  var beforeAttributes = captureEventAttributeSnapshot();
   var msg = ch && ch.apply ? ch.apply() : '';
   msg = applyChoiceBonus(ch, msg);
   msg = fillBranchEventText(msg);
@@ -10157,19 +10236,21 @@ function chooseOffseasonEvent(choiceIdx) {
   if (modal) modal.remove();
   STATE._branchScenePage = 0;
   STATE._offseasonEventIdx = idx + 1;
-  if (msg) showOffseasonResultModal(ev.title, msg);
+  var attributeChanges = diffEventAttributeSnapshot(beforeAttributes);
+  if (msg || attributeChanges.length) showOffseasonResultModal(ev.title, msg, null, attributeChanges);
   else showNextOffseasonEvent();
 }
 
-function showOffseasonResultModal(title, msg, done) {
+function showOffseasonResultModal(title, msg, done, attributeChanges) {
   var existing = document.getElementById('offseason-result-modal');
   if (existing) existing.remove();
   STATE._offseasonResultDone = typeof done === 'function' ? done : null;
   var html = '<div class="team-picker-overlay" id="offseason-result-modal">';
   html += '<div class="team-picker-modal">';
   html += '<div class="team-picker-header"><span>' + getPlayerFacingBranchTitle(title) + '</span></div>';
-  html += '<div style="padding:14px 14px 8px;">';
+  html += '<div class="event-result-body">';
   html += formatBranchResultText(fillBranchEventText(msg));
+  html += renderEventAttributeChanges(attributeChanges);
   html += '<button class="btn btn-primary btn-sm" style="width:100%;" onclick="' + (STATE._offseasonResultDone ? 'continueOffseasonResultWithCallback()' : 'continueOffseasonEvent()') + '">继续</button>';
   html += '</div></div></div>';
   document.body.insertAdjacentHTML('beforeend', html);
@@ -10366,6 +10447,7 @@ function chooseCityFarewell(choiceIdx) {
   if (!ev) return;
   var ch = ev.choices[choiceIdx];
   if (!ch || isBranchChoiceLocked(ch)) return;
+  var beforeAttributes = captureEventAttributeSnapshot();
   var msg = ch && ch.apply ? ch.apply() : '';
   msg = applyChoiceBonus(ch, msg);
   recordBranchChoice(ev, ch, msg, 'offseason');
@@ -10378,8 +10460,9 @@ function chooseCityFarewell(choiceIdx) {
     STATE._cityFarewellDone = null;
     if (typeof done === 'function') done();
   }
-  if (msg) {
-    showOffseasonResultModal(ev.title, msg, finishCityFarewell);
+  var attributeChanges = diffEventAttributeSnapshot(beforeAttributes);
+  if (msg || attributeChanges.length) {
+    showOffseasonResultModal(ev.title, msg, finishCityFarewell, attributeChanges);
   } else {
     finishCityFarewell();
   }
@@ -16889,6 +16972,7 @@ function chooseMobilityChoice(idx) {
   if (!modal) return;
   var ch = modal.choices[idx];
   if (!ch) return;
+  var beforeAttributes = captureEventAttributeSnapshot();
   var msg = '';
   try { msg = ch.apply ? ch.apply() : ''; } catch(e) { msg = ''; }
   msg = sanitizePlayerFacingText(msg || '');
@@ -16896,11 +16980,13 @@ function chooseMobilityChoice(idx) {
   var overlay = document.getElementById('mobility-modal');
   if (overlay) overlay.remove();
   STATE._mobilityChoice = null;
-  if (msg) showOffseasonResultModal(modal.title, msg, done);
+  var attributeChanges = diffEventAttributeSnapshot(beforeAttributes);
+  if (msg || attributeChanges.length) showOffseasonResultModal(modal.title, msg, done, attributeChanges);
   else if (done) done();
 }
 
 function doTradeUser(destTeam, done) {
+  var beforeAttributes = captureEventAttributeSnapshot();
   var old = STATE.careerTeam;
   var displayName = getHupuDisplayName();
   var m = getMobility();
@@ -16949,10 +17035,11 @@ function doTradeUser(destTeam, done) {
         }}
       ],
       done);
-  });
+  }, diffEventAttributeSnapshot(beforeAttributes));
 }
 
 function doWaiveUser(done) {
+  var beforeAttributes = captureEventAttributeSnapshot();
   var old = STATE.careerTeam;
   var displayName = getHupuDisplayName();
   var m = getMobility();
@@ -16969,7 +17056,7 @@ function doWaiveUser(done) {
   var oldTn = getTeamName ? getTeamName(old) : old;
   var msg = oldTn + '宣布裁掉' + displayName + '。管理层没有多解释，新闻稿只有一行：感谢为球队所做的一切。<br><br>效果：球迷支持-1；媒体压力+1；你将进入自由市场。';
   recordMobilityHistory('waive', '裁员官宣', msg);
-  showOffseasonResultModal('裁员官宣', msg, done);
+  showOffseasonResultModal('裁员官宣', msg, done, diffEventAttributeSnapshot(beforeAttributes));
 }
 
 function maybeMoveUserInOffseason(done) {
@@ -23848,6 +23935,7 @@ function choosePostCareerEvent(choiceIdx) {
   if (!ev) return;
   var ch = ev.choices[choiceIdx];
   if (!ch || isBranchChoiceLocked(ch)) return;
+  var beforeAttributes = captureEventAttributeSnapshot();
   var msg = ch.apply ? ch.apply() : '';
   msg = applyChoiceBonus(ch, msg);
   recordBranchChoice(ev, ch, msg, 'post_career');
@@ -23855,17 +23943,18 @@ function choosePostCareerEvent(choiceIdx) {
   if (modal) modal.remove();
   STATE._postCareerEvent = null;
   STATE._postCareerScenePage = 0;
-  showPostCareerResultModal(ev.title, msg);
+  showPostCareerResultModal(ev.title, msg, diffEventAttributeSnapshot(beforeAttributes));
 }
 
-function showPostCareerResultModal(title, msg) {
+function showPostCareerResultModal(title, msg, attributeChanges) {
   var existing = document.getElementById('post-career-result-modal');
   if (existing) existing.remove();
   var html = '<div class="team-picker-overlay" id="post-career-result-modal">';
   html += '<div class="team-picker-modal">';
   html += '<div class="team-picker-header"><span>' + getPlayerFacingBranchTitle(title) + '</span></div>';
-  html += '<div style="padding:14px 14px 8px;">';
+  html += '<div class="event-result-body">';
   html += formatBranchResultText(fillBranchEventText(msg));
+  html += renderEventAttributeChanges(attributeChanges);
   html += '<button class="btn btn-primary btn-sm" style="width:100%;" onclick="finishPostCareerStep()">继续</button>';
   html += '</div></div></div>';
   document.body.insertAdjacentHTML('beforeend', html);
@@ -23950,6 +24039,7 @@ function chooseCountdownLegacyEvent(choiceIdx) {
   if (!ev) return;
   var ch = ev.choices[choiceIdx];
   if (!ch || isBranchChoiceLocked(ch)) return;
+  var beforeAttributes = captureEventAttributeSnapshot();
   var msg = ch.apply ? ch.apply() : '';
   msg = applyChoiceBonus(ch, msg);
   recordBranchChoice(ev, ch, msg, 'countdown');
@@ -23957,17 +24047,18 @@ function chooseCountdownLegacyEvent(choiceIdx) {
   if (modal) modal.remove();
   _countdownLegacyEvent = null;
   _countdownLegacyScenePage = 0;
-  showCountdownLegacyResultModal(ev.title, msg);
+  showCountdownLegacyResultModal(ev.title, msg, diffEventAttributeSnapshot(beforeAttributes));
 }
 
-function showCountdownLegacyResultModal(title, msg) {
+function showCountdownLegacyResultModal(title, msg, attributeChanges) {
   var existing = document.getElementById('countdown-legacy-result-modal');
   if (existing) existing.remove();
   var html = '<div class="team-picker-overlay" id="countdown-legacy-result-modal">';
   html += '<div class="team-picker-modal">';
   html += '<div class="team-picker-header"><span>' + getPlayerFacingBranchTitle(title) + '</span></div>';
-  html += '<div style="padding:14px 14px 8px;">';
+  html += '<div class="event-result-body">';
   html += formatBranchResultText(fillBranchEventText(msg));
+  html += renderEventAttributeChanges(attributeChanges);
   html += '<button class="btn btn-primary btn-sm" style="width:100%;" onclick="finishCountdownLegacy()">继续</button>';
   html += '</div></div></div>';
   document.body.insertAdjacentHTML('beforeend', html);
