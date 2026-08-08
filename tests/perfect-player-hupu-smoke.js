@@ -158,15 +158,87 @@ async function main() {
     assert.deepEqual(leagueHeadshots.rookieMissing, [], '2026 新秀应全部有官方头像缓存');
     assert.ok(leagueHeadshots.rookieStyle.includes('assets/images/Player/rookies-2026/rookie-01.jpg'), '2026 新秀头像应使用 NBA 官方资料页肖像缓存');
     assert.equal(await page.evaluate(() => window.PERFECT_PLAYER_EVENT_REPORT.added), 12, '应扩充 12 个原机制事件');
+    assert.equal(await page.evaluate(() => window.PERFECT_PLAYER_EVENT_REPORT.seasonAdded), 21, '应新增 21 个可直接抽取的赛季日常事件');
+    assert.deepEqual(await page.evaluate(() => ({
+      added: PERFECT_PLAYER_SEASON_EVENT_REPORT.added,
+      ids: PERFECT_PLAYER_SEASON_EVENT_REPORT.ids.length,
+      config: PERFECT_PLAYER_SEASON_EVENT_REPORT.config,
+      openingPoolOnly: PERFECT_PLAYER_SEASON_EVENT_REPORT.openingPoolOnly
+    })), {
+      added: 21,
+      ids: 21,
+      config: { chancePercent: 14, cooldownGames: 7, maxPerSeason: 7, maxWithRelationship: 6, openingGames: 12, recentWindow: 10 },
+      openingPoolOnly: true
+    });
     assert.deepEqual(await page.evaluate(() => window.PERFECT_PLAYER_DRAFT_EVENT_REPORT), {
-      total: 19, pre: 10, post: 9, perRun: 2, stageChance: { pre: 0.65, post: 0.55 }
+      total: 35, pre: 18, post: 17, perRun: 2, stageChance: { pre: 0.9, post: 0.85 }
     });
     const randomDraftIds = await page.evaluate(() => {
       const ids = [];
       for (let index = 0; index < 100; index++) ids.push(pickPerfectPlayerDraftEventId('pre', []));
       return [...new Set(ids)];
     });
-    assert.ok(randomDraftIds.length >= 4, '选秀事件抽取不应固定：' + randomDraftIds.join(','));
+    assert.ok(randomDraftIds.length >= 8, '选秀事件抽取不应固定：' + randomDraftIds.join(','));
+    const seasonPoolProbe = await page.evaluate(() => {
+      const pool = STAGED_BRANCH_EVENTS.filter(event => event.id && event.id.startsWith('pp_season_'));
+      const ids = [];
+      for (let index = 0; index < 200; index++) ids.push(pickBranchEvent(pool, false).id);
+      return {
+        count: pool.length,
+        uniqueDraws: [...new Set(ids)],
+        hasRequires: pool.some(event => typeof event.requires === 'function'),
+        choiceCounts: pool.map(event => event.choices.length)
+      };
+    });
+    assert.equal(seasonPoolProbe.count, 21, '新秀开局应拥有 21 条独立日常事件，而不是只抽城市/输球发布会');
+    assert.ok(seasonPoolProbe.uniqueDraws.length >= 15, '赛季日常事件抽取应有足够多样性：' + seasonPoolProbe.uniqueDraws.join(','));
+    assert.equal(seasonPoolProbe.hasRequires, false, '新增开局事件必须全部可直接抽取');
+    assert.ok(seasonPoolProbe.choiceCounts.every(count => count >= 2), '每条新增赛季事件都应至少有两个选择');
+    const openingEventProbe = await page.evaluate(() => {
+      const savedCareer = STATE.career;
+      const savedSeason = STATE.season;
+      const savedTeam = STATE.careerTeam;
+      const originalRandom = Math.random;
+      let output = null;
+      try {
+        STATE.career = Object.assign({}, savedCareer, {
+          seasonCount: 1,
+          branches: {},
+          flags: Object.assign({}, savedCareer.flags || {}),
+          profile: Object.assign({}, savedCareer.profile || {}),
+          totalStats: Object.assign({}, savedCareer.totalStats || {}, { games: 4 }),
+          branchSeasonEvents: { _season: 0, _count: 4 },
+          _lastSeasonBranchGame: 75,
+          _recentSeasonEventIds: []
+        });
+        STATE.season = {
+          isPlayoffs: false,
+          games: Array.from({ length: 4 }, () => ({})),
+          schedule: Array.from({ length: 82 }, () => ({})),
+          playerStats: { games: 4 },
+          awards: []
+        };
+        STATE.careerTeam = 'LAL';
+        Math.random = () => 0.99;
+        const picked = checkSeasonBranchEvent({ opponent: 'BOS' }, { won: true }, { pts: 20 });
+        output = {
+          id: picked && picked.id,
+          count: STATE.career.branchSeasonEvents._count,
+          lastGame: STATE.career._lastSeasonBranchGame,
+          recent: STATE.career._recentSeasonEventIds.slice()
+        };
+      } finally {
+        Math.random = originalRandom;
+        STATE.career = savedCareer;
+        STATE.season = savedSeason;
+        STATE.careerTeam = savedTeam;
+      }
+      return output;
+    });
+    assert.ok(openingEventProbe.id && openingEventProbe.id.startsWith('pp_season_'), '新生涯首条事件必须来自扩充池，而不是固定城市/失利事件：' + JSON.stringify(openingEventProbe));
+    assert.equal(openingEventProbe.count, 1, '跨赛季事件计数应重置后重新开始');
+    assert.equal(openingEventProbe.lastGame, 4, '跨赛季冷却场次必须重置，不能沿用上一季场次');
+    assert.deepEqual(openingEventProbe.recent, [openingEventProbe.id], '最近事件应进入跨赛季防重复记录');
 
     await page.click('#feature-grid .fc-btn');
     await page.waitForSelector('#screen-character.active');
@@ -183,6 +255,28 @@ async function main() {
     const outputDir = path.join(root, 'output', 'perfect-player-hupu-mobile');
     fs.mkdirSync(outputDir, { recursive: true });
     await page.screenshot({ path: path.join(outputDir, '01-character.png'), fullPage: false });
+
+    await page.evaluate(() => {
+      const event = STAGED_BRANCH_EVENTS.find(item => item.id === 'pp_season_film_detail');
+      showSeasonBranchEvent(event, () => {});
+    });
+    await page.waitForSelector('#season-branch-modal');
+    await page.locator('#season-branch-modal button').click();
+    await page.waitForFunction(() => document.querySelectorAll('#season-branch-modal button').length >= 2);
+    assert.equal(await page.locator('#season-branch-modal button').count(), 2, '新增赛季事件应提供可操作选择');
+    const seasonEventBounds = await page.$eval('#season-branch-modal .team-picker-modal', element => {
+      const rect = element.getBoundingClientRect();
+      return { top: rect.top, bottom: rect.bottom, viewport: innerHeight };
+    });
+    assert.ok(seasonEventBounds.top >= -1 && seasonEventBounds.bottom <= seasonEventBounds.viewport + 1, '新增赛季事件应在手机竖屏单屏内完成选择');
+    await page.screenshot({ path: path.join(outputDir, '01b-season-event-pool.png'), fullPage: false });
+    await page.evaluate(() => {
+      const modal = document.getElementById('season-branch-modal');
+      if (modal) modal.remove();
+      STATE._seasonBranchEvent = null;
+      STATE._seasonBranchDone = null;
+      STATE._seasonBranchScenePage = 0;
+    });
 
     await page.fill('#character-name', '林一飞');
     await page.click('.character-avatar:nth-child(4)');
@@ -312,6 +406,43 @@ async function main() {
     assert.ok(simulation.strongVsWeak.avgA > 90 && simulation.strongVsWeak.avgA < 135 && simulation.strongVsWeak.avgB > 85 && simulation.strongVsWeak.avgB < 130, '比分均值应处于现代 NBA 区间：' + JSON.stringify(simulation.strongVsWeak));
     assert.ok(simulation.strongVsWeak.minScore >= 78 && simulation.strongVsWeak.maxScore <= 180, '比分边界异常：' + JSON.stringify(simulation.strongVsWeak));
 
+    const draftProjectionProbe = await page.evaluate(() => {
+      STATE.finalOVR = 84;
+      STATE._draftPending = { prep: 'workouts', draftStockBonus: 0, randomEventIds: [] };
+      const before = getPerfectPlayerDraftProjection();
+      changePerfectPlayerDraftStock(2);
+      const after = getPerfectPlayerDraftProjection();
+      const originalRandom = Math.random;
+      Math.random = () => 0.5;
+      const result = computeDraftBand();
+      Math.random = originalRandom;
+      showDraftChoiceModal('draft_projection_probe', '选秀前夜', '球队正在更新最后一版模拟选秀。', [
+        { label: '继续', hint: '查看预测顺位', apply: () => '' }
+      ], () => {});
+      return {
+        before,
+        after,
+        result: { pick: result.pick, round: result.round, type: result.type, projectedRank: result.projectedRank }
+      };
+    });
+    await page.waitForSelector('#draft-modal [data-draft-projection]');
+    const draftProjectionText = (await page.locator('#draft-modal [data-draft-projection]').textContent()).replace(/\s+/g, ' ').trim();
+    assert.ok(draftProjectionText.includes('当前预测') && draftProjectionText.includes('预测区间') && draftProjectionText.includes('选秀行情'), '选秀弹窗必须持续显示预测排名：' + draftProjectionText);
+    assert.ok(draftProjectionProbe.after.rank < draftProjectionProbe.before.rank, '行情上升应让预测顺位前移：' + JSON.stringify(draftProjectionProbe));
+    assert.equal(draftProjectionProbe.result.pick, draftProjectionProbe.after.rank, '最终抽签中位结果应与可见预测顺位一致');
+    assert.equal(draftProjectionProbe.result.projectedRank, draftProjectionProbe.after.rank, '选秀结果应保存预测排名');
+    const draftModalBounds = await page.$eval('#draft-modal .team-picker-modal', element => {
+      const rect = element.getBoundingClientRect();
+      return { top: rect.top, bottom: rect.bottom, viewport: innerHeight };
+    });
+    assert.ok(draftModalBounds.top >= -1 && draftModalBounds.bottom <= draftModalBounds.viewport + 1, '选秀排名和选择仍应在手机单屏弹窗内');
+    await page.screenshot({ path: path.join(outputDir, '03-draft-ranking.png'), fullPage: false });
+    await page.evaluate(() => {
+      const modal = document.getElementById('draft-modal');
+      if (modal) modal.remove();
+      STATE._draftModalStep = null;
+    });
+
     await page.evaluate(() => {
       STATE._draftPending = { draftStockBonus: 0, randomEventIds: [] };
       window.__draftRandomDone = 0;
@@ -403,7 +534,7 @@ async function main() {
     const localBadResponses = badResponses.filter(item => item.includes(`127.0.0.1:${port}`));
     assert.deepEqual(localBadResponses, [], '不应有本地 4xx 资源：' + localBadResponses.join(', '));
     assert.deepEqual(errors, [], '浏览器错误：' + errors.join('\n') + '\n4xx：' + badResponses.join('\n'));
-    console.log(JSON.stringify({ ok: true, pool: 510, current: 360, historical: 150, injuryEventsAdded: 12, draftEvents: 19, simulation, screenshots: outputDir }, null, 2));
+    console.log(JSON.stringify({ ok: true, pool: 510, current: 360, historical: 150, injuryEventsAdded: 12, seasonEventsAdded: 21, draftEvents: 35, simulation, screenshots: outputDir }, null, 2));
   } finally {
     if (browser) await browser.close();
     server.kill();

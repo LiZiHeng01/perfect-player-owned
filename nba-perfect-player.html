@@ -3602,6 +3602,7 @@ function showDraftChoiceModal(stepId, title, scene, choices, onDone) {
   var html = '<div class="team-picker-overlay" id="draft-modal">';
   html += '<div class="team-picker-modal">';
   html += '<div class="team-picker-header"><span>' + title + '</span></div>';
+  if (typeof renderPerfectPlayerDraftProjection === 'function') html += renderPerfectPlayerDraftProjection(title);
   html += '<div style="padding:14px 14px 8px;">';
   html += '<div style="font-size:11px;color:var(--orange);font-weight:700;margin-bottom:6px;">剧情</div>';
   html += '<div style="font-size:13px;color:var(--text-dim);line-height:1.65;margin-bottom:14px;">' + sanitizePlayerFacingText(scene) + '</div>';
@@ -3637,6 +3638,7 @@ function showDraftSceneModal(title, scene, btnText, onNext) {
   var html = '<div class="team-picker-overlay" id="draft-modal">';
   html += '<div class="team-picker-modal">';
   html += '<div class="team-picker-header"><span>' + title + '</span></div>';
+  if (typeof renderPerfectPlayerDraftProjection === 'function') html += renderPerfectPlayerDraftProjection(title);
   html += '<div style="padding:14px 14px 8px;">';
   html += '<div style="font-size:11px;color:var(--orange);font-weight:700;margin-bottom:6px;">剧情</div>';
   html += '<div style="font-size:13px;color:var(--text-dim);line-height:1.65;margin-bottom:14px;">' + sanitizePlayerFacingText(scene) + '</div>';
@@ -3661,6 +3663,7 @@ function showDraftResultModal(title, msg, onNext) {
   var html = '<div class="team-picker-overlay" id="draft-result-modal">';
   html += '<div class="team-picker-modal">';
   html += '<div class="team-picker-header"><span>' + title + '</span></div>';
+  if (typeof renderPerfectPlayerDraftProjection === 'function') html += renderPerfectPlayerDraftProjection(title);
   html += '<div style="padding:14px 14px 8px;">';
   html += formatBranchResultText(msg);
   html += '<button class="btn btn-primary btn-sm" style="width:100%;" onclick="continueDraftResult()">继续</button>';
@@ -3776,6 +3779,28 @@ function showDraftPrepStep() {
 function computeDraftBand() {
   var p = STATE._draftPending;
   var ovr = STATE.finalOVR || 50;
+  if (typeof getPerfectPlayerDraftProjection === 'function') {
+    var projection = getPerfectPlayerDraftProjection();
+    p.projectedRank = projection ? projection.rank : null;
+    p.projectedRange = projection ? [projection.rangeStart, projection.rangeEnd] : null;
+    p.draftScore = projection ? projection.score : ovr;
+    if (projection && projection.rank != null) {
+      var variance = Math.floor(Math.random() * 7) - 3;
+      var actualPick = Math.max(1, Math.min(60, projection.rank + variance));
+      p.pick = actualPick;
+      p.round = actualPick <= 30 ? 1 : 2;
+      p.type = actualPick <= 14 ? 'lottery' : (actualPick <= 30 ? 'first' : 'second');
+    } else if (projection && projection.score >= 62 && Math.random() < 0.28) {
+      p.type = 'second'; p.round = 2; p.pick = 56 + Math.floor(Math.random() * 5);
+    } else {
+      p.type = 'undrafted'; p.round = 0; p.pick = 0;
+    }
+    if (p.type === 'lottery') p.contractYears = 4;
+    else if (p.type === 'first') p.contractYears = 3 + Math.floor(Math.random() * 2);
+    else if (p.type === 'second') p.contractYears = 2;
+    else p.contractYears = 1;
+    return p;
+  }
   var shift = 0;
   if (p.prep === 'combine') {
     shift = p.combineHurt ? -2 : Math.floor(Math.random() * 4);
@@ -4006,6 +4031,9 @@ function finalizeDraft(team, done) {
     guaranteed: !p.twoWay,
     prep: p.prep,
     agent: p.agent,
+    projectedRank: p.projectedRank,
+    draftScore: p.draftScore,
+    randomEventIds: (p.randomEventIds || []).slice(),
     contractYears: p.contractYears,
     selfPicked: !!p.selfPicked
   };
@@ -9845,6 +9873,15 @@ function recordBranchChoice(ev, ch, msg, phase) {
   }
 }
 
+var SEASON_BRANCH_EVENT_CONFIG = {
+  chancePercent: 14,
+  cooldownGames: 7,
+  maxPerSeason: 7,
+  maxWithRelationship: 6,
+  openingGames: 12,
+  recentWindow: 10
+};
+
 function checkSeasonBranchEvent(game, result, stats) {
   if (!STATE.career || !STATE.season || STATE.season.isPlayoffs) return null;
   var c = STATE.career;
@@ -9853,6 +9890,7 @@ function checkSeasonBranchEvent(game, result, stats) {
   var seasonKey = c.seasonCount || 0;
   if (c.branchSeasonEvents._season !== seasonKey) {
     c.branchSeasonEvents = { _season: seasonKey, _count: 0 };
+    c._lastSeasonBranchGame = null;
   }
   // 退役倒计时：按赛程均等分布触发，赛季内独占
   var gamesPlayed = (STATE.season.games || []).length;
@@ -9888,7 +9926,7 @@ function checkSeasonBranchEvent(game, result, stats) {
   var sinceLast = null;
   if (c._lastSeasonBranchGame != null) {
     sinceLast = (STATE.season.games || []).length - c._lastSeasonBranchGame;
-    if (sinceLast < 12) return null;
+    if (sinceLast < SEASON_BRANCH_EVENT_CONFIG.cooldownGames) return null;
   }
   // 恋爱线一旦开启，每年赛季中都保证推进一次下个节点
   var romanceStepPool = [];
@@ -9911,22 +9949,39 @@ function checkSeasonBranchEvent(game, result, stats) {
       }
     }
   }
-  // 更多但分散：提高单场触发率(5%→7%)与赛季上限(2→4)，冷却(12场)保持不变，
-  // 这样一个赛季能遇到更多剧情事件，但仍被冷却拉开、不会扎堆。
-  if (Math.random() * 100 >= 7) return null;
-  var maxRandomEvents = romanceStepPool.length > 0 ? 3 : 4;
+  // 每个赛季第 4 场起保证出现一条随机日常，之后平均每季约 6–7 次；
+  // 仍保留 7 场冷却，避免连续弹窗。
+  var openingEventDue = gamesPlayed >= 4
+    && gamesPlayed <= SEASON_BRANCH_EVENT_CONFIG.openingGames
+    && (c.branchSeasonEvents._count || 0) === 0;
+  if (!openingEventDue && Math.random() * 100 >= SEASON_BRANCH_EVENT_CONFIG.chancePercent) return null;
+  var maxRandomEvents = romanceStepPool.length > 0
+    ? SEASON_BRANCH_EVENT_CONFIG.maxWithRelationship
+    : SEASON_BRANCH_EVENT_CONFIG.maxPerSeason;
   if ((c.branchSeasonEvents._count || 0) >= maxRandomEvents) return null;
   var pool = getBranchEventSource().filter(function(ev) {
     if (getEventPhases(ev).indexOf('season') < 0) return false;
     if (c.branchSeasonEvents[ev.branch]) return false;
-    return !ev.requires || ev.requires({ game: game, result: result, stats: stats });
+    try { return !ev.requires || ev.requires({ game: game, result: result, stats: stats }); }
+    catch(e) { return false; }
   });
+  // 每个赛季前 12 场优先抽日常独立事件，避免每次开局都固定出现
+  // “来到这座城市 / 输球发布会”这类长支线起点。
+  if (gamesPlayed <= SEASON_BRANCH_EVENT_CONFIG.openingGames) {
+    var openingPool = pool.filter(function(ev) { return ev.id && ev.id.indexOf('pp_season_') === 0; });
+    if (openingPool.length > 0) pool = openingPool;
+  }
+  // 跨赛季记住最近事件，事件池够用时不在短期内重复同一条。
+  var recentIds = c._recentSeasonEventIds || [];
+  var freshPool = pool.filter(function(ev) { return recentIds.indexOf(ev.id) < 0; });
+  if (freshPool.length > 0) pool = freshPool;
   if (pool.length === 0) return null;
   var picked = pickBranchEvent(pool, false);
   if (!picked) return null;
   c._lastSeasonBranchGame = (STATE.season.games || []).length;
   c.branchSeasonEvents[picked.branch] = true;
   c.branchSeasonEvents._count = (c.branchSeasonEvents._count || 0) + 1;
+  c._recentSeasonEventIds = recentIds.concat([picked.id]).slice(-SEASON_BRANCH_EVENT_CONFIG.recentWindow);
   return picked;
 }
 
