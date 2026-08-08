@@ -422,6 +422,8 @@
 
   /* ==================== 成就面板 ==================== */
   PP_FX.openPanel = function () {
+    // 读档后先按当前生涯事实重新校验，及时撤回旧版重复计数造成的误解锁。
+    syncAchievementState();
     var existing = $('pp-ach-panel');
     if (existing) existing.remove();
     var total = ACHIEVEMENTS.length;
@@ -639,16 +641,21 @@
   // 但首次解锁必须附带当前 gameId 和当前生涯计数，杜绝跨存档拼次数。
   var SINGLE_CAREER_CUMULATIVE = {
     mvp_x3: { fact: 'mvp', threshold: 3 },
-    champion_x3: { fact: 'champion', threshold: 3 }
+    // v2 凭证表示冠军数经过“已归档赛季 / 当前赛季”去重校验。
+    champion_x3: { fact: 'champion', threshold: 3, proofVersion: 2 }
   };
 
-  function singleCareerEvidence(s, count) {
-    return { version: 1, gameId: String((s && s.gameId) || 'current-career'), count: count };
+  function singleCareerEvidence(s, count, version) {
+    return { version: version || 1, gameId: String((s && s.gameId) || 'current-career'), count: count };
   }
 
-  function hasSingleCareerEvidence(record, threshold) {
+  function hasSingleCareerEvidence(record, rule, s) {
     var proof = record && record.singleCareer;
-    return !!(proof && proof.version === 1 && proof.gameId && Number(proof.count) >= threshold);
+    if (!proof || !proof.gameId || Number(proof.count) < rule.threshold) return false;
+    if (!rule.proofVersion || Number(proof.version) >= rule.proofVersion) return true;
+    // 旧生涯已经永久保存的 v1 凭证无法再还原现场，继续保留；当前生涯的
+    // v1 冠军凭证必须按新去重逻辑重新验证，修复“两冠误算三冠”。
+    return String(proof.gameId) !== String((s && s.gameId) || 'current-career');
   }
 
   function repairCumulativeAchievements(s, facts) {
@@ -656,9 +663,9 @@
     Object.keys(SINGLE_CAREER_CUMULATIVE).forEach(function (id) {
       var rule = SINGLE_CAREER_CUMULATIVE[id];
       var count = Number(facts[rule.fact]) || 0;
-      if (!unlocked[id] || hasSingleCareerEvidence(unlocked[id], rule.threshold)) return;
+      if (!unlocked[id] || hasSingleCareerEvidence(unlocked[id], rule, s)) return;
       if (count >= rule.threshold) {
-        unlocked[id].singleCareer = singleCareerEvidence(s, count);
+        unlocked[id].singleCareer = singleCareerEvidence(s, count, rule.proofVersion);
       } else {
         // 旧版本可能通过跨生涯隐藏计数误解锁。无法证明来自同一生涯时撤回。
         delete unlocked[id];
@@ -771,7 +778,11 @@
       if (act === 'allNBA' || label.indexOf('最佳阵容') >= 0) facts.allNBA = true;
       if (act === 'champion' || label.indexOf('总冠军') >= 0) facts.champion++;
     }
-    (s.season && s.season.awards || []).forEach(function(a, i) { take(a, 'current', i, false); });
+    // saveCurrentSeasonToCareer() 归档后不会立刻清空 season.awards；此时同一座
+    // 冠军已存在于 career.honors / career.seasons，继续扫描 current 会重复计数。
+    if (!s._careerSaved) {
+      (s.season && s.season.awards || []).forEach(function(a, i) { take(a, 'current', i, false); });
+    }
     (s.career && s.career.honors || []).forEach(function(a, i) { take(a, 'career', i, true); });
     (s.career && s.career.seasons || []).forEach(function(season) {
       (season && season.awards || []).forEach(function(a, i) { take(a, 'season' + (season.seasonNum || ''), i, false); });
@@ -801,7 +812,7 @@
     if (facts.allStar) PP_FX.unlock('all_star');
     if (facts.allNBA) PP_FX.unlock('all_nba');
     if (facts.champion > 0) PP_FX.unlock('champion');
-    if (facts.champion >= 3) PP_FX.unlock('champion_x3', singleCareerEvidence(s, facts.champion));
+    if (facts.champion >= 3) PP_FX.unlock('champion_x3', singleCareerEvidence(s, facts.champion, 2));
     // 赛季场均里程碑
     var ps = s.season && s.season.playerStats;
     if (ps && ps.games >= 40) {
@@ -872,6 +883,7 @@
     wrap('showEndOfSeason', null, afterEndOfSeason);
     wrap('showChampionshipCelebration', afterChampion, null);
     wrap('saveCurrentSeasonToCareer', null, function () { syncAchievementState(); });
+    wrap('renderAfterSaveLoad', null, function () { syncAchievementState(); });
     // 退役实际走 announcePlayerRetirement()，showRetirementModal 定义了却从未被调用，
     // 旧 hook 挂在后者上导致 retire 成就永远无法解锁。
     wrap('announcePlayerRetirement', afterRetire, null);

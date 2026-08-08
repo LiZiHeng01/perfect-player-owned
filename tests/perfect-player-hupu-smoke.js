@@ -598,8 +598,29 @@ async function main() {
       PP_FX.syncAchievements();
       const splitCareersDoNotStack = !!PP_FX.getUnlocked().champion && !PP_FX.getUnlocked().champion_x3;
 
+      // 赛季刚归档后，当前 awards 仍会暂时保留同一座冠军；不能把它当成下一年的第三冠。
+      PP_FX.resetAchievements();
+      STATE.gameId = 'career-saved-current-duplicate';
+      STATE.career.seasonCount = 2;
+      STATE.career.honors = honors('champion', '总冠军', 2);
+      STATE.career.seasons = [
+        { seasonNum: 1, awards: honors('champion', '总冠军', 1) },
+        { seasonNum: 2, awards: [{ act: 'champion', label: '总冠军', seasonNum: 2, winner: user, isUser: true }] }
+      ];
+      STATE.season.awards = [{ act: 'champion', label: '总冠军', winner: user, isUser: true }];
+      STATE._careerSaved = true;
+      PP_FX.getUnlocked().champion_x3 = {
+        at: 1,
+        singleCareer: { version: 1, gameId: 'career-saved-current-duplicate', count: 3 }
+      };
+      const savedSeasonFacts = PP_FX.syncAchievements();
+      const savedCurrentAwardDoesNotDuplicate = savedSeasonFacts.champion === 2 && !PP_FX.getUnlocked().champion_x3;
+
       // 同一生涯达到 3 次后写入凭证；之后开始新生涯，已合法获得的成就永久保留。
       STATE.gameId = 'career-three';
+      STATE._careerSaved = false;
+      STATE.career.seasonCount = 2;
+      STATE.season.awards = [];
       STATE.career.honors = honors('champion', '总冠军', 3);
       PP_FX.syncAchievements();
       const champRecord = PP_FX.getUnlocked().champion_x3;
@@ -617,11 +638,12 @@ async function main() {
       const sameCareerMvpUnlocks = !!(mvpRecord && mvpRecord.singleCareer && mvpRecord.singleCareer.gameId === 'career-mvp' && mvpRecord.singleCareer.count === 3);
       const descriptionsExplicit = PP_FX.ACHIEVEMENTS.filter(item => item.id === 'mvp_x3' || item.id === 'champion_x3').every(item => item.desc.includes('同一生涯'));
 
-      return { legacyFalseUnlockRemoved, splitCareersDoNotStack, sameCareerChampUnlocks, validUnlockSurvivesNewCareer, sameCareerMvpUnlocks, descriptionsExplicit };
+      return { legacyFalseUnlockRemoved, splitCareersDoNotStack, savedCurrentAwardDoesNotDuplicate, sameCareerChampUnlocks, validUnlockSurvivesNewCareer, sameCareerMvpUnlocks, descriptionsExplicit };
     });
     assert.deepEqual(singleCareerAchievementProbe, {
       legacyFalseUnlockRemoved: true,
       splitCareersDoNotStack: true,
+      savedCurrentAwardDoesNotDuplicate: true,
       sameCareerChampUnlocks: true,
       validUnlockSurvivesNewCareer: true,
       sameCareerMvpUnlocks: true,
