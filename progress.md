@@ -25,3 +25,8 @@ Original prompt: 完美球员模式 UI风格修改成统一的篮球风格；征
 - Achievement hooks now resolve the top-level `STATE` correctly, scan current/career/list awards, and recognize draft, All-Star, and Rookie of the Year achievements.
 - Profile and season modifiers refresh the visible player-state strip immediately after event changes.
 - Mobile Hupu smoke test passes with the 18-player pool, current-only competition rosters, local headshots, mock rerolls, achievements, live state refresh, random draft events, and simulation checks.
+- All 525 competition-roster players now resolve to official NBA headshot IDs and local cached files; the 19 names missing from the old map use verified NBA IDs.
+- All 60 2026 draft picks now carry verified NBA IDs and local real-player portraits under `assets/images/Player/rookies-2026/`; sources are NBA Draft profile portraits, 1040x760 official headshots, or an NBA official Draft media portrait only where the profile CDN still returns a gray silhouette.
+- The old 260x190 rookie placeholder PNGs were removed; every shipped 2026 rookie asset is a playable JPEG and is checked by the smoke test.
+- Three current-roster players whose NBA CDN images were still silhouettes now use cached ESPN official player-profile headshots, with a runtime URL fallback and placeholder-size regression checks.
+- Headshot lookup accepts player objects as well as names, so roster cards, draft cards, awards, and player detail views share the same local official-photo path.

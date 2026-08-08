@@ -1,0 +1,5154 @@
+{
+  "source": "NBA.com official headshot CDN + NBA.com 2026 Draft profile portraits + ESPN official player headshots fallback",
+  "sourceUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/{nbaId}.png",
+  "generatedAt": "2026-08-08T03:14:36.567Z",
+  "currentPlayers": [
+    {
+      "team": "ATL",
+      "name": "Jalen Johnson",
+      "cname": "杰伦-约翰逊",
+      "nbaId": 1630552,
+      "photoLocal": "assets/images/Player/nba-official/1630552.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630552.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ATL",
+      "name": "Nickeil Alexander-Walker",
+      "cname": "亚历山大-沃克",
+      "nbaId": 1629638,
+      "photoLocal": "assets/images/Player/nba-official/1629638.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629638.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ATL",
+      "name": "Dyson Daniels",
+      "cname": "戴森-丹尼尔斯",
+      "nbaId": 1630700,
+      "photoLocal": "assets/images/Player/nba-official/1630700.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630700.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ATL",
+      "name": "CJ McCollum",
+      "cname": "CJ-麦科勒姆",
+      "nbaId": 203468,
+      "photoLocal": "assets/images/Player/nba-official/203468.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203468.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ATL",
+      "name": "Onyeka Okongwu",
+      "cname": "奥涅卡-奥孔古",
+      "nbaId": 1630168,
+      "photoLocal": "assets/images/Player/nba-official/1630168.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630168.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ATL",
+      "name": "Jock Landale",
+      "cname": "乔克-兰代尔",
+      "nbaId": 1629111,
+      "photoLocal": "assets/images/Player/nba-official/1629111.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629111.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ATL",
+      "name": "Zaccharie Risacher",
+      "cname": "扎卡里-里萨谢",
+      "nbaId": 1642258,
+      "photoLocal": "assets/images/Player/nba-official/1642258.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642258.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ATL",
+      "name": "Devin Carter",
+      "cname": "德文-卡特",
+      "nbaId": 1642269,
+      "photoLocal": "assets/images/Player/nba-official/1642269.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642269.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ATL",
+      "name": "Corey Kispert",
+      "cname": "科里-基斯珀特",
+      "nbaId": 1630557,
+      "photoLocal": "assets/images/Player/nba-official/1630557.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630557.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ATL",
+      "name": "Buddy Hield",
+      "cname": "巴迪-希尔德",
+      "nbaId": 1627741,
+      "photoLocal": "assets/images/Player/nba-official/1627741.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1627741.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ATL",
+      "name": "Asa Newell",
+      "cname": "阿萨-纽厄尔",
+      "nbaId": 1642854,
+      "photoLocal": "assets/images/Player/nba-official/1642854.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642854.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ATL",
+      "name": "Mouhamed Gueye",
+      "cname": "穆罕默德-古耶",
+      "nbaId": 1631243,
+      "photoLocal": "assets/images/Player/nba-official/1631243.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631243.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ATL",
+      "name": "Tony Bradley",
+      "cname": "托尼-布拉德利",
+      "nbaId": 1628396,
+      "photoLocal": "assets/images/Player/nba-official/1628396.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628396.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ATL",
+      "name": "Gabe Vincent",
+      "cname": "盖布-文森特",
+      "nbaId": 1629216,
+      "photoLocal": "assets/images/Player/nba-official/1629216.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629216.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ATL",
+      "name": "Christian Koloko",
+      "cname": "克里斯蒂安-科洛科",
+      "nbaId": 1631132,
+      "photoLocal": "assets/images/Player/nba-official/1631132.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631132.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ATL",
+      "name": "Keaton Wallace",
+      "cname": "基顿-华莱士",
+      "nbaId": 1630811,
+      "photoLocal": "assets/images/Player/nba-official/1630811.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630811.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ATL",
+      "name": "RayJ Dennis",
+      "cname": "雷-J-丹尼斯",
+      "nbaId": 1642484,
+      "photoLocal": "assets/images/Player/nba-official/1642484.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642484.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ATL",
+      "name": "Keshon Gilbert",
+      "cname": "凯雄-吉尔伯特",
+      "nbaId": 1642933,
+      "photoLocal": "assets/images/Player/nba-official/1642933.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642933.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "Michael Porter Jr.",
+      "cname": "小迈克尔-波特",
+      "nbaId": 1629008,
+      "photoLocal": "assets/images/Player/nba-official/1629008.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629008.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "Julius Randle",
+      "cname": "朱利叶斯-兰德尔",
+      "nbaId": 203944,
+      "photoLocal": "assets/images/Player/nba-official/203944.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203944.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "Ziaire Williams",
+      "cname": "宰伊尔-威廉姆斯",
+      "nbaId": 1630533,
+      "photoLocal": "assets/images/Player/nba-official/1630533.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630533.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "Day’Ron Sharpe",
+      "cname": "戴龙-夏普",
+      "nbaId": 1630549,
+      "photoLocal": "assets/images/Player/nba-official/1630549.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630549.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "Egor Demin",
+      "cname": "叶戈尔-德明",
+      "nbaId": 1642856,
+      "photoLocal": "assets/images/Player/nba-official/1642856.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642856.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "Josh Minott",
+      "cname": "乔什-米诺特",
+      "nbaId": 1631169,
+      "photoLocal": "assets/images/Player/nba-official/1631169.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631169.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "Moritz Wagner",
+      "cname": "莫里茨-瓦格纳",
+      "nbaId": 1629021,
+      "photoLocal": "assets/images/Player/nba-official/1629021.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629021.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "Danny Wolf",
+      "cname": "丹尼-沃尔夫",
+      "nbaId": 1642874,
+      "photoLocal": "assets/images/Player/nba-official/1642874.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642874.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "Keon Ellis",
+      "cname": "基恩-埃利斯",
+      "nbaId": 1631165,
+      "photoLocal": "assets/images/Player/nba-official/1631165.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631165.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "Nolan Traore",
+      "cname": "诺兰-特拉奥雷",
+      "nbaId": 1642849,
+      "photoLocal": "assets/images/Player/nba-official/1642849.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642849.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "Noah Clowney",
+      "cname": "诺厄-克洛尼",
+      "nbaId": 1641730,
+      "photoLocal": "assets/images/Player/nba-official/1641730.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641730.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "Terance Mann",
+      "cname": "特伦斯-曼",
+      "nbaId": 1629611,
+      "photoLocal": "assets/images/Player/nba-official/1629611.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629611.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "Ochai Agbaji",
+      "cname": "奥查伊-阿巴吉",
+      "nbaId": 1630534,
+      "photoLocal": "assets/images/Player/nba-official/1630534.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630534.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "Ben Saraf",
+      "cname": "本-萨拉夫",
+      "nbaId": 1642879,
+      "photoLocal": "assets/images/Player/nba-official/1642879.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642879.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "Jalen Wilson",
+      "cname": "杰伦-威尔逊",
+      "nbaId": 1630592,
+      "photoLocal": "assets/images/Player/nba-official/1630592.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630592.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "Drake Powell",
+      "cname": "德雷克-鲍威尔",
+      "nbaId": 1642962,
+      "photoLocal": "assets/images/Player/nba-official/1642962.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642962.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "Chaney Johnson",
+      "cname": "钱尼-约翰逊",
+      "nbaId": 1643052,
+      "photoLocal": "assets/images/Player/nba-official/1643052.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643052.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "Tyson Etienne",
+      "cname": "泰森-艾蒂安",
+      "nbaId": 1630623,
+      "photoLocal": "assets/images/Player/nba-official/1630623.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630623.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "Malachi Smith",
+      "cname": "玛拉基-史密斯",
+      "nbaId": 1641869,
+      "photoLocal": "assets/images/Player/nba-official/1641869.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641869.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "E.J. Liddell",
+      "cname": "E.J.-利德尔",
+      "nbaId": 1630604,
+      "photoLocal": "assets/images/Player/nba-official/1630604.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630604.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BKN",
+      "name": "Trevon Scott",
+      "cname": "特雷文-斯科特",
+      "nbaId": 1630286,
+      "photoLocal": "assets/images/Player/nba-official/1630286.png",
+      "photoUrl": "https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/3934620.png",
+      "photoSource": "espn-official-player-headshot"
+    },
+    {
+      "team": "BOS",
+      "name": "Jayson Tatum",
+      "cname": "杰森-塔图姆",
+      "nbaId": 1628369,
+      "photoLocal": "assets/images/Player/nba-official/1628369.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628369.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BOS",
+      "name": "Derrick White",
+      "cname": "德里克-怀特",
+      "nbaId": 1628401,
+      "photoLocal": "assets/images/Player/nba-official/1628401.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628401.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BOS",
+      "name": "Paul George",
+      "cname": "保罗-乔治",
+      "nbaId": 202331,
+      "photoLocal": "assets/images/Player/nba-official/202331.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/202331.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BOS",
+      "name": "Payton Pritchard",
+      "cname": "佩顿-普里查德",
+      "nbaId": 1630202,
+      "photoLocal": "assets/images/Player/nba-official/1630202.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630202.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BOS",
+      "name": "Neemias Queta",
+      "cname": "内米亚斯-克塔",
+      "nbaId": 1629674,
+      "photoLocal": "assets/images/Player/nba-official/1629674.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629674.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BOS",
+      "name": "Mitchell Robinson",
+      "cname": "米切尔-罗宾逊",
+      "nbaId": 1629011,
+      "photoLocal": "assets/images/Player/nba-official/1629011.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629011.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BOS",
+      "name": "Luka Garza",
+      "cname": "卢卡-加尔扎",
+      "nbaId": 1630568,
+      "photoLocal": "assets/images/Player/nba-official/1630568.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630568.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BOS",
+      "name": "Sam Hauser",
+      "cname": "萨姆-豪瑟",
+      "nbaId": 1630573,
+      "photoLocal": "assets/images/Player/nba-official/1630573.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630573.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BOS",
+      "name": "Mike Conley",
+      "cname": "迈克-康利",
+      "nbaId": 201144,
+      "photoLocal": "assets/images/Player/nba-official/201144.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/201144.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BOS",
+      "name": "Jordan Walsh",
+      "cname": "乔丹-沃尔什",
+      "nbaId": 1641775,
+      "photoLocal": "assets/images/Player/nba-official/1641775.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641775.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BOS",
+      "name": "Baylor Scheierman",
+      "cname": "贝勒-沙伊尔曼",
+      "nbaId": 1631248,
+      "photoLocal": "assets/images/Player/nba-official/1631248.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631248.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BOS",
+      "name": "Hugo Gonzalez",
+      "cname": "乌戈-冈萨雷斯",
+      "nbaId": 1642864,
+      "photoLocal": "assets/images/Player/nba-official/1642864.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642864.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BOS",
+      "name": "Dalano Banton",
+      "cname": "达拉诺-班顿",
+      "nbaId": 1630625,
+      "photoLocal": "assets/images/Player/nba-official/1630625.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630625.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BOS",
+      "name": "Ron Harper Jr.",
+      "cname": "小罗恩-哈珀",
+      "nbaId": 1631199,
+      "photoLocal": "assets/images/Player/nba-official/1631199.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631199.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BOS",
+      "name": "Amari Williams",
+      "cname": "阿马里-威廉姆斯",
+      "nbaId": 1642873,
+      "photoLocal": "assets/images/Player/nba-official/1642873.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642873.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BOS",
+      "name": "John Tonje",
+      "cname": "约翰-汤杰",
+      "nbaId": 1642910,
+      "photoLocal": "assets/images/Player/nba-official/1642910.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642910.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "BOS",
+      "name": "Max Shulga",
+      "cname": "马克斯-舒尔加",
+      "nbaId": 1642917,
+      "photoLocal": "assets/images/Player/nba-official/1642917.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642917.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHA",
+      "name": "Brandon Miller",
+      "cname": "布兰登-米勒",
+      "nbaId": 1641706,
+      "photoLocal": "assets/images/Player/nba-official/1641706.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641706.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHA",
+      "name": "Kon Knueppel",
+      "cname": "康-克努佩尔",
+      "nbaId": 1642851,
+      "photoLocal": "assets/images/Player/nba-official/1642851.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642851.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHA",
+      "name": "Naz Reid",
+      "cname": "纳兹-里德",
+      "nbaId": 1629675,
+      "photoLocal": "assets/images/Player/nba-official/1629675.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629675.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHA",
+      "name": "Coby White",
+      "cname": "科比-怀特",
+      "nbaId": 1629632,
+      "photoLocal": "assets/images/Player/nba-official/1629632.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629632.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHA",
+      "name": "Grayson Allen",
+      "cname": "格雷森-阿伦",
+      "nbaId": 1628960,
+      "photoLocal": "assets/images/Player/nba-official/1628960.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628960.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHA",
+      "name": "Moussa Diabate",
+      "cname": "穆萨-迪亚巴特",
+      "nbaId": 1631217,
+      "photoLocal": "assets/images/Player/nba-official/1631217.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631217.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHA",
+      "name": "Ryan Kalkbrenner",
+      "cname": "瑞安-卡尔克布伦纳",
+      "nbaId": 1641750,
+      "photoLocal": "assets/images/Player/nba-official/1641750.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641750.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHA",
+      "name": "Royce O’Neale",
+      "cname": "罗伊斯-奥尼尔",
+      "nbaId": 1626220,
+      "photoLocal": "assets/images/Player/nba-official/1626220.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1626220.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHA",
+      "name": "Grant Williams",
+      "cname": "格兰特-威廉姆斯",
+      "nbaId": 1629684,
+      "photoLocal": "assets/images/Player/nba-official/1629684.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629684.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHA",
+      "name": "Tidjane Salaun",
+      "cname": "蒂贾内-萨隆",
+      "nbaId": 1642275,
+      "photoLocal": "assets/images/Player/nba-official/1642275.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642275.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHA",
+      "name": "Dorian Finney-Smith",
+      "cname": "多里安-芬尼-史密斯",
+      "nbaId": 1627827,
+      "photoLocal": "assets/images/Player/nba-official/1627827.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1627827.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHA",
+      "name": "Sion James",
+      "cname": "锡安-詹姆斯",
+      "nbaId": 1642883,
+      "photoLocal": "assets/images/Player/nba-official/1642883.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642883.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHA",
+      "name": "Tre Mann",
+      "cname": "特雷-曼",
+      "nbaId": 1630544,
+      "photoLocal": "assets/images/Player/nba-official/1630544.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630544.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHA",
+      "name": "Pat Connaughton",
+      "cname": "帕特-康诺顿",
+      "nbaId": 1626192,
+      "photoLocal": "assets/images/Player/nba-official/1626192.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1626192.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHA",
+      "name": "Xavier Tillman",
+      "cname": "泽维尔-蒂尔曼",
+      "nbaId": 1630214,
+      "photoLocal": "assets/images/Player/nba-official/1630214.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630214.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHA",
+      "name": "PJ Hall",
+      "cname": "PJ-霍尔",
+      "nbaId": 1641790,
+      "photoLocal": "assets/images/Player/nba-official/1641790.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641790.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHA",
+      "name": "Liam McNeeley",
+      "cname": "利亚姆-麦克尼利",
+      "nbaId": 1642862,
+      "photoLocal": "assets/images/Player/nba-official/1642862.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642862.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHA",
+      "name": "Antonio Reeves",
+      "cname": "安东尼奥-里夫斯",
+      "nbaId": 1641810,
+      "photoLocal": "assets/images/Player/nba-official/1641810.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641810.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHI",
+      "name": "Norman Powell",
+      "cname": "诺曼-鲍威尔",
+      "nbaId": 1626181,
+      "photoLocal": "assets/images/Player/nba-official/1626181.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1626181.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHI",
+      "name": "Josh Giddey",
+      "cname": "乔什-吉迪",
+      "nbaId": 1630581,
+      "photoLocal": "assets/images/Player/nba-official/1630581.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630581.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHI",
+      "name": "Matas Buzelis",
+      "cname": "马塔斯-布泽利斯",
+      "nbaId": 1641824,
+      "photoLocal": "assets/images/Player/nba-official/1641824.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641824.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHI",
+      "name": "Nic Claxton",
+      "cname": "尼古拉斯-克拉克斯顿",
+      "nbaId": 1629651,
+      "photoLocal": "assets/images/Player/nba-official/1629651.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629651.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHI",
+      "name": "Tre Jones",
+      "cname": "特雷-琼斯",
+      "nbaId": 1630200,
+      "photoLocal": "assets/images/Player/nba-official/1630200.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630200.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHI",
+      "name": "Jalen Smith",
+      "cname": "杰伦-史密斯",
+      "nbaId": 1630188,
+      "photoLocal": "assets/images/Player/nba-official/1630188.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630188.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHI",
+      "name": "Zach Collins",
+      "cname": "扎克-科林斯",
+      "nbaId": 1628380,
+      "photoLocal": "assets/images/Player/nba-official/1628380.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628380.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHI",
+      "name": "Isaac Okoro",
+      "cname": "艾萨克-奥科罗",
+      "nbaId": 1630171,
+      "photoLocal": "assets/images/Player/nba-official/1630171.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630171.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHI",
+      "name": "Leonard Miller",
+      "cname": "伦纳德-米勒",
+      "nbaId": 1631159,
+      "photoLocal": "assets/images/Player/nba-official/1631159.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631159.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHI",
+      "name": "Patrick Williams",
+      "cname": "帕特里克-威廉姆斯",
+      "nbaId": 1630172,
+      "photoLocal": "assets/images/Player/nba-official/1630172.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630172.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHI",
+      "name": "Nick Richards",
+      "cname": "尼克-理查兹",
+      "nbaId": 1630208,
+      "photoLocal": "assets/images/Player/nba-official/1630208.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630208.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHI",
+      "name": "Rob Dillingham",
+      "cname": "罗布-迪林厄姆",
+      "nbaId": 1642265,
+      "photoLocal": "assets/images/Player/nba-official/1642265.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642265.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHI",
+      "name": "Yuki Kawamura",
+      "cname": "河村勇辉",
+      "nbaId": 1642530,
+      "photoLocal": "assets/images/Player/nba-official/1642530.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642530.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHI",
+      "name": "Noa Essengue",
+      "cname": "诺阿-埃森格",
+      "nbaId": 1642855,
+      "photoLocal": "assets/images/Player/nba-official/1642855.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642855.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHI",
+      "name": "Mac McClung",
+      "cname": "麦克-麦克朗",
+      "nbaId": 1630644,
+      "photoLocal": "assets/images/Player/nba-official/1630644.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630644.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CHI",
+      "name": "Lachlan Olbrich",
+      "cname": "拉克伦-奥尔布里奇",
+      "nbaId": 1642950,
+      "photoLocal": "assets/images/Player/nba-official/1642950.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642950.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CLE",
+      "name": "Donovan Mitchell",
+      "cname": "多诺万-米切尔",
+      "nbaId": 1628378,
+      "photoLocal": "assets/images/Player/nba-official/1628378.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628378.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CLE",
+      "name": "Evan Mobley",
+      "cname": "埃文-莫布利",
+      "nbaId": 1630596,
+      "photoLocal": "assets/images/Player/nba-official/1630596.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630596.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CLE",
+      "name": "Jarrett Allen",
+      "cname": "贾勒特-阿伦",
+      "nbaId": 1628386,
+      "photoLocal": "assets/images/Player/nba-official/1628386.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628386.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CLE",
+      "name": "Max Strus",
+      "cname": "马克斯-斯特鲁斯",
+      "nbaId": 1629622,
+      "photoLocal": "assets/images/Player/nba-official/1629622.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629622.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CLE",
+      "name": "Sam Merrill",
+      "cname": "萨姆-梅里尔",
+      "nbaId": 1630241,
+      "photoLocal": "assets/images/Player/nba-official/1630241.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630241.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CLE",
+      "name": "Dennis Schroder",
+      "cname": "丹尼斯-施罗德",
+      "nbaId": 203471,
+      "photoLocal": "assets/images/Player/nba-official/203471.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203471.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CLE",
+      "name": "Jaylon Tyson",
+      "cname": "杰伦-泰森",
+      "nbaId": 1642281,
+      "photoLocal": "assets/images/Player/nba-official/1642281.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642281.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CLE",
+      "name": "Thomas Bryant",
+      "cname": "托马斯-布莱恩特",
+      "nbaId": 1628418,
+      "photoLocal": "assets/images/Player/nba-official/1628418.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628418.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CLE",
+      "name": "Craig Porter Jr.",
+      "cname": "小克雷格-波特",
+      "nbaId": 1641854,
+      "photoLocal": "assets/images/Player/nba-official/1641854.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641854.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CLE",
+      "name": "Nae’Qwan Tomlin",
+      "cname": "纳伊夸恩-汤姆林",
+      "nbaId": 1641772,
+      "photoLocal": "assets/images/Player/nba-official/1641772.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641772.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CLE",
+      "name": "Tyrese Proctor",
+      "cname": "泰雷斯-普罗克特",
+      "nbaId": 1642878,
+      "photoLocal": "assets/images/Player/nba-official/1642878.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642878.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CLE",
+      "name": "Olivier Sarr",
+      "cname": "奥利维耶-萨尔",
+      "nbaId": 1630846,
+      "photoLocal": "assets/images/Player/nba-official/1630846.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630846.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CLE",
+      "name": "Tristan Enaruna",
+      "cname": "特里斯坦-埃纳鲁纳",
+      "nbaId": 1642400,
+      "photoLocal": "assets/images/Player/nba-official/1642400.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642400.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "CLE",
+      "name": "Riley Minix",
+      "cname": "赖利-米尼克斯",
+      "nbaId": 1642434,
+      "photoLocal": "assets/images/Player/nba-official/1642434.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642434.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DAL",
+      "name": "Kyrie Irving",
+      "cname": "凯里-欧文",
+      "nbaId": 202681,
+      "photoLocal": "assets/images/Player/nba-official/202681.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/202681.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DAL",
+      "name": "Cooper Flagg",
+      "cname": "库珀-弗拉格",
+      "nbaId": 1642843,
+      "photoLocal": "assets/images/Player/nba-official/1642843.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642843.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DAL",
+      "name": "Naji Marshall",
+      "cname": "纳吉-马歇尔",
+      "nbaId": 1630230,
+      "photoLocal": "assets/images/Player/nba-official/1630230.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630230.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DAL",
+      "name": "Santi Aldama",
+      "cname": "桑蒂-阿尔达马",
+      "nbaId": 1630583,
+      "photoLocal": "assets/images/Player/nba-official/1630583.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630583.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DAL",
+      "name": "P.J. Washington",
+      "cname": "PJ-华盛顿",
+      "nbaId": 1629023,
+      "photoLocal": "assets/images/Player/nba-official/1629023.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629023.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DAL",
+      "name": "Daniel Gafford",
+      "cname": "丹尼尔-加福德",
+      "nbaId": 1629655,
+      "photoLocal": "assets/images/Player/nba-official/1629655.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629655.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DAL",
+      "name": "Dereck Lively II",
+      "cname": "德雷克-莱夫利二世",
+      "nbaId": 1641726,
+      "photoLocal": "assets/images/Player/nba-official/1641726.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641726.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DAL",
+      "name": "Klay Thompson",
+      "cname": "克莱-汤普森",
+      "nbaId": 202691,
+      "photoLocal": "assets/images/Player/nba-official/202691.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/202691.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DAL",
+      "name": "Max Christie",
+      "cname": "马克斯-克里斯蒂",
+      "nbaId": 1631108,
+      "photoLocal": "assets/images/Player/nba-official/1631108.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631108.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DAL",
+      "name": "Caleb Martin",
+      "cname": "凯莱布-马丁",
+      "nbaId": 1628997,
+      "photoLocal": "assets/images/Player/nba-official/1628997.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628997.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DAL",
+      "name": "Ryan Nembhard",
+      "cname": "瑞安-内姆哈德",
+      "nbaId": 1642948,
+      "photoLocal": "assets/images/Player/nba-official/1642948.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642948.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DAL",
+      "name": "Dwight Powell",
+      "cname": "德怀特-鲍威尔",
+      "nbaId": 203939,
+      "photoLocal": "assets/images/Player/nba-official/203939.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203939.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DAL",
+      "name": "Moussa Cisse",
+      "cname": "穆萨-西塞",
+      "nbaId": 1630619,
+      "photoLocal": "assets/images/Player/nba-official/1630619.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630619.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DAL",
+      "name": "John Poulakidas",
+      "cname": "约翰-普拉基达斯",
+      "nbaId": 1642967,
+      "photoLocal": "assets/images/Player/nba-official/1642967.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642967.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DAL",
+      "name": "Tyler Smith",
+      "cname": "泰勒-史密斯",
+      "nbaId": 1641890,
+      "photoLocal": "assets/images/Player/nba-official/1641890.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641890.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DEN",
+      "name": "Nikola Jokic",
+      "cname": "尼古拉-约基奇",
+      "nbaId": 203999,
+      "photoLocal": "assets/images/Player/nba-official/203999.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203999.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DEN",
+      "name": "Jamal Murray",
+      "cname": "贾马尔-默里",
+      "nbaId": 1627750,
+      "photoLocal": "assets/images/Player/nba-official/1627750.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1627750.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DEN",
+      "name": "Aaron Gordon",
+      "cname": "阿龙-戈登",
+      "nbaId": 203932,
+      "photoLocal": "assets/images/Player/nba-official/203932.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203932.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DEN",
+      "name": "Peyton Watson",
+      "cname": "佩顿-沃特森",
+      "nbaId": 1631212,
+      "photoLocal": "assets/images/Player/nba-official/1631212.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631212.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DEN",
+      "name": "Christian Braun",
+      "cname": "克里斯蒂安-布劳恩",
+      "nbaId": 1631128,
+      "photoLocal": "assets/images/Player/nba-official/1631128.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631128.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DEN",
+      "name": "Cameron Johnson",
+      "cname": "卡梅伦-约翰逊",
+      "nbaId": 1629661,
+      "photoLocal": "assets/images/Player/nba-official/1629661.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629661.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DEN",
+      "name": "Tim Hardaway Jr.",
+      "cname": "小蒂姆-哈达威",
+      "nbaId": 203501,
+      "photoLocal": "assets/images/Player/nba-official/203501.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203501.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DEN",
+      "name": "Marvin Bagley III",
+      "cname": "马文-巴格利三世",
+      "nbaId": 1628963,
+      "photoLocal": "assets/images/Player/nba-official/1628963.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628963.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DEN",
+      "name": "Julian Strawther",
+      "cname": "朱利安-斯特劳瑟",
+      "nbaId": 1631124,
+      "photoLocal": "assets/images/Player/nba-official/1631124.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631124.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DEN",
+      "name": "Bruce Brown",
+      "cname": "布鲁斯-布朗",
+      "nbaId": 1628971,
+      "photoLocal": "assets/images/Player/nba-official/1628971.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628971.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DEN",
+      "name": "Zeke Nnaji",
+      "cname": "齐克-纳吉",
+      "nbaId": 1630192,
+      "photoLocal": "assets/images/Player/nba-official/1630192.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630192.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DEN",
+      "name": "Tyus Jones",
+      "cname": "泰厄斯-琼斯",
+      "nbaId": 1626145,
+      "photoLocal": "assets/images/Player/nba-official/1626145.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1626145.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DEN",
+      "name": "Jalen Pickett",
+      "cname": "杰伦-皮克特",
+      "nbaId": 1629618,
+      "photoLocal": "assets/images/Player/nba-official/1629618.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629618.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DEN",
+      "name": "DaRon Holmes II",
+      "cname": "达隆-霍姆斯二世",
+      "nbaId": 1641747,
+      "photoLocal": "assets/images/Player/nba-official/1641747.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641747.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DEN",
+      "name": "KJ Simpson",
+      "cname": "KJ-辛普森",
+      "nbaId": 1642354,
+      "photoLocal": "assets/images/Player/nba-official/1642354.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642354.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DEN",
+      "name": "Spencer Jones",
+      "cname": "斯潘塞-琼斯",
+      "nbaId": 1642461,
+      "photoLocal": "assets/images/Player/nba-official/1642461.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642461.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DEN",
+      "name": "David Roddy",
+      "cname": "戴维-罗迪",
+      "nbaId": 1631223,
+      "photoLocal": "assets/images/Player/nba-official/1631223.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631223.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DEN",
+      "name": "Curtis Jones",
+      "cname": "柯蒂斯-琼斯",
+      "nbaId": 1642938,
+      "photoLocal": "assets/images/Player/nba-official/1642938.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642938.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DET",
+      "name": "Cade Cunningham",
+      "cname": "凯德-坎宁安",
+      "nbaId": 1630595,
+      "photoLocal": "assets/images/Player/nba-official/1630595.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630595.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DET",
+      "name": "Ausar Thompson",
+      "cname": "奥萨尔-汤普森",
+      "nbaId": 1641709,
+      "photoLocal": "assets/images/Player/nba-official/1641709.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641709.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DET",
+      "name": "Jalen Duren",
+      "cname": "杰伦-杜伦",
+      "nbaId": 1631105,
+      "photoLocal": "assets/images/Player/nba-official/1631105.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631105.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DET",
+      "name": "John Collins",
+      "cname": "约翰-科林斯",
+      "nbaId": 1628381,
+      "photoLocal": "assets/images/Player/nba-official/1628381.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628381.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DET",
+      "name": "Daniss Jenkins",
+      "cname": "达尼斯-詹金斯",
+      "nbaId": 1642450,
+      "photoLocal": "assets/images/Player/nba-official/1642450.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642450.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DET",
+      "name": "Duncan Robinson",
+      "cname": "邓肯-罗宾逊",
+      "nbaId": 1629130,
+      "photoLocal": "assets/images/Player/nba-official/1629130.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629130.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DET",
+      "name": "Paul Reed",
+      "cname": "保罗-里德",
+      "nbaId": 1630194,
+      "photoLocal": "assets/images/Player/nba-official/1630194.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630194.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DET",
+      "name": "Isaiah Joe",
+      "cname": "以赛亚-乔",
+      "nbaId": 1630198,
+      "photoLocal": "assets/images/Player/nba-official/1630198.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630198.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DET",
+      "name": "Javonte Green",
+      "cname": "贾冯特-格林",
+      "nbaId": 1629750,
+      "photoLocal": "assets/images/Player/nba-official/1629750.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629750.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DET",
+      "name": "Ronald Holland II",
+      "cname": "罗纳德-霍兰德二世",
+      "nbaId": 1641842,
+      "photoLocal": "assets/images/Player/nba-official/1641842.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641842.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DET",
+      "name": "Kevin Huerter",
+      "cname": "凯文-赫尔特",
+      "nbaId": 1628989,
+      "photoLocal": "assets/images/Player/nba-official/1628989.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628989.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DET",
+      "name": "Marcus Sasser",
+      "cname": "马库斯-萨瑟",
+      "nbaId": 1631204,
+      "photoLocal": "assets/images/Player/nba-official/1631204.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631204.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DET",
+      "name": "Taurean Prince",
+      "cname": "托里恩-普林斯",
+      "nbaId": 1627752,
+      "photoLocal": "assets/images/Player/nba-official/1627752.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1627752.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DET",
+      "name": "Gary Harris",
+      "cname": "加里-哈里斯",
+      "nbaId": 203914,
+      "photoLocal": "assets/images/Player/nba-official/203914.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203914.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DET",
+      "name": "Isaac Jones",
+      "cname": "艾萨克-琼斯",
+      "nbaId": 1642403,
+      "photoLocal": "assets/images/Player/nba-official/1642403.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642403.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DET",
+      "name": "Wendell Moore Jr.",
+      "cname": "小温德尔-摩尔",
+      "nbaId": 1631111,
+      "photoLocal": "assets/images/Player/nba-official/1631111.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631111.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DET",
+      "name": "Chaz Lanier",
+      "cname": "查兹-拉尼尔",
+      "nbaId": 1642404,
+      "photoLocal": "assets/images/Player/nba-official/1642404.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642404.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "DET",
+      "name": "Tolu Smith",
+      "cname": "托卢-史密斯",
+      "nbaId": 1642449,
+      "photoLocal": "assets/images/Player/nba-official/1642449.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642449.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "GSW",
+      "name": "Stephen Curry",
+      "cname": "斯蒂芬-库里",
+      "nbaId": 201939,
+      "photoLocal": "assets/images/Player/nba-official/201939.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/201939.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "GSW",
+      "name": "Jimmy Butler",
+      "cname": "吉米-巴特勒",
+      "nbaId": 202710,
+      "photoLocal": "assets/images/Player/nba-official/202710.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/202710.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "GSW",
+      "name": "Kristaps Porzingis",
+      "cname": "克里斯塔普斯-波尔津吉斯",
+      "nbaId": 204001,
+      "photoLocal": "assets/images/Player/nba-official/204001.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/204001.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "GSW",
+      "name": "Brandin Podziemski",
+      "cname": "布兰丁-波杰姆斯基",
+      "nbaId": 1641764,
+      "photoLocal": "assets/images/Player/nba-official/1641764.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641764.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "GSW",
+      "name": "Gui Santos",
+      "cname": "吉-桑托斯",
+      "nbaId": 1630611,
+      "photoLocal": "assets/images/Player/nba-official/1630611.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630611.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "GSW",
+      "name": "Draymond Green",
+      "cname": "德雷蒙德-格林",
+      "nbaId": 203110,
+      "photoLocal": "assets/images/Player/nba-official/203110.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203110.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "GSW",
+      "name": "De’Anthony Melton",
+      "cname": "德安东尼-梅尔顿",
+      "nbaId": 1629001,
+      "photoLocal": "assets/images/Player/nba-official/1629001.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629001.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "GSW",
+      "name": "Al Horford",
+      "cname": "艾尔-霍福德",
+      "nbaId": 201143,
+      "photoLocal": "assets/images/Player/nba-official/201143.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/201143.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "GSW",
+      "name": "Gary Payton II",
+      "cname": "加里-佩顿二世",
+      "nbaId": 1627780,
+      "photoLocal": "assets/images/Player/nba-official/1627780.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1627780.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "GSW",
+      "name": "Moses Moody",
+      "cname": "摩西-穆迪",
+      "nbaId": 1630541,
+      "photoLocal": "assets/images/Player/nba-official/1630541.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630541.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "GSW",
+      "name": "Will Richard",
+      "cname": "威尔-理查德",
+      "nbaId": 1642954,
+      "photoLocal": "assets/images/Player/nba-official/1642954.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642954.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "GSW",
+      "name": "Seth Curry",
+      "cname": "塞思-库里",
+      "nbaId": 203552,
+      "photoLocal": "assets/images/Player/nba-official/203552.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203552.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "GSW",
+      "name": "Nate Williams",
+      "cname": "内特-威廉姆斯",
+      "nbaId": 1631466,
+      "photoLocal": "assets/images/Player/nba-official/1631466.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631466.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "GSW",
+      "name": "LJ Cryer",
+      "cname": "LJ-克赖尔",
+      "nbaId": 1643018,
+      "photoLocal": "assets/images/Player/nba-official/1643018.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643018.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "GSW",
+      "name": "Charles Bassey",
+      "cname": "查尔斯-巴塞",
+      "nbaId": 1629646,
+      "photoLocal": "assets/images/Player/nba-official/1629646.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629646.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "GSW",
+      "name": "Malevy Leons",
+      "cname": "马莱维-莱昂斯",
+      "nbaId": 1642502,
+      "photoLocal": "assets/images/Player/nba-official/1642502.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642502.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "HOU",
+      "name": "Kevin Durant",
+      "cname": "凯文-杜兰特",
+      "nbaId": 201142,
+      "photoLocal": "assets/images/Player/nba-official/201142.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/201142.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "HOU",
+      "name": "Alperen Sengun",
+      "cname": "阿尔佩伦-申京",
+      "nbaId": 1630578,
+      "photoLocal": "assets/images/Player/nba-official/1630578.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630578.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "HOU",
+      "name": "Amen Thompson",
+      "cname": "阿门-汤普森",
+      "nbaId": 1641708,
+      "photoLocal": "assets/images/Player/nba-official/1641708.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641708.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "HOU",
+      "name": "Jabari Smith Jr.",
+      "cname": "小贾巴里-史密斯",
+      "nbaId": 1631095,
+      "photoLocal": "assets/images/Player/nba-official/1631095.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631095.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "HOU",
+      "name": "Reed Sheppard",
+      "cname": "里德-谢泼德",
+      "nbaId": 1642263,
+      "photoLocal": "assets/images/Player/nba-official/1642263.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642263.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "HOU",
+      "name": "Fred VanVleet",
+      "cname": "弗雷德-范弗利特",
+      "nbaId": 1627832,
+      "photoLocal": "assets/images/Player/nba-official/1627832.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1627832.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "HOU",
+      "name": "Marcus Smart",
+      "cname": "马库斯-斯马特",
+      "nbaId": 203935,
+      "photoLocal": "assets/images/Player/nba-official/203935.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203935.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "HOU",
+      "name": "Tari Eason",
+      "cname": "塔里-伊森",
+      "nbaId": 1631106,
+      "photoLocal": "assets/images/Player/nba-official/1631106.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631106.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "HOU",
+      "name": "Clint Capela",
+      "cname": "克林特-卡佩拉",
+      "nbaId": 203991,
+      "photoLocal": "assets/images/Player/nba-official/203991.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203991.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "HOU",
+      "name": "Steven Adams",
+      "cname": "史蒂文-亚当斯",
+      "nbaId": 203500,
+      "photoLocal": "assets/images/Player/nba-official/203500.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203500.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "HOU",
+      "name": "Aaron Holiday",
+      "cname": "阿龙-霍勒迪",
+      "nbaId": 1628988,
+      "photoLocal": "assets/images/Player/nba-official/1628988.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628988.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "HOU",
+      "name": "Bogdan Bogdanovic",
+      "cname": "波格丹-波格丹诺维奇",
+      "nbaId": 203992,
+      "photoLocal": "assets/images/Player/nba-official/203992.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203992.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "HOU",
+      "name": "Jae’Sean Tate",
+      "cname": "杰肖恩-泰特",
+      "nbaId": 1630256,
+      "photoLocal": "assets/images/Player/nba-official/1630256.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630256.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "HOU",
+      "name": "Jeff Green",
+      "cname": "杰夫-格林",
+      "nbaId": 201145,
+      "photoLocal": "assets/images/Player/nba-official/201145.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/201145.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "HOU",
+      "name": "JD Davison",
+      "cname": "JD-戴维森",
+      "nbaId": 1631120,
+      "photoLocal": "assets/images/Player/nba-official/1631120.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631120.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "HOU",
+      "name": "Tristen Newton",
+      "cname": "特里斯坦-牛顿",
+      "nbaId": 1641803,
+      "photoLocal": "assets/images/Player/nba-official/1641803.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641803.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "HOU",
+      "name": "Isaiah Crawford",
+      "cname": "以赛亚-克劳福德",
+      "nbaId": 1642384,
+      "photoLocal": "assets/images/Player/nba-official/1642384.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642384.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "IND",
+      "name": "Tyrese Haliburton",
+      "cname": "泰雷塞-哈利伯顿",
+      "nbaId": 1630169,
+      "photoLocal": "assets/images/Player/nba-official/1630169.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630169.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "IND",
+      "name": "Pascal Siakam",
+      "cname": "帕斯卡尔-西亚卡姆",
+      "nbaId": 1627783,
+      "photoLocal": "assets/images/Player/nba-official/1627783.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1627783.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "IND",
+      "name": "Ivica Zubac",
+      "cname": "伊维察-祖巴茨",
+      "nbaId": 1627826,
+      "photoLocal": "assets/images/Player/nba-official/1627826.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1627826.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "IND",
+      "name": "Andrew Nembhard",
+      "cname": "安德鲁-内姆哈德",
+      "nbaId": 1629614,
+      "photoLocal": "assets/images/Player/nba-official/1629614.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629614.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "IND",
+      "name": "T.J. McConnell",
+      "cname": "TJ-麦康奈尔",
+      "nbaId": 204456,
+      "photoLocal": "assets/images/Player/nba-official/204456.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/204456.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "IND",
+      "name": "Jarace Walker",
+      "cname": "贾拉斯-沃克",
+      "nbaId": 1641716,
+      "photoLocal": "assets/images/Player/nba-official/1641716.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641716.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "IND",
+      "name": "Obi Toppin",
+      "cname": "奥比-托平",
+      "nbaId": 1630167,
+      "photoLocal": "assets/images/Player/nba-official/1630167.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630167.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "IND",
+      "name": "Aaron Nesmith",
+      "cname": "阿龙-内史密斯",
+      "nbaId": 1630174,
+      "photoLocal": "assets/images/Player/nba-official/1630174.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630174.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "IND",
+      "name": "Kelly Oubre Jr.",
+      "cname": "小凯利-乌布雷",
+      "nbaId": 1626162,
+      "photoLocal": "assets/images/Player/nba-official/1626162.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1626162.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "IND",
+      "name": "Jay Huff",
+      "cname": "杰伊-赫夫",
+      "nbaId": 1630643,
+      "photoLocal": "assets/images/Player/nba-official/1630643.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630643.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "IND",
+      "name": "Quenton Jackson",
+      "cname": "昆顿-杰克逊",
+      "nbaId": 1631245,
+      "photoLocal": "assets/images/Player/nba-official/1631245.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631245.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "IND",
+      "name": "Kobe Brown",
+      "cname": "科比-布朗",
+      "nbaId": 1641738,
+      "photoLocal": "assets/images/Player/nba-official/1641738.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641738.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "IND",
+      "name": "Ben Sheppard",
+      "cname": "本-谢泼德",
+      "nbaId": 1641767,
+      "photoLocal": "assets/images/Player/nba-official/1641767.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641767.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "IND",
+      "name": "Johnny Furphy",
+      "cname": "约翰尼-弗菲",
+      "nbaId": 1642277,
+      "photoLocal": "assets/images/Player/nba-official/1642277.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642277.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "IND",
+      "name": "Larry Nance Jr.",
+      "cname": "小拉里-南斯",
+      "nbaId": 1626204,
+      "photoLocal": "assets/images/Player/nba-official/1626204.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1626204.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "IND",
+      "name": "Jalen Slawson",
+      "cname": "杰伦-斯劳森",
+      "nbaId": 1641771,
+      "photoLocal": "assets/images/Player/nba-official/1641771.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641771.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "IND",
+      "name": "Ethan Thompson",
+      "cname": "伊桑-汤普森",
+      "nbaId": 1630679,
+      "photoLocal": "assets/images/Player/nba-official/1630679.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630679.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "IND",
+      "name": "Taelon Peter",
+      "cname": "塔隆-彼得",
+      "nbaId": 1643007,
+      "photoLocal": "assets/images/Player/nba-official/1643007.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643007.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAC",
+      "name": "Brandon Ingram",
+      "cname": "布兰登-英格拉姆",
+      "nbaId": 1627742,
+      "photoLocal": "assets/images/Player/nba-official/1627742.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1627742.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAC",
+      "name": "Darius Garland",
+      "cname": "达里厄斯-加兰",
+      "nbaId": 1629636,
+      "photoLocal": "assets/images/Player/nba-official/1629636.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629636.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAC",
+      "name": "Bennedict Mathurin",
+      "cname": "本内迪克特-马图林",
+      "nbaId": 1631097,
+      "photoLocal": "assets/images/Player/nba-official/1631097.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631097.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAC",
+      "name": "Rui Hachimura",
+      "cname": "八村垒",
+      "nbaId": 1629060,
+      "photoLocal": "assets/images/Player/nba-official/1629060.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629060.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAC",
+      "name": "Derrick Jones Jr.",
+      "cname": "小德里克-琼斯",
+      "nbaId": 1627884,
+      "photoLocal": "assets/images/Player/nba-official/1627884.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1627884.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAC",
+      "name": "Brook Lopez",
+      "cname": "布鲁克-洛佩斯",
+      "nbaId": 201572,
+      "photoLocal": "assets/images/Player/nba-official/201572.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/201572.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAC",
+      "name": "Kris Dunn",
+      "cname": "克里斯-邓恩",
+      "nbaId": 1627739,
+      "photoLocal": "assets/images/Player/nba-official/1627739.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1627739.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAC",
+      "name": "Jordan Miller",
+      "cname": "乔丹-米勒",
+      "nbaId": 1641757,
+      "photoLocal": "assets/images/Player/nba-official/1641757.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641757.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAC",
+      "name": "Isaiah Jackson",
+      "cname": "以赛亚-杰克逊",
+      "nbaId": 1630543,
+      "photoLocal": "assets/images/Player/nba-official/1630543.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630543.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAC",
+      "name": "Bradley Beal",
+      "cname": "布拉德利-比尔",
+      "nbaId": 203078,
+      "photoLocal": "assets/images/Player/nba-official/203078.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203078.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAC",
+      "name": "Gradey Dick",
+      "cname": "格雷迪-迪克",
+      "nbaId": 1641711,
+      "photoLocal": "assets/images/Player/nba-official/1641711.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641711.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAC",
+      "name": "Kobe Sanders",
+      "cname": "科比-桑德斯",
+      "nbaId": 1642920,
+      "photoLocal": "assets/images/Player/nba-official/1642920.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642920.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAC",
+      "name": "Yanic Konan Niederhauser",
+      "cname": "亚尼克-科南-尼德豪泽",
+      "nbaId": 1642949,
+      "photoLocal": "assets/images/Player/nba-official/1642949.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642949.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAC",
+      "name": "Nicolas Batum",
+      "cname": "尼古拉-巴图姆",
+      "nbaId": 201587,
+      "photoLocal": "assets/images/Player/nba-official/201587.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/201587.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAC",
+      "name": "TyTy Washington Jr.",
+      "cname": "小泰泰-华盛顿",
+      "nbaId": 1631102,
+      "photoLocal": "assets/images/Player/nba-official/1631102.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631102.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAC",
+      "name": "Cam Christie",
+      "cname": "卡姆-克里斯蒂",
+      "nbaId": 1642353,
+      "photoLocal": "assets/images/Player/nba-official/1642353.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642353.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAC",
+      "name": "Norchad Omier",
+      "cname": "诺查德-奥米尔",
+      "nbaId": 1641807,
+      "photoLocal": "assets/images/Player/nba-official/1641807.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641807.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAC",
+      "name": "Sean Pedulla",
+      "cname": "肖恩-佩杜拉",
+      "nbaId": 1642951,
+      "photoLocal": "assets/images/Player/nba-official/1642951.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642951.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAL",
+      "name": "Luka Doncic",
+      "cname": "卢卡-东契奇",
+      "nbaId": 1629029,
+      "photoLocal": "assets/images/Player/nba-official/1629029.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629029.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAL",
+      "name": "Austin Reaves",
+      "cname": "奥斯汀-里夫斯",
+      "nbaId": 1630559,
+      "photoLocal": "assets/images/Player/nba-official/1630559.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630559.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAL",
+      "name": "Walker Kessler",
+      "cname": "沃克-凯斯勒",
+      "nbaId": 1631117,
+      "photoLocal": "assets/images/Player/nba-official/1631117.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631117.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAL",
+      "name": "Collin Sexton",
+      "cname": "科林-塞克斯顿",
+      "nbaId": 1629012,
+      "photoLocal": "assets/images/Player/nba-official/1629012.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629012.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAL",
+      "name": "Quentin Grimes",
+      "cname": "昆廷-格兰姆斯",
+      "nbaId": 1629656,
+      "photoLocal": "assets/images/Player/nba-official/1629656.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629656.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAL",
+      "name": "Sandro Mamukelashvili",
+      "cname": "桑德罗-马穆凯拉什维利",
+      "nbaId": 1630572,
+      "photoLocal": "assets/images/Player/nba-official/1630572.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630572.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAL",
+      "name": "Jarred Vanderbilt",
+      "cname": "贾里德-范德比尔特",
+      "nbaId": 1629020,
+      "photoLocal": "assets/images/Player/nba-official/1629020.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629020.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAL",
+      "name": "Jaden Hardy",
+      "cname": "杰登-哈迪",
+      "nbaId": 1630702,
+      "photoLocal": "assets/images/Player/nba-official/1630702.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630702.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAL",
+      "name": "Jake LaRavia",
+      "cname": "杰克-拉雷维亚",
+      "nbaId": 1631222,
+      "photoLocal": "assets/images/Player/nba-official/1631222.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631222.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAL",
+      "name": "Maxi Kleber",
+      "cname": "马克西-克勒贝尔",
+      "nbaId": 1628467,
+      "photoLocal": "assets/images/Player/nba-official/1628467.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628467.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAL",
+      "name": "Dalton Knecht",
+      "cname": "多尔顿-克内克特",
+      "nbaId": 1642261,
+      "photoLocal": "assets/images/Player/nba-official/1642261.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642261.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAL",
+      "name": "Kevon Looney",
+      "cname": "凯文-卢尼",
+      "nbaId": 1626172,
+      "photoLocal": "assets/images/Player/nba-official/1626172.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1626172.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAL",
+      "name": "Nick Smith Jr.",
+      "cname": "小尼克-史密斯",
+      "nbaId": 1641733,
+      "photoLocal": "assets/images/Player/nba-official/1641733.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641733.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAL",
+      "name": "Drew Timme",
+      "cname": "德鲁-蒂米",
+      "nbaId": 1631166,
+      "photoLocal": "assets/images/Player/nba-official/1631166.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631166.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAL",
+      "name": "Bronny James",
+      "cname": "布朗尼-詹姆斯",
+      "nbaId": 1642355,
+      "photoLocal": "assets/images/Player/nba-official/1642355.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642355.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAL",
+      "name": "Adou Thiero",
+      "cname": "阿杜-蒂耶罗",
+      "nbaId": 1642876,
+      "photoLocal": "assets/images/Player/nba-official/1642876.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642876.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "LAL",
+      "name": "Chris Manon",
+      "cname": "克里斯-马农",
+      "nbaId": 1643024,
+      "photoLocal": "assets/images/Player/nba-official/1643024.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643024.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "Ty Jerome",
+      "cname": "泰-杰罗姆",
+      "nbaId": 1629660,
+      "photoLocal": "assets/images/Player/nba-official/1629660.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629660.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "Zach Edey",
+      "cname": "扎克-埃迪",
+      "nbaId": 1641744,
+      "photoLocal": "assets/images/Player/nba-official/1641744.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641744.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "Jerami Grant",
+      "cname": "杰拉米-格兰特",
+      "nbaId": 203924,
+      "photoLocal": "assets/images/Player/nba-official/203924.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203924.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "Cedric Coward",
+      "cname": "塞德里克-科沃德",
+      "nbaId": 1642907,
+      "photoLocal": "assets/images/Player/nba-official/1642907.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642907.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "GG Jackson",
+      "cname": "GG-杰克逊",
+      "nbaId": 1641713,
+      "photoLocal": "assets/images/Player/nba-official/1641713.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641713.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "Jaylen Wells",
+      "cname": "杰伦-威尔斯",
+      "nbaId": 1642377,
+      "photoLocal": "assets/images/Player/nba-official/1642377.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642377.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "Cam Spencer",
+      "cname": "卡姆-斯潘塞",
+      "nbaId": 1642285,
+      "photoLocal": "assets/images/Player/nba-official/1642285.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642285.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "Isaiah Stewart",
+      "cname": "以赛亚-斯图尔特",
+      "nbaId": 1630191,
+      "photoLocal": "assets/images/Player/nba-official/1630191.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630191.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "Olivier-Maxence Prosper",
+      "cname": "奥利维耶-马克桑斯-普罗斯珀",
+      "nbaId": 1641765,
+      "photoLocal": "assets/images/Player/nba-official/1641765.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641765.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "Javon Small",
+      "cname": "贾冯-斯莫尔",
+      "nbaId": 1642914,
+      "photoLocal": "assets/images/Player/nba-official/1642914.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642914.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "Scotty Pippen Jr.",
+      "cname": "小斯科蒂-皮蓬",
+      "nbaId": 1630590,
+      "photoLocal": "assets/images/Player/nba-official/1630590.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630590.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "D’Angelo Russell",
+      "cname": "丹吉洛-拉塞尔",
+      "nbaId": 1626156,
+      "photoLocal": "assets/images/Player/nba-official/1626156.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1626156.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "Quinten Post",
+      "cname": "昆滕-波斯特",
+      "nbaId": 1642366,
+      "photoLocal": "assets/images/Player/nba-official/1642366.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642366.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "Taylor Hendricks",
+      "cname": "泰勒-亨德里克斯",
+      "nbaId": 1641707,
+      "photoLocal": "assets/images/Player/nba-official/1641707.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641707.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "Walter Clayton Jr.",
+      "cname": "小沃尔特-克莱顿",
+      "nbaId": 1642383,
+      "photoLocal": "assets/images/Player/nba-official/1642383.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642383.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "Kentavious Caldwell-Pope",
+      "cname": "肯塔维奥斯-考德威尔-波普",
+      "nbaId": 203484,
+      "photoLocal": "assets/images/Player/nba-official/203484.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203484.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "Kris Murray",
+      "cname": "克里斯-默里",
+      "nbaId": 1631200,
+      "photoLocal": "assets/images/Player/nba-official/1631200.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631200.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "Jahmai Mashack",
+      "cname": "贾迈-马沙克",
+      "nbaId": 1642942,
+      "photoLocal": "assets/images/Player/nba-official/1642942.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642942.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "AJ Johnson",
+      "cname": "AJ-约翰逊",
+      "nbaId": 1642358,
+      "photoLocal": "assets/images/Player/nba-official/1642358.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642358.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "Dariq Whitehead",
+      "cname": "达里克-怀特黑德",
+      "nbaId": 1641727,
+      "photoLocal": "assets/images/Player/nba-official/1641727.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641727.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "Taj Gibson",
+      "cname": "泰-吉布森",
+      "nbaId": 201959,
+      "photoLocal": "assets/images/Player/nba-official/201959.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/201959.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MEM",
+      "name": "Adama Bal",
+      "cname": "阿达马-巴尔",
+      "nbaId": 1642380,
+      "photoLocal": "assets/images/Player/nba-official/1642380.png",
+      "photoUrl": "https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/4896365.png",
+      "photoSource": "espn-official-player-headshot"
+    },
+    {
+      "team": "MIA",
+      "name": "Giannis Antetokounmpo",
+      "cname": "扬尼斯-阿德托昆博",
+      "nbaId": 203507,
+      "photoLocal": "assets/images/Player/nba-official/203507.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203507.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIA",
+      "name": "Bam Adebayo",
+      "cname": "巴姆-阿德巴约",
+      "nbaId": 1628389,
+      "photoLocal": "assets/images/Player/nba-official/1628389.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628389.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIA",
+      "name": "Andrew Wiggins",
+      "cname": "安德鲁-威金斯",
+      "nbaId": 203952,
+      "photoLocal": "assets/images/Player/nba-official/203952.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203952.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIA",
+      "name": "Bobby Portis",
+      "cname": "博比-波蒂斯",
+      "nbaId": 1626171,
+      "photoLocal": "assets/images/Player/nba-official/1626171.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1626171.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIA",
+      "name": "Pelle Larsson",
+      "cname": "佩莱-拉松",
+      "nbaId": 1641796,
+      "photoLocal": "assets/images/Player/nba-official/1641796.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641796.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIA",
+      "name": "Davion Mitchell",
+      "cname": "戴维恩-米切尔",
+      "nbaId": 1630558,
+      "photoLocal": "assets/images/Player/nba-official/1630558.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630558.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIA",
+      "name": "Simone Fontecchio",
+      "cname": "西莫内-丰泰基奥",
+      "nbaId": 1631323,
+      "photoLocal": "assets/images/Player/nba-official/1631323.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631323.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIA",
+      "name": "Dru Smith",
+      "cname": "德鲁-史密斯",
+      "nbaId": 1630696,
+      "photoLocal": "assets/images/Player/nba-official/1630696.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630696.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIA",
+      "name": "Myron Gardner",
+      "cname": "迈伦-加德纳",
+      "nbaId": 1642066,
+      "photoLocal": "assets/images/Player/nba-official/1642066.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642066.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIA",
+      "name": "Nikola Jovic",
+      "cname": "尼古拉-约维奇",
+      "nbaId": 1631107,
+      "photoLocal": "assets/images/Player/nba-official/1631107.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631107.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIA",
+      "name": "Keshad Johnson",
+      "cname": "凯沙德-约翰逊",
+      "nbaId": 1642352,
+      "photoLocal": "assets/images/Player/nba-official/1642352.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642352.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIA",
+      "name": "Trevor Keels",
+      "cname": "特雷弗-基尔斯",
+      "nbaId": 1631211,
+      "photoLocal": "assets/images/Player/nba-official/1631211.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631211.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIA",
+      "name": "Vladislav Goldin",
+      "cname": "弗拉季斯拉夫-戈尔丁",
+      "nbaId": 1642884,
+      "photoLocal": "assets/images/Player/nba-official/1642884.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642884.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIA",
+      "name": "Jahmir Young",
+      "cname": "贾米尔-扬",
+      "nbaId": 1642443,
+      "photoLocal": "assets/images/Player/nba-official/1642443.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642443.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIL",
+      "name": "Tyler Herro",
+      "cname": "泰勒-希罗",
+      "nbaId": 1629639,
+      "photoLocal": "assets/images/Player/nba-official/1629639.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629639.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIL",
+      "name": "Kevin Porter Jr.",
+      "cname": "小凯文-波特",
+      "nbaId": 1629645,
+      "photoLocal": "assets/images/Player/nba-official/1629645.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629645.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIL",
+      "name": "Ryan Rollins",
+      "cname": "瑞安-罗林斯",
+      "nbaId": 1631157,
+      "photoLocal": "assets/images/Player/nba-official/1631157.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631157.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIL",
+      "name": "Kyle Kuzma",
+      "cname": "凯尔-库兹马",
+      "nbaId": 1628398,
+      "photoLocal": "assets/images/Player/nba-official/1628398.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628398.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIL",
+      "name": "Jaime Jaquez Jr.",
+      "cname": "小海梅-哈克斯",
+      "nbaId": 1631170,
+      "photoLocal": "assets/images/Player/nba-official/1631170.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631170.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIL",
+      "name": "Kel’el Ware",
+      "cname": "凯尔-韦尔",
+      "nbaId": 1642276,
+      "photoLocal": "assets/images/Player/nba-official/1642276.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642276.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIL",
+      "name": "Caris LeVert",
+      "cname": "卡里斯-勒韦尔",
+      "nbaId": 1627747,
+      "photoLocal": "assets/images/Player/nba-official/1627747.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1627747.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIL",
+      "name": "Myles Turner",
+      "cname": "迈尔斯-特纳",
+      "nbaId": 1626167,
+      "photoLocal": "assets/images/Player/nba-official/1626167.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1626167.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIL",
+      "name": "Ousmane Dieng",
+      "cname": "乌斯曼-迪昂",
+      "nbaId": 1631172,
+      "photoLocal": "assets/images/Player/nba-official/1631172.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631172.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIL",
+      "name": "AJ Green",
+      "cname": "AJ-格林",
+      "nbaId": 1631260,
+      "photoLocal": "assets/images/Player/nba-official/1631260.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631260.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIL",
+      "name": "Kasparas Jakucionis",
+      "cname": "卡斯帕拉斯-雅库西奥尼斯",
+      "nbaId": 1642857,
+      "photoLocal": "assets/images/Player/nba-official/1642857.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642857.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIL",
+      "name": "Gary Trent Jr.",
+      "cname": "小加里-特伦特",
+      "nbaId": 1629018,
+      "photoLocal": "assets/images/Player/nba-official/1629018.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629018.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIL",
+      "name": "Jericho Sims",
+      "cname": "杰里科-西姆斯",
+      "nbaId": 1630579,
+      "photoLocal": "assets/images/Player/nba-official/1630579.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630579.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIL",
+      "name": "Kam Jones",
+      "cname": "卡姆-琼斯",
+      "nbaId": 1642880,
+      "photoLocal": "assets/images/Player/nba-official/1642880.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642880.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIL",
+      "name": "Andre Jackson Jr.",
+      "cname": "小安德烈-杰克逊",
+      "nbaId": 1641748,
+      "photoLocal": "assets/images/Player/nba-official/1641748.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641748.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIL",
+      "name": "Cormac Ryan",
+      "cname": "科马克-瑞安",
+      "nbaId": 1642504,
+      "photoLocal": "assets/images/Player/nba-official/1642504.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642504.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIL",
+      "name": "Thanasis Antetokounmpo",
+      "cname": "萨纳西斯-阿德托昆博",
+      "nbaId": 203648,
+      "photoLocal": "assets/images/Player/nba-official/203648.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203648.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIL",
+      "name": "Alex Antetokounmpo",
+      "cname": "亚历克斯-阿德托昆博",
+      "nbaId": 1630828,
+      "photoLocal": "assets/images/Player/nba-official/1630828.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630828.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIN",
+      "name": "Anthony Edwards",
+      "cname": "安东尼-爱德华兹",
+      "nbaId": 1630162,
+      "photoLocal": "assets/images/Player/nba-official/1630162.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630162.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIN",
+      "name": "LaMelo Ball",
+      "cname": "拉梅洛-鲍尔",
+      "nbaId": 1630163,
+      "photoLocal": "assets/images/Player/nba-official/1630163.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630163.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIN",
+      "name": "Rudy Gobert",
+      "cname": "鲁迪-戈贝尔",
+      "nbaId": 203497,
+      "photoLocal": "assets/images/Player/nba-official/203497.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203497.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIN",
+      "name": "Jaden McDaniels",
+      "cname": "贾登-麦克丹尼尔斯",
+      "nbaId": 1630183,
+      "photoLocal": "assets/images/Player/nba-official/1630183.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630183.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIN",
+      "name": "Ayo Dosunmu",
+      "cname": "阿约-多孙穆",
+      "nbaId": 1630245,
+      "photoLocal": "assets/images/Player/nba-official/1630245.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630245.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIN",
+      "name": "Donte DiVincenzo",
+      "cname": "唐特-迪温琴佐",
+      "nbaId": 1628978,
+      "photoLocal": "assets/images/Player/nba-official/1628978.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628978.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIN",
+      "name": "Terrence Shannon Jr.",
+      "cname": "小特伦斯-香农",
+      "nbaId": 1630545,
+      "photoLocal": "assets/images/Player/nba-official/1630545.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630545.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIN",
+      "name": "Bones Hyland",
+      "cname": "伯恩斯-海兰",
+      "nbaId": 1630538,
+      "photoLocal": "assets/images/Player/nba-official/1630538.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630538.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIN",
+      "name": "Josh Green",
+      "cname": "乔什-格林",
+      "nbaId": 1630182,
+      "photoLocal": "assets/images/Player/nba-official/1630182.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630182.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIN",
+      "name": "Trey Lyles",
+      "cname": "Trey Lyles",
+      "nbaId": 1626168,
+      "photoLocal": "assets/images/Player/nba-official/1626168.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1626168.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIN",
+      "name": "Jaylen Clark",
+      "cname": "杰伦-克拉克",
+      "nbaId": 1641740,
+      "photoLocal": "assets/images/Player/nba-official/1641740.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641740.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIN",
+      "name": "Joe Ingles",
+      "cname": "乔-英格尔斯",
+      "nbaId": 204060,
+      "photoLocal": "assets/images/Player/nba-official/204060.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/204060.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIN",
+      "name": "Julian Phillips",
+      "cname": "朱利安-菲利普斯",
+      "nbaId": 1641763,
+      "photoLocal": "assets/images/Player/nba-official/1641763.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641763.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIN",
+      "name": "Joan Beringer",
+      "cname": "若昂-贝林格",
+      "nbaId": 1642866,
+      "photoLocal": "assets/images/Player/nba-official/1642866.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642866.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIN",
+      "name": "Enrique Freeman",
+      "cname": "恩里克-弗里曼",
+      "nbaId": 1642402,
+      "photoLocal": "assets/images/Player/nba-official/1642402.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642402.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIN",
+      "name": "Rocco Zikarsky",
+      "cname": "罗科-齐卡尔斯基",
+      "nbaId": 1642911,
+      "photoLocal": "assets/images/Player/nba-official/1642911.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642911.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIN",
+      "name": "Mouhamadou Gueye",
+      "cname": "穆罕默杜-古耶",
+      "nbaId": 1631338,
+      "photoLocal": "assets/images/Player/nba-official/1631338.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631338.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "MIN",
+      "name": "Zyon Pullin",
+      "cname": "齐昂-普林",
+      "nbaId": 1642389,
+      "photoLocal": "assets/images/Player/nba-official/1642389.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642389.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NOP",
+      "name": "Zion Williamson",
+      "cname": "锡安-威廉姆森",
+      "nbaId": 1629627,
+      "photoLocal": "assets/images/Player/nba-official/1629627.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629627.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NOP",
+      "name": "Trey Murphy III",
+      "cname": "特雷-墨菲三世",
+      "nbaId": 1630530,
+      "photoLocal": "assets/images/Player/nba-official/1630530.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630530.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NOP",
+      "name": "Dejounte Murray",
+      "cname": "德章泰-默里",
+      "nbaId": 1627749,
+      "photoLocal": "assets/images/Player/nba-official/1627749.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1627749.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NOP",
+      "name": "Saddiq Bey",
+      "cname": "萨迪克-贝",
+      "nbaId": 1630180,
+      "photoLocal": "assets/images/Player/nba-official/1630180.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630180.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NOP",
+      "name": "Jeremiah Fears",
+      "cname": "杰里迈亚-费尔斯",
+      "nbaId": 1642847,
+      "photoLocal": "assets/images/Player/nba-official/1642847.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642847.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NOP",
+      "name": "Derik Queen",
+      "cname": "德里克-奎因",
+      "nbaId": 1642852,
+      "photoLocal": "assets/images/Player/nba-official/1642852.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642852.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NOP",
+      "name": "Herbert Jones",
+      "cname": "赫伯特-琼斯",
+      "nbaId": 1630529,
+      "photoLocal": "assets/images/Player/nba-official/1630529.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630529.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NOP",
+      "name": "Yves Missi",
+      "cname": "伊夫-米西",
+      "nbaId": 1642274,
+      "photoLocal": "assets/images/Player/nba-official/1642274.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642274.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NOP",
+      "name": "DeAndre Jordan",
+      "cname": "德安德烈-乔丹",
+      "nbaId": 201599,
+      "photoLocal": "assets/images/Player/nba-official/201599.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/201599.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NOP",
+      "name": "Jordan Poole",
+      "cname": "乔丹-普尔",
+      "nbaId": 1629673,
+      "photoLocal": "assets/images/Player/nba-official/1629673.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629673.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NOP",
+      "name": "Karlo Matkovic",
+      "cname": "卡洛-马特科维奇",
+      "nbaId": 1631255,
+      "photoLocal": "assets/images/Player/nba-official/1631255.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631255.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NOP",
+      "name": "Bryce McGowens",
+      "cname": "布赖斯-麦高恩斯",
+      "nbaId": 1631121,
+      "photoLocal": "assets/images/Player/nba-official/1631121.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631121.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NOP",
+      "name": "Jordan Hawkins",
+      "cname": "乔丹-霍金斯",
+      "nbaId": 1641722,
+      "photoLocal": "assets/images/Player/nba-official/1641722.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641722.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NOP",
+      "name": "Micah Peavy",
+      "cname": "迈卡-皮维",
+      "nbaId": 1642877,
+      "photoLocal": "assets/images/Player/nba-official/1642877.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642877.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NOP",
+      "name": "Hunter Dickinson",
+      "cname": "亨特-迪金森",
+      "nbaId": 1630621,
+      "photoLocal": "assets/images/Player/nba-official/1630621.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630621.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NOP",
+      "name": "Josh Oduro",
+      "cname": "乔什-奥杜罗",
+      "nbaId": 1642490,
+      "photoLocal": "assets/images/Player/nba-official/1642490.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642490.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NYK",
+      "name": "Jalen Brunson",
+      "cname": "杰伦-布伦森",
+      "nbaId": 1628973,
+      "photoLocal": "assets/images/Player/nba-official/1628973.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628973.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NYK",
+      "name": "Karl-Anthony Towns",
+      "cname": "卡尔-安东尼-唐斯",
+      "nbaId": 1626157,
+      "photoLocal": "assets/images/Player/nba-official/1626157.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1626157.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NYK",
+      "name": "OG Anunoby",
+      "cname": "OG-阿奴诺比",
+      "nbaId": 1628384,
+      "photoLocal": "assets/images/Player/nba-official/1628384.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628384.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NYK",
+      "name": "Mikal Bridges",
+      "cname": "米卡尔-布里奇斯",
+      "nbaId": 1628969,
+      "photoLocal": "assets/images/Player/nba-official/1628969.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628969.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NYK",
+      "name": "Josh Hart",
+      "cname": "约什-哈特",
+      "nbaId": 1628404,
+      "photoLocal": "assets/images/Player/nba-official/1628404.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628404.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NYK",
+      "name": "Miles McBride",
+      "cname": "迈尔斯-麦克布莱德",
+      "nbaId": 1630540,
+      "photoLocal": "assets/images/Player/nba-official/1630540.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630540.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NYK",
+      "name": "Jose Alvarado",
+      "cname": "何塞-阿尔瓦拉多",
+      "nbaId": 1630631,
+      "photoLocal": "assets/images/Player/nba-official/1630631.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630631.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NYK",
+      "name": "Landry Shamet",
+      "cname": "兰德里-沙梅特",
+      "nbaId": 1629013,
+      "photoLocal": "assets/images/Player/nba-official/1629013.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629013.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NYK",
+      "name": "Jordan Clarkson",
+      "cname": "乔丹-克拉克森",
+      "nbaId": 203903,
+      "photoLocal": "assets/images/Player/nba-official/203903.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203903.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NYK",
+      "name": "Andre Drummond",
+      "cname": "安德烈-德拉蒙德",
+      "nbaId": 203083,
+      "photoLocal": "assets/images/Player/nba-official/203083.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203083.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NYK",
+      "name": "Jeremy Sochan",
+      "cname": "杰里米-索汉",
+      "nbaId": 1631110,
+      "photoLocal": "assets/images/Player/nba-official/1631110.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631110.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NYK",
+      "name": "Tyler Kolek",
+      "cname": "泰勒-科莱克",
+      "nbaId": 1642278,
+      "photoLocal": "assets/images/Player/nba-official/1642278.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642278.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NYK",
+      "name": "Mohamed Diawara",
+      "cname": "穆罕默德-迪亚瓦拉",
+      "nbaId": 1642885,
+      "photoLocal": "assets/images/Player/nba-official/1642885.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642885.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NYK",
+      "name": "Trey Jemison III",
+      "cname": "特雷-杰米森三世",
+      "nbaId": 1641998,
+      "photoLocal": "assets/images/Player/nba-official/1641998.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641998.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NYK",
+      "name": "Kevin McCullar Jr.",
+      "cname": "小凯文-麦卡拉",
+      "nbaId": 1641755,
+      "photoLocal": "assets/images/Player/nba-official/1641755.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641755.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NYK",
+      "name": "Pacome Dadiet",
+      "cname": "帕科姆-达迪耶",
+      "nbaId": 1642359,
+      "photoLocal": "assets/images/Player/nba-official/1642359.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642359.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "NYK",
+      "name": "Dillon Jones",
+      "cname": "狄龙-琼斯",
+      "nbaId": 1641794,
+      "photoLocal": "assets/images/Player/nba-official/1641794.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641794.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "OKC",
+      "name": "Shai Gilgeous-Alexander",
+      "cname": "谢伊-吉尔杰斯-亚历山大",
+      "nbaId": 1628983,
+      "photoLocal": "assets/images/Player/nba-official/1628983.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628983.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "OKC",
+      "name": "Chet Holmgren",
+      "cname": "切特-霍姆格伦",
+      "nbaId": 1631096,
+      "photoLocal": "assets/images/Player/nba-official/1631096.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631096.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "OKC",
+      "name": "Jalen Williams",
+      "cname": "杰伦-威廉姆斯",
+      "nbaId": 1631114,
+      "photoLocal": "assets/images/Player/nba-official/1631114.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631114.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "OKC",
+      "name": "Isaiah Hartenstein",
+      "cname": "以赛亚-哈尔滕施泰因",
+      "nbaId": 1628392,
+      "photoLocal": "assets/images/Player/nba-official/1628392.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628392.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "OKC",
+      "name": "Ajay Mitchell",
+      "cname": "阿贾伊-米切尔",
+      "nbaId": 1642349,
+      "photoLocal": "assets/images/Player/nba-official/1642349.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642349.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "OKC",
+      "name": "Cason Wallace",
+      "cname": "卡森-华莱士",
+      "nbaId": 1641717,
+      "photoLocal": "assets/images/Player/nba-official/1641717.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641717.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "OKC",
+      "name": "Alex Caruso",
+      "cname": "亚历克斯-卡鲁索",
+      "nbaId": 1627936,
+      "photoLocal": "assets/images/Player/nba-official/1627936.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1627936.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "OKC",
+      "name": "Luguentz Dort",
+      "cname": "吕冈茨-多尔特",
+      "nbaId": 1629652,
+      "photoLocal": "assets/images/Player/nba-official/1629652.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629652.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "OKC",
+      "name": "Jared McCain",
+      "cname": "贾里德-麦凯恩",
+      "nbaId": 1642272,
+      "photoLocal": "assets/images/Player/nba-official/1642272.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642272.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "OKC",
+      "name": "Jaylin Williams",
+      "cname": "杰林-威廉姆斯",
+      "nbaId": 1631119,
+      "photoLocal": "assets/images/Player/nba-official/1631119.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631119.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "OKC",
+      "name": "Kenrich Williams",
+      "cname": "肯里奇-威廉姆斯",
+      "nbaId": 1629026,
+      "photoLocal": "assets/images/Player/nba-official/1629026.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629026.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "OKC",
+      "name": "Aaron Wiggins",
+      "cname": "阿龙-威金斯",
+      "nbaId": 1630598,
+      "photoLocal": "assets/images/Player/nba-official/1630598.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630598.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "OKC",
+      "name": "Nikola Topic",
+      "cname": "尼古拉-托皮奇",
+      "nbaId": 1642260,
+      "photoLocal": "assets/images/Player/nba-official/1642260.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642260.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "OKC",
+      "name": "Thomas Sorber",
+      "cname": "托马斯-索伯",
+      "nbaId": 1642850,
+      "photoLocal": "assets/images/Player/nba-official/1642850.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642850.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "OKC",
+      "name": "Brooks Barnhizer",
+      "cname": "布鲁克斯-巴恩希泽",
+      "nbaId": 1642964,
+      "photoLocal": "assets/images/Player/nba-official/1642964.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642964.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ORL",
+      "name": "Paolo Banchero",
+      "cname": "保罗-班凯罗",
+      "nbaId": 1631094,
+      "photoLocal": "assets/images/Player/nba-official/1631094.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631094.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ORL",
+      "name": "Franz Wagner",
+      "cname": "弗朗茨-瓦格纳",
+      "nbaId": 1630532,
+      "photoLocal": "assets/images/Player/nba-official/1630532.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630532.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ORL",
+      "name": "Desmond Bane",
+      "cname": "德斯蒙德-贝恩",
+      "nbaId": 1630217,
+      "photoLocal": "assets/images/Player/nba-official/1630217.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630217.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ORL",
+      "name": "Anthony Black",
+      "cname": "安东尼-布莱克",
+      "nbaId": 1641710,
+      "photoLocal": "assets/images/Player/nba-official/1641710.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641710.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ORL",
+      "name": "Jalen Suggs",
+      "cname": "杰伦-萨格斯",
+      "nbaId": 1630591,
+      "photoLocal": "assets/images/Player/nba-official/1630591.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630591.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ORL",
+      "name": "Wendell Carter Jr.",
+      "cname": "小温德尔-卡特",
+      "nbaId": 1628976,
+      "photoLocal": "assets/images/Player/nba-official/1628976.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628976.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ORL",
+      "name": "Nikola Vucevic",
+      "cname": "尼古拉-武切维奇",
+      "nbaId": 202696,
+      "photoLocal": "assets/images/Player/nba-official/202696.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/202696.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ORL",
+      "name": "Tristan da Silva",
+      "cname": "特里斯坦-达席尔瓦",
+      "nbaId": 1641783,
+      "photoLocal": "assets/images/Player/nba-official/1641783.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641783.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ORL",
+      "name": "Goga Bitadze",
+      "cname": "戈加-比塔泽",
+      "nbaId": 1629048,
+      "photoLocal": "assets/images/Player/nba-official/1629048.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629048.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ORL",
+      "name": "Jevon Carter",
+      "cname": "杰文-卡特",
+      "nbaId": 1628975,
+      "photoLocal": "assets/images/Player/nba-official/1628975.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628975.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ORL",
+      "name": "Noah Penda",
+      "cname": "诺亚-彭达",
+      "nbaId": 1642869,
+      "photoLocal": "assets/images/Player/nba-official/1642869.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642869.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ORL",
+      "name": "Jamal Cain",
+      "cname": "贾马尔-凯恩",
+      "nbaId": 1631288,
+      "photoLocal": "assets/images/Player/nba-official/1631288.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631288.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ORL",
+      "name": "Jett Howard",
+      "cname": "杰特-霍华德",
+      "nbaId": 1641724,
+      "photoLocal": "assets/images/Player/nba-official/1641724.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641724.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ORL",
+      "name": "Jonathan Isaac",
+      "cname": "乔纳森-艾萨克",
+      "nbaId": 1628371,
+      "photoLocal": "assets/images/Player/nba-official/1628371.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628371.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ORL",
+      "name": "Jase Richardson",
+      "cname": "杰斯-理查德森",
+      "nbaId": 1642859,
+      "photoLocal": "assets/images/Player/nba-official/1642859.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642859.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ORL",
+      "name": "Colin Castleton",
+      "cname": "科林-卡斯尔顿",
+      "nbaId": 1630658,
+      "photoLocal": "assets/images/Player/nba-official/1630658.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630658.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "ORL",
+      "name": "Alex Morales",
+      "cname": "亚历克斯-莫拉莱斯",
+      "nbaId": 1631457,
+      "photoLocal": "assets/images/Player/nba-official/1631457.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631457.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHI",
+      "name": "LeBron James",
+      "cname": "勒布朗-詹姆斯",
+      "nbaId": 2544,
+      "photoLocal": "assets/images/Player/nba-official/2544.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/2544.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHI",
+      "name": "Jaylen Brown",
+      "cname": "杰伦-布朗",
+      "nbaId": 1627759,
+      "photoLocal": "assets/images/Player/nba-official/1627759.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1627759.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHI",
+      "name": "Tyrese Maxey",
+      "cname": "泰雷塞-马克西",
+      "nbaId": 1630178,
+      "photoLocal": "assets/images/Player/nba-official/1630178.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630178.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHI",
+      "name": "Joel Embiid",
+      "cname": "乔尔-恩比德",
+      "nbaId": 203954,
+      "photoLocal": "assets/images/Player/nba-official/203954.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203954.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHI",
+      "name": "VJ Edgecombe",
+      "cname": "VJ-埃奇库姆",
+      "nbaId": 1642845,
+      "photoLocal": "assets/images/Player/nba-official/1642845.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642845.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHI",
+      "name": "Anfernee Simons",
+      "cname": "安芬尼-西蒙斯",
+      "nbaId": 1629014,
+      "photoLocal": "assets/images/Player/nba-official/1629014.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629014.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHI",
+      "name": "Dean Wade",
+      "cname": "迪恩-韦德",
+      "nbaId": 1629731,
+      "photoLocal": "assets/images/Player/nba-official/1629731.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629731.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHI",
+      "name": "Trendon Watford",
+      "cname": "特伦登-沃特福德",
+      "nbaId": 1630570,
+      "photoLocal": "assets/images/Player/nba-official/1630570.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630570.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHI",
+      "name": "Justin Edwards",
+      "cname": "贾斯汀-爱德华兹",
+      "nbaId": 1642348,
+      "photoLocal": "assets/images/Player/nba-official/1642348.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642348.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHI",
+      "name": "Dominick Barlow",
+      "cname": "多米尼克-巴洛",
+      "nbaId": 1631230,
+      "photoLocal": "assets/images/Player/nba-official/1631230.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631230.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHI",
+      "name": "Caleb Love",
+      "cname": "凯莱布-乐福",
+      "nbaId": 1631126,
+      "photoLocal": "assets/images/Player/nba-official/1631126.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631126.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHI",
+      "name": "Adem Bona",
+      "cname": "阿代姆-博纳",
+      "nbaId": 1641737,
+      "photoLocal": "assets/images/Player/nba-official/1641737.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641737.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHI",
+      "name": "Rayan Rupert",
+      "cname": "拉扬-吕佩尔",
+      "nbaId": 1641712,
+      "photoLocal": "assets/images/Player/nba-official/1641712.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641712.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHI",
+      "name": "Ariel Hukporti",
+      "cname": "阿里埃尔-胡克波尔蒂",
+      "nbaId": 1630574,
+      "photoLocal": "assets/images/Player/nba-official/1630574.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630574.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHI",
+      "name": "Tyrese Martin",
+      "cname": "泰雷斯-马丁",
+      "nbaId": 1631213,
+      "photoLocal": "assets/images/Player/nba-official/1631213.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631213.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHI",
+      "name": "Dalen Terry",
+      "cname": "达伦-特里",
+      "nbaId": 1631207,
+      "photoLocal": "assets/images/Player/nba-official/1631207.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631207.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHI",
+      "name": "Jabari Walker",
+      "cname": "贾巴里-沃克",
+      "nbaId": 1631133,
+      "photoLocal": "assets/images/Player/nba-official/1631133.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631133.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHI",
+      "name": "Johni Broome",
+      "cname": "约翰尼-布鲁姆",
+      "nbaId": 1641780,
+      "photoLocal": "assets/images/Player/nba-official/1641780.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641780.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHI",
+      "name": "MarJon Beauchamp",
+      "cname": "马乔恩-博尚",
+      "nbaId": 1630699,
+      "photoLocal": "assets/images/Player/nba-official/1630699.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630699.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHX",
+      "name": "Devin Booker",
+      "cname": "德文-布克",
+      "nbaId": 1626164,
+      "photoLocal": "assets/images/Player/nba-official/1626164.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1626164.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHX",
+      "name": "Dillon Brooks",
+      "cname": "狄龙-布鲁克斯",
+      "nbaId": 1628415,
+      "photoLocal": "assets/images/Player/nba-official/1628415.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628415.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHX",
+      "name": "Jalen Green",
+      "cname": "杰伦-格林",
+      "nbaId": 1630224,
+      "photoLocal": "assets/images/Player/nba-official/1630224.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630224.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHX",
+      "name": "Mark Williams",
+      "cname": "马克-威廉姆斯",
+      "nbaId": 1631109,
+      "photoLocal": "assets/images/Player/nba-official/1631109.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631109.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHX",
+      "name": "Miles Bridges",
+      "cname": "迈尔斯-布里奇斯",
+      "nbaId": 1628970,
+      "photoLocal": "assets/images/Player/nba-official/1628970.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628970.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHX",
+      "name": "Collin Gillespie",
+      "cname": "科林-吉莱斯皮",
+      "nbaId": 1631221,
+      "photoLocal": "assets/images/Player/nba-official/1631221.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631221.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHX",
+      "name": "Luke Kennard",
+      "cname": "卢克-肯纳德",
+      "nbaId": 1628379,
+      "photoLocal": "assets/images/Player/nba-official/1628379.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628379.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHX",
+      "name": "Jordan Goodwin",
+      "cname": "乔丹-古德温",
+      "nbaId": 1630692,
+      "photoLocal": "assets/images/Player/nba-official/1630692.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630692.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHX",
+      "name": "Oso Ighodaro",
+      "cname": "奥索-伊戈达罗",
+      "nbaId": 1642345,
+      "photoLocal": "assets/images/Player/nba-official/1642345.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642345.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHX",
+      "name": "Pat Spencer",
+      "cname": "帕特-斯潘塞",
+      "nbaId": 1630311,
+      "photoLocal": "assets/images/Player/nba-official/1630311.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630311.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHX",
+      "name": "Rasheer Fleming",
+      "cname": "拉希尔-弗莱明",
+      "nbaId": 1642853,
+      "photoLocal": "assets/images/Player/nba-official/1642853.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642853.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHX",
+      "name": "Ryan Dunn",
+      "cname": "瑞安-邓恩",
+      "nbaId": 1642346,
+      "photoLocal": "assets/images/Player/nba-official/1642346.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642346.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHX",
+      "name": "Khaman Maluach",
+      "cname": "卡曼-马卢阿奇",
+      "nbaId": 1642863,
+      "photoLocal": "assets/images/Player/nba-official/1642863.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642863.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHX",
+      "name": "Jamaree Bouyea",
+      "cname": "贾马里-布耶",
+      "nbaId": 1631123,
+      "photoLocal": "assets/images/Player/nba-official/1631123.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631123.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHX",
+      "name": "Amir Coffey",
+      "cname": "阿米尔-科菲",
+      "nbaId": 1629599,
+      "photoLocal": "assets/images/Player/nba-official/1629599.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629599.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHX",
+      "name": "Haywood Highsmith",
+      "cname": "海伍德-海史密斯",
+      "nbaId": 1629312,
+      "photoLocal": "assets/images/Player/nba-official/1629312.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629312.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHX",
+      "name": "Isaiah Livers",
+      "cname": "以赛亚-利弗斯",
+      "nbaId": 1630587,
+      "photoLocal": "assets/images/Player/nba-official/1630587.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630587.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHX",
+      "name": "Koby Brea",
+      "cname": "科比-布雷亚",
+      "nbaId": 1642886,
+      "photoLocal": "assets/images/Player/nba-official/1642886.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642886.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "PHX",
+      "name": "CJ Huntley",
+      "cname": "CJ-亨特利",
+      "nbaId": 1643047,
+      "photoLocal": "assets/images/Player/nba-official/1643047.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643047.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "POR",
+      "name": "Deni Avdija",
+      "cname": "德尼-阿夫迪亚",
+      "nbaId": 1630166,
+      "photoLocal": "assets/images/Player/nba-official/1630166.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630166.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "POR",
+      "name": "Damian Lillard",
+      "cname": "达米安-利拉德",
+      "nbaId": 203081,
+      "photoLocal": "assets/images/Player/nba-official/203081.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203081.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "POR",
+      "name": "Ja Morant",
+      "cname": "贾-莫兰特",
+      "nbaId": 1629630,
+      "photoLocal": "assets/images/Player/nba-official/1629630.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629630.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "POR",
+      "name": "Shaedon Sharpe",
+      "cname": "谢登-夏普",
+      "nbaId": 1631101,
+      "photoLocal": "assets/images/Player/nba-official/1631101.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631101.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "POR",
+      "name": "Donovan Clingan",
+      "cname": "多诺万-克林根",
+      "nbaId": 1642270,
+      "photoLocal": "assets/images/Player/nba-official/1642270.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642270.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "POR",
+      "name": "Jrue Holiday",
+      "cname": "朱-霍勒迪",
+      "nbaId": 201950,
+      "photoLocal": "assets/images/Player/nba-official/201950.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/201950.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "POR",
+      "name": "Scoot Henderson",
+      "cname": "斯库特-亨德森",
+      "nbaId": 1630703,
+      "photoLocal": "assets/images/Player/nba-official/1630703.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630703.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "POR",
+      "name": "Toumani Camara",
+      "cname": "图马尼-卡马拉",
+      "nbaId": 1641739,
+      "photoLocal": "assets/images/Player/nba-official/1641739.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641739.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "POR",
+      "name": "Robert Williams III",
+      "cname": "罗伯特-威廉姆斯三世",
+      "nbaId": 1629057,
+      "photoLocal": "assets/images/Player/nba-official/1629057.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629057.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "POR",
+      "name": "Matisse Thybulle",
+      "cname": "马蒂斯-赛布尔",
+      "nbaId": 1629680,
+      "photoLocal": "assets/images/Player/nba-official/1629680.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629680.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "POR",
+      "name": "Vit Krejci",
+      "cname": "维特-克雷伊奇",
+      "nbaId": 1630249,
+      "photoLocal": "assets/images/Player/nba-official/1630249.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630249.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "POR",
+      "name": "Sidy Cissoko",
+      "cname": "西迪-西索科",
+      "nbaId": 1631321,
+      "photoLocal": "assets/images/Player/nba-official/1631321.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631321.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "POR",
+      "name": "Blake Wesley",
+      "cname": "布莱克-韦斯利",
+      "nbaId": 1631104,
+      "photoLocal": "assets/images/Player/nba-official/1631104.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631104.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "POR",
+      "name": "Branden Carlson",
+      "cname": "布兰登-卡尔森",
+      "nbaId": 1642382,
+      "photoLocal": "assets/images/Player/nba-official/1642382.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642382.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "POR",
+      "name": "Yang Hansen",
+      "cname": "杨瀚森",
+      "nbaId": 1642905,
+      "photoLocal": "assets/images/Player/nba-official/1642905.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642905.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "POR",
+      "name": "Chris Youngblood",
+      "cname": "克里斯-扬布拉德",
+      "nbaId": 1642959,
+      "photoLocal": "assets/images/Player/nba-official/1642959.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642959.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "POR",
+      "name": "Jayson Kent",
+      "cname": "杰森-肯特",
+      "nbaId": 1643257,
+      "photoLocal": "assets/images/Player/nba-official/1643257.png",
+      "photoUrl": "https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/4703889.png",
+      "photoSource": "espn-official-player-headshot"
+    },
+    {
+      "team": "SAC",
+      "name": "Domantas Sabonis",
+      "cname": "多曼塔斯-萨博尼斯",
+      "nbaId": 1627734,
+      "photoLocal": "assets/images/Player/nba-official/1627734.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1627734.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAC",
+      "name": "Zach LaVine",
+      "cname": "扎克-拉文",
+      "nbaId": 203897,
+      "photoLocal": "assets/images/Player/nba-official/203897.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203897.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAC",
+      "name": "Russell Westbrook",
+      "cname": "拉塞尔-威斯布鲁克",
+      "nbaId": 201566,
+      "photoLocal": "assets/images/Player/nba-official/201566.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/201566.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAC",
+      "name": "Maxime Raynaud",
+      "cname": "马克西姆-雷诺",
+      "nbaId": 1642875,
+      "photoLocal": "assets/images/Player/nba-official/1642875.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642875.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAC",
+      "name": "Malik Monk",
+      "cname": "马利克-蒙克",
+      "nbaId": 1628370,
+      "photoLocal": "assets/images/Player/nba-official/1628370.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628370.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAC",
+      "name": "Keegan Murray",
+      "cname": "基根-默里",
+      "nbaId": 1631099,
+      "photoLocal": "assets/images/Player/nba-official/1631099.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631099.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAC",
+      "name": "De’Andre Hunter",
+      "cname": "德安德烈-亨特",
+      "nbaId": 1629631,
+      "photoLocal": "assets/images/Player/nba-official/1629631.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629631.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAC",
+      "name": "Precious Achiuwa",
+      "cname": "普雷舍斯-阿丘瓦",
+      "nbaId": 1630173,
+      "photoLocal": "assets/images/Player/nba-official/1630173.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630173.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAC",
+      "name": "Nique Clifford",
+      "cname": "尼克-克利福德",
+      "nbaId": 1642363,
+      "photoLocal": "assets/images/Player/nba-official/1642363.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642363.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAC",
+      "name": "Dylan Cardwell",
+      "cname": "迪伦-卡德韦尔",
+      "nbaId": 1642928,
+      "photoLocal": "assets/images/Player/nba-official/1642928.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642928.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAC",
+      "name": "Drew Eubanks",
+      "cname": "德鲁-尤班克斯",
+      "nbaId": 1629234,
+      "photoLocal": "assets/images/Player/nba-official/1629234.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629234.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAC",
+      "name": "Jonathan Mogbo",
+      "cname": "乔纳森-莫格博",
+      "nbaId": 1642367,
+      "photoLocal": "assets/images/Player/nba-official/1642367.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642367.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAC",
+      "name": "Daeqwon Plowden",
+      "cname": "戴克万-普洛登",
+      "nbaId": 1631342,
+      "photoLocal": "assets/images/Player/nba-official/1631342.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631342.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAC",
+      "name": "Killian Hayes",
+      "cname": "基利安-海斯",
+      "nbaId": 1630165,
+      "photoLocal": "assets/images/Player/nba-official/1630165.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630165.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAC",
+      "name": "Patrick Baldwin Jr.",
+      "cname": "小帕特里克-鲍德温",
+      "nbaId": 1631116,
+      "photoLocal": "assets/images/Player/nba-official/1631116.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631116.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAC",
+      "name": "Doug McDermott",
+      "cname": "道格-麦克德莫特",
+      "nbaId": 203926,
+      "photoLocal": "assets/images/Player/nba-official/203926.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203926.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAC",
+      "name": "Isaiah Stevens",
+      "cname": "以赛亚-史蒂文斯",
+      "nbaId": 1641815,
+      "photoLocal": "assets/images/Player/nba-official/1641815.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641815.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAC",
+      "name": "Adam Flagler",
+      "cname": "Adam Flagler",
+      "nbaId": 1641745,
+      "photoLocal": "assets/images/Player/nba-official/1641745.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641745.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAS",
+      "name": "Victor Wembanyama",
+      "cname": "维克托-文班亚马",
+      "nbaId": 1641705,
+      "photoLocal": "assets/images/Player/nba-official/1641705.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641705.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAS",
+      "name": "Stephon Castle",
+      "cname": "斯蒂芬-卡斯尔",
+      "nbaId": 1642264,
+      "photoLocal": "assets/images/Player/nba-official/1642264.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642264.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAS",
+      "name": "De’Aaron Fox",
+      "cname": "达龙-福克斯",
+      "nbaId": 1628368,
+      "photoLocal": "assets/images/Player/nba-official/1628368.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628368.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAS",
+      "name": "Dylan Harper",
+      "cname": "迪伦-哈珀",
+      "nbaId": 1642844,
+      "photoLocal": "assets/images/Player/nba-official/1642844.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642844.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAS",
+      "name": "Tobias Harris",
+      "cname": "托拜厄斯-哈里斯",
+      "nbaId": 202699,
+      "photoLocal": "assets/images/Player/nba-official/202699.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/202699.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAS",
+      "name": "Julian Champagnie",
+      "cname": "朱利安-尚帕尼",
+      "nbaId": 1630577,
+      "photoLocal": "assets/images/Player/nba-official/1630577.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630577.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAS",
+      "name": "Devin Vassell",
+      "cname": "德文-瓦塞尔",
+      "nbaId": 1630170,
+      "photoLocal": "assets/images/Player/nba-official/1630170.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630170.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAS",
+      "name": "Keldon Johnson",
+      "cname": "凯尔登-约翰逊",
+      "nbaId": 1629640,
+      "photoLocal": "assets/images/Player/nba-official/1629640.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629640.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAS",
+      "name": "Luke Kornet",
+      "cname": "卢克-科内特",
+      "nbaId": 1628436,
+      "photoLocal": "assets/images/Player/nba-official/1628436.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628436.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAS",
+      "name": "Harrison Barnes",
+      "cname": "哈里森-巴恩斯",
+      "nbaId": 203084,
+      "photoLocal": "assets/images/Player/nba-official/203084.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203084.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAS",
+      "name": "Carter Bryant",
+      "cname": "卡特-布赖恩特",
+      "nbaId": 1642868,
+      "photoLocal": "assets/images/Player/nba-official/1642868.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642868.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAS",
+      "name": "Mason Plumlee",
+      "cname": "梅森-普拉姆利",
+      "nbaId": 203486,
+      "photoLocal": "assets/images/Player/nba-official/203486.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203486.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAS",
+      "name": "Kelly Olynyk",
+      "cname": "凯利-奥利尼克",
+      "nbaId": 203482,
+      "photoLocal": "assets/images/Player/nba-official/203482.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203482.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAS",
+      "name": "Lindy Waters III",
+      "cname": "林迪-沃特斯三世",
+      "nbaId": 1630322,
+      "photoLocal": "assets/images/Player/nba-official/1630322.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630322.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAS",
+      "name": "Jordan McLaughlin",
+      "cname": "乔丹-麦克劳克林",
+      "nbaId": 1629162,
+      "photoLocal": "assets/images/Player/nba-official/1629162.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629162.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAS",
+      "name": "David Jones Garcia",
+      "cname": "戴维-琼斯-加西亚",
+      "nbaId": 1642357,
+      "photoLocal": "assets/images/Player/nba-official/1642357.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642357.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAS",
+      "name": "Bismack Biyombo",
+      "cname": "俾斯麦-比永博",
+      "nbaId": 202687,
+      "photoLocal": "assets/images/Player/nba-official/202687.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/202687.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAS",
+      "name": "Harrison Ingram",
+      "cname": "哈里森-英格拉姆",
+      "nbaId": 1631127,
+      "photoLocal": "assets/images/Player/nba-official/1631127.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631127.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "SAS",
+      "name": "Emanuel Miller",
+      "cname": "伊曼纽尔-米勒",
+      "nbaId": 1641801,
+      "photoLocal": "assets/images/Player/nba-official/1641801.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641801.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "TOR",
+      "name": "Kawhi Leonard",
+      "cname": "科怀-伦纳德",
+      "nbaId": 202695,
+      "photoLocal": "assets/images/Player/nba-official/202695.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/202695.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "TOR",
+      "name": "Scottie Barnes",
+      "cname": "斯科蒂-巴恩斯",
+      "nbaId": 1630567,
+      "photoLocal": "assets/images/Player/nba-official/1630567.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630567.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "TOR",
+      "name": "Immanuel Quickley",
+      "cname": "伊曼纽尔-奎克利",
+      "nbaId": 1630193,
+      "photoLocal": "assets/images/Player/nba-official/1630193.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630193.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "TOR",
+      "name": "RJ Barrett",
+      "cname": "RJ-巴雷特",
+      "nbaId": 1629628,
+      "photoLocal": "assets/images/Player/nba-official/1629628.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629628.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "TOR",
+      "name": "Collin Murray-Boyles",
+      "cname": "科林-默里-博伊尔斯",
+      "nbaId": 1642867,
+      "photoLocal": "assets/images/Player/nba-official/1642867.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642867.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "TOR",
+      "name": "Jakob Poeltl",
+      "cname": "雅各布-珀尔特尔",
+      "nbaId": 1627751,
+      "photoLocal": "assets/images/Player/nba-official/1627751.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1627751.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "TOR",
+      "name": "Ja’Kobe Walter",
+      "cname": "贾科比-沃尔特",
+      "nbaId": 1642266,
+      "photoLocal": "assets/images/Player/nba-official/1642266.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642266.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "TOR",
+      "name": "Jamal Shead",
+      "cname": "贾马尔-谢德",
+      "nbaId": 1642347,
+      "photoLocal": "assets/images/Player/nba-official/1642347.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642347.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "TOR",
+      "name": "Jamison Battle",
+      "cname": "贾米森-巴特尔",
+      "nbaId": 1642419,
+      "photoLocal": "assets/images/Player/nba-official/1642419.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642419.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "TOR",
+      "name": "Kyle Anderson",
+      "cname": "凯尔-安德森",
+      "nbaId": 203937,
+      "photoLocal": "assets/images/Player/nba-official/203937.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203937.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "TOR",
+      "name": "A.J. Lawson",
+      "cname": "A.J.-劳森",
+      "nbaId": 1630639,
+      "photoLocal": "assets/images/Player/nba-official/1630639.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630639.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "TOR",
+      "name": "Kyle Lowry",
+      "cname": "凯尔-洛瑞",
+      "nbaId": 200768,
+      "photoLocal": "assets/images/Player/nba-official/200768.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/200768.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "TOR",
+      "name": "Trayce Jackson-Davis",
+      "cname": "特雷斯-杰克逊-戴维斯",
+      "nbaId": 1631218,
+      "photoLocal": "assets/images/Player/nba-official/1631218.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631218.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "TOR",
+      "name": "Alijah Martin",
+      "cname": "阿利雅-马丁",
+      "nbaId": 1642918,
+      "photoLocal": "assets/images/Player/nba-official/1642918.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642918.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "TOR",
+      "name": "Garrett Temple",
+      "cname": "加勒特-坦普尔",
+      "nbaId": 202066,
+      "photoLocal": "assets/images/Player/nba-official/202066.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/202066.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "TOR",
+      "name": "Chucky Hepburn",
+      "cname": "查基-赫普伯恩",
+      "nbaId": 1642935,
+      "photoLocal": "assets/images/Player/nba-official/1642935.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642935.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Lauri Markkanen",
+      "cname": "劳里-马尔卡宁",
+      "nbaId": 1628374,
+      "photoLocal": "assets/images/Player/nba-official/1628374.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628374.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Keyonte George",
+      "cname": "基扬特-乔治",
+      "nbaId": 1641718,
+      "photoLocal": "assets/images/Player/nba-official/1641718.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641718.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Jaren Jackson Jr.",
+      "cname": "小贾伦-杰克逊",
+      "nbaId": 1628991,
+      "photoLocal": "assets/images/Player/nba-official/1628991.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628991.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Isaiah Collier",
+      "cname": "以赛亚-科利尔",
+      "nbaId": 1642268,
+      "photoLocal": "assets/images/Player/nba-official/1642268.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642268.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Jusuf Nurkic",
+      "cname": "优素福-努尔基奇",
+      "nbaId": 203994,
+      "photoLocal": "assets/images/Player/nba-official/203994.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203994.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Ace Bailey",
+      "cname": "埃斯-贝利",
+      "nbaId": 1642846,
+      "photoLocal": "assets/images/Player/nba-official/1642846.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642846.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Brice Sensabaugh",
+      "cname": "布赖斯-森萨博",
+      "nbaId": 1641729,
+      "photoLocal": "assets/images/Player/nba-official/1641729.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641729.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Kyle Filipowski",
+      "cname": "凯尔-菲利波夫斯基",
+      "nbaId": 1642271,
+      "photoLocal": "assets/images/Player/nba-official/1642271.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642271.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Jaxson Hayes",
+      "cname": "贾克森-海斯",
+      "nbaId": 1629637,
+      "photoLocal": "assets/images/Player/nba-official/1629637.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629637.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Kevin Love",
+      "cname": "凯文-乐福",
+      "nbaId": 201567,
+      "photoLocal": "assets/images/Player/nba-official/201567.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/201567.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Cody Williams",
+      "cname": "科迪-威廉姆斯",
+      "nbaId": 1642262,
+      "photoLocal": "assets/images/Player/nba-official/1642262.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642262.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "John Konchar",
+      "cname": "约翰-康查尔",
+      "nbaId": 1629723,
+      "photoLocal": "assets/images/Player/nba-official/1629723.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629723.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Svi Mykhailiuk",
+      "cname": "斯维亚托斯拉夫-米哈伊柳克",
+      "nbaId": 1629004,
+      "photoLocal": "assets/images/Player/nba-official/1629004.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629004.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Josh Okogie",
+      "cname": "乔什-奥科吉",
+      "nbaId": 1629006,
+      "photoLocal": "assets/images/Player/nba-official/1629006.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629006.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Oscar Tshiebwe",
+      "cname": "奥斯卡-奇布韦",
+      "nbaId": 1631131,
+      "photoLocal": "assets/images/Player/nba-official/1631131.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631131.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Blake Hinson",
+      "cname": "布莱克-欣森",
+      "nbaId": 1642396,
+      "photoLocal": "assets/images/Player/nba-official/1642396.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642396.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Elijah Harkless",
+      "cname": "伊莱贾-哈克利斯",
+      "nbaId": 1641989,
+      "photoLocal": "assets/images/Player/nba-official/1641989.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641989.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Mo Bamba",
+      "cname": "Mo Bamba",
+      "nbaId": 1628964,
+      "photoLocal": "assets/images/Player/nba-official/1628964.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1628964.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Bez Mbeng",
+      "cname": "贝兹-姆本格",
+      "nbaId": 1643016,
+      "photoLocal": "assets/images/Player/nba-official/1643016.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643016.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Trey Alexander",
+      "cname": "特雷-亚历山大",
+      "nbaId": 1641725,
+      "photoLocal": "assets/images/Player/nba-official/1641725.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641725.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Tamar Bates",
+      "cname": "Tamar Bates",
+      "nbaId": 1642926,
+      "photoLocal": "assets/images/Player/nba-official/1642926.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642926.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "UTA",
+      "name": "Hayden Gray",
+      "cname": "海登-格雷",
+      "nbaId": 1643060,
+      "photoLocal": "assets/images/Player/nba-official/1643060.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643060.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "WAS",
+      "name": "Anthony Davis",
+      "cname": "安东尼-戴维斯",
+      "nbaId": 203076,
+      "photoLocal": "assets/images/Player/nba-official/203076.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203076.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "WAS",
+      "name": "Trae Young",
+      "cname": "特雷-杨",
+      "nbaId": 1629027,
+      "photoLocal": "assets/images/Player/nba-official/1629027.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629027.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "WAS",
+      "name": "Alex Sarr",
+      "cname": "亚历克斯-萨尔",
+      "nbaId": 1642259,
+      "photoLocal": "assets/images/Player/nba-official/1642259.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642259.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "WAS",
+      "name": "KyShawn George",
+      "cname": "凯肖恩-乔治",
+      "nbaId": 1642273,
+      "photoLocal": "assets/images/Player/nba-official/1642273.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642273.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "WAS",
+      "name": "Will Riley",
+      "cname": "威尔-莱利",
+      "nbaId": 1642860,
+      "photoLocal": "assets/images/Player/nba-official/1642860.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642860.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "WAS",
+      "name": "Deandre Ayton",
+      "cname": "德安德烈-艾顿",
+      "nbaId": 1629028,
+      "photoLocal": "assets/images/Player/nba-official/1629028.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629028.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "WAS",
+      "name": "Bilal Coulibaly",
+      "cname": "比拉勒-库利巴利",
+      "nbaId": 1641731,
+      "photoLocal": "assets/images/Player/nba-official/1641731.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641731.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "WAS",
+      "name": "Justin Champagnie",
+      "cname": "贾斯廷-尚帕尼",
+      "nbaId": 1630551,
+      "photoLocal": "assets/images/Player/nba-official/1630551.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630551.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "WAS",
+      "name": "Tre Johnson",
+      "cname": "特雷-约翰逊",
+      "nbaId": 1642848,
+      "photoLocal": "assets/images/Player/nba-official/1642848.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642848.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "WAS",
+      "name": "Bub Carrington",
+      "cname": "巴布-卡林顿",
+      "nbaId": 1642267,
+      "photoLocal": "assets/images/Player/nba-official/1642267.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642267.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "WAS",
+      "name": "Tristan Vukcevic",
+      "cname": "特里斯坦-武克切维奇",
+      "nbaId": 1641774,
+      "photoLocal": "assets/images/Player/nba-official/1641774.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641774.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "WAS",
+      "name": "Julian Reese",
+      "cname": "朱利安-里斯",
+      "nbaId": 1642882,
+      "photoLocal": "assets/images/Player/nba-official/1642882.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642882.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "WAS",
+      "name": "Jamir Watkins",
+      "cname": "贾米尔-沃特金斯",
+      "nbaId": 1642364,
+      "photoLocal": "assets/images/Player/nba-official/1642364.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642364.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "WAS",
+      "name": "Khris Middleton",
+      "cname": "克里斯-米德尔顿",
+      "nbaId": 203114,
+      "photoLocal": "assets/images/Player/nba-official/203114.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203114.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "WAS",
+      "name": "Cam Whitmore",
+      "cname": "卡姆-惠特莫尔",
+      "nbaId": 1641715,
+      "photoLocal": "assets/images/Player/nba-official/1641715.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641715.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "WAS",
+      "name": "Sharife Cooper",
+      "cname": "谢里夫-库珀",
+      "nbaId": 1630536,
+      "photoLocal": "assets/images/Player/nba-official/1630536.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630536.png",
+      "photoSource": "nba-official-headshot"
+    },
+    {
+      "team": "WAS",
+      "name": "Anthony Gill",
+      "cname": "安东尼-吉尔",
+      "nbaId": 1630264,
+      "photoLocal": "assets/images/Player/nba-official/1630264.png",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630264.png",
+      "photoSource": "nba-official-headshot"
+    }
+  ],
+  "draft2026": [
+    {
+      "pick": 1,
+      "nbaId": 1643407,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-01.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/AJ_Dybantsa_2026.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643407.png"
+    },
+    {
+      "pick": 2,
+      "nbaId": 1643408,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-02.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Untitled-design-13.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643408.png"
+    },
+    {
+      "pick": 3,
+      "nbaId": 1643409,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-03.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Untitled-design-12.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643409.png"
+    },
+    {
+      "pick": 4,
+      "nbaId": 1643410,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-04.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Caleb_Wilson_2026.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643410.png"
+    },
+    {
+      "pick": 5,
+      "nbaId": 1643413,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-05.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Keaton_Wagler_2026.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643413.png"
+    },
+    {
+      "pick": 6,
+      "nbaId": 1643414,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-06.jpg",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/1040x760/1643414.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643414.png"
+    },
+    {
+      "pick": 7,
+      "nbaId": 1643411,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-07.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/06/acuff1.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643411.png"
+    },
+    {
+      "pick": 8,
+      "nbaId": 1643412,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-08.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/kingston-flemings.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643412.png"
+    },
+    {
+      "pick": 9,
+      "nbaId": 1643516,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-09.jpg",
+      "photoUrl": "https://cdn.nba.com/headshots/nba/latest/1040x760/1643516.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643516.png"
+    },
+    {
+      "pick": 10,
+      "nbaId": 1643415,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-10.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Brayden_Burries_2026.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643415.png"
+    },
+    {
+      "pick": 11,
+      "nbaId": 1642865,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-11.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Untitled-design-6.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642865.png"
+    },
+    {
+      "pick": 12,
+      "nbaId": 1643530,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-12.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Untitled-design-5.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643530.png"
+    },
+    {
+      "pick": 13,
+      "nbaId": 1643417,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-13.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Nate_Ament_2026-1.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643417.png"
+    },
+    {
+      "pick": 14,
+      "nbaId": 1643419,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-14.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Hannes_Steinbach_2026.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643419.png"
+    },
+    {
+      "pick": 15,
+      "nbaId": 1643517,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-15.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Dailyn_Swain_2026.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643517.png"
+    },
+    {
+      "pick": 16,
+      "nbaId": 1642892,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-16.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Untitled-design-8.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642892.png"
+    },
+    {
+      "pick": 17,
+      "nbaId": 1643536,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-17.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Ebuka_Okorie_2026.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643536.png"
+    },
+    {
+      "pick": 18,
+      "nbaId": 1643515,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-18.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Christian_Anderson_2026.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643515.png"
+    },
+    {
+      "pick": 19,
+      "nbaId": 1643512,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-19.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Allen_Graves_2006.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643512.png"
+    },
+    {
+      "pick": 20,
+      "nbaId": 1643519,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-20.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Jayden_Quaintance_2026.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643519.png"
+    },
+    {
+      "pick": 21,
+      "nbaId": 1643510,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-21.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Karim_Lopez_2026.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643510.png"
+    },
+    {
+      "pick": 22,
+      "nbaId": 1642889,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-22.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Untitled-design-7.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642889.png"
+    },
+    {
+      "pick": 23,
+      "nbaId": 1643544,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-23.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Zuby_Ejiofor_2026.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643544.png"
+    },
+    {
+      "pick": 24,
+      "nbaId": 1643418,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-24.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Cameron_Carr_2026.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643418.png"
+    },
+    {
+      "pick": 25,
+      "nbaId": 1643547,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-25.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/de-Larrea-Sergio.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643547.png"
+    },
+    {
+      "pick": 26,
+      "nbaId": 1643542,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-26.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Tarris_Reed_Jr_2026.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643542.png"
+    },
+    {
+      "pick": 27,
+      "nbaId": 1643416,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-27.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Chris_Cenac_Jr_2026.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643416.png"
+    },
+    {
+      "pick": 28,
+      "nbaId": 1643538,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-28.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Joshua_Jefferson_2026.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643538.png"
+    },
+    {
+      "pick": 29,
+      "nbaId": 1642284,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-29.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Untitled-design-10.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642284.png"
+    },
+    {
+      "pick": 30,
+      "nbaId": 1643520,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-30.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Koa_Peat_2026.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643520.png"
+    },
+    {
+      "pick": 31,
+      "nbaId": 1643570,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-31.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Untitled-design-9.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643570.png"
+    },
+    {
+      "pick": 32,
+      "nbaId": 1643563,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-32.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Richie_Saunders_2026.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643563.png"
+    },
+    {
+      "pick": 33,
+      "nbaId": 1642912,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-33.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Isaiah_Evans_2026.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642912.png"
+    },
+    {
+      "pick": 34,
+      "nbaId": 1643509,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-34.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/meleek-thomas.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643509.png"
+    },
+    {
+      "pick": 35,
+      "nbaId": 1642350,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-35.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Brazile-Trevon.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642350.png"
+    },
+    {
+      "pick": 36,
+      "nbaId": 1642394,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-36.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Miller-Baba.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642394.png"
+    },
+    {
+      "pick": 37,
+      "nbaId": 1643553,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-37.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Ryan_Conwell_2026.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643553.png"
+    },
+    {
+      "pick": 38,
+      "nbaId": 1643552,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-38.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Braden_smith_2026.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643552.png"
+    },
+    {
+      "pick": 39,
+      "nbaId": 1643583,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-39.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/06/Jack-Kayil.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643583.png"
+    },
+    {
+      "pick": 40,
+      "nbaId": 1641759,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-40.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/06/Dillon_Mitchell_214.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641759.png"
+    },
+    {
+      "pick": 41,
+      "nbaId": 1642923,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-41.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Oweh-Otega.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642923.png"
+    },
+    {
+      "pick": 42,
+      "nbaId": 1643551,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-42.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Jakobi_Gillespie_2026.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643551.png"
+    },
+    {
+      "pick": 43,
+      "nbaId": 1643548,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-43.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Bilodeau-Tyler.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643548.png"
+    },
+    {
+      "pick": 44,
+      "nbaId": 1643576,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-44.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Brown-Maliq.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643576.png"
+    },
+    {
+      "pick": 45,
+      "nbaId": 1643567,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-45.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Emanuel_Sharp_2026.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643567.png"
+    },
+    {
+      "pick": 46,
+      "nbaId": 1643590,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-46.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Okpara-Felix.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643590.png"
+    },
+    {
+      "pick": 47,
+      "nbaId": 1643589,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-47.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/06/tyler-nickel.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643589.png"
+    },
+    {
+      "pick": 48,
+      "nbaId": 1643588,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-48.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/06/GettyImages-2275154292.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643588.png"
+    },
+    {
+      "pick": 49,
+      "nbaId": 1643624,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-49.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/06/Bryce_Hopkins_216x216.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643624.png"
+    },
+    {
+      "pick": 50,
+      "nbaId": 1643558,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-50.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Jaden_Bradley_2026.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643558.png"
+    },
+    {
+      "pick": 51,
+      "nbaId": 1643593,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-51.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/06/Izaiyah_Nelson_216.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643593.png"
+    },
+    {
+      "pick": 52,
+      "nbaId": 1643539,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-52.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/veessaar.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643539.png"
+    },
+    {
+      "pick": 53,
+      "nbaId": 1642391,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-53.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Onyenso-Ugonna.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642391.png"
+    },
+    {
+      "pick": 54,
+      "nbaId": 1643650,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-54.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/06/Lajae_Jones_214.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643650.png"
+    },
+    {
+      "pick": 55,
+      "nbaId": 1643568,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-55.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Nick_Martinelli_2026.png",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643568.png"
+    },
+    {
+      "pick": 56,
+      "nbaId": 1643585,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-56.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/06/2I8A7470_256x256_acf_cropped.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643585.png"
+    },
+    {
+      "pick": 57,
+      "nbaId": 1643712,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-57.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/06/Narcisse_Ngoy_216.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643712.png"
+    },
+    {
+      "pick": 58,
+      "nbaId": 1643555,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-58.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/06/i-4.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643555.png"
+    },
+    {
+      "pick": 59,
+      "nbaId": 1643626,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-59.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/05/Kaufman-Renn-Trey.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643626.png"
+    },
+    {
+      "pick": 60,
+      "nbaId": 1641831,
+      "photoLocal": "assets/images/Player/rookies-2026/rookie-60.jpg",
+      "photoUrl": "https://cdn.nba.com/manage/2026/06/malique-lewis-1f0c31ec-2ac9-6734-a2ec-197224ff32af.jpg",
+      "nbaCdnUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641831.png"
+    }
+  ]
+}

@@ -50,6 +50,15 @@ async function waitForHttp(url) {
 
 async function main() {
   const pool = JSON.parse(fs.readFileSync(path.join(root, 'assets', 'data', 'perfect-player-pool.json'), 'utf8'));
+  const officialHeadshots = JSON.parse(fs.readFileSync(path.join(root, 'assets', 'data', 'official-headshot-manifest.json'), 'utf8'));
+  assert.equal(officialHeadshots.currentPlayers.length, 525, '现役/轮换名单应全部登记官方头像');
+  assert.equal(officialHeadshots.draft2026.length, 60, '2026 新秀应全部登记官方头像');
+  officialHeadshots.currentPlayers.concat(officialHeadshots.draft2026).forEach(player => {
+    const localPath = path.join(root, player.photoLocal);
+    assert.ok(fs.existsSync(localPath), player.name || ('2026 顺位 ' + player.pick) + ' 缺少官方头像缓存');
+    assert.notEqual(fs.statSync(localPath).size, 4937, player.name || ('2026 顺位 ' + player.pick) + ' 不能使用 260x190 灰色占位图');
+    assert.notEqual(fs.statSync(localPath).size, 12430, player.name || ('2026 顺位 ' + player.pick) + ' 不能使用 1040x760 灰色占位图');
+  });
   const teams = Object.values(pool.teams || {});
   assert.equal(teams.length, 30);
   teams.forEach(team => {
@@ -111,6 +120,22 @@ async function main() {
     assert.ok(poolSeparation.leagueSize >= 10, '正式球队应保留原现役轮换');
     assert.equal(poolSeparation.leagueHistorical, 0, '正式比赛名单不应注入经典球员');
     assert.equal(poolSeparation.lineupHistorical, 0, '比赛轮换不应出现经典球员');
+    const leagueHeadshots = await page.evaluate(() => {
+      const current = NBA2K_TEAMS.flatMap(team => NBA2K_DATA[team] || []);
+      const rookies = DRAFT_CLASS_2026.map(item => (NBA2K_DATA[item.team] || []).find(player => player.cname === item.cn));
+      return {
+        currentCount: current.length,
+        currentMissing: current.filter(player => !player.photoLocal || !player.nbaId).map(player => player.name),
+        rookieCount: rookies.filter(Boolean).length,
+        rookieMissing: rookies.filter(player => !player || !player.photoLocal || !player.nbaId).map(player => player && player.cname),
+        rookieStyle: rookies[0] ? getPlayerHeadshotStyle(rookies[0], 44) : ''
+      };
+    });
+    assert.equal(leagueHeadshots.currentCount, 585, '正式名单应包含 525 名原球员和 60 名 2026 新秀');
+    assert.deepEqual(leagueHeadshots.currentMissing, [], '正式比赛名单的球员应全部有官方头像缓存');
+    assert.equal(leagueHeadshots.rookieCount, 60, '2026 新秀应全部进入选秀名单');
+    assert.deepEqual(leagueHeadshots.rookieMissing, [], '2026 新秀应全部有官方头像缓存');
+    assert.ok(leagueHeadshots.rookieStyle.includes('assets/images/Player/rookies-2026/rookie-01.jpg'), '2026 新秀头像应使用 NBA 官方资料页肖像缓存');
     assert.equal(await page.evaluate(() => window.PERFECT_PLAYER_EVENT_REPORT.added), 12, '应扩充 12 个原机制事件');
     assert.deepEqual(await page.evaluate(() => window.PERFECT_PLAYER_DRAFT_EVENT_REPORT), {
       total: 19, pre: 10, post: 9, perRun: 2, stageChance: { pre: 0.65, post: 0.55 }

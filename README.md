@@ -25,6 +25,8 @@ python -m http.server 8035
 - 每轮抽取固定 5 人，同轮不重复；重选轮次允许再次抽到已出现球员
 - 普通重选用完后可使用最多 3 次模拟广告重选，暂不接入真实广告 SDK
 - 现役球员头像沿用虎扑 BuildPlayer 的 `NBA_PLAYER_IMAGES` → NBA player ID → `260x190` 头像接口，并已全部本地缓存
+- 2026 年 60 个选秀顺位均补齐 NBA 官方资料页大头照；官方 CDN 尚未更新的少数新秀使用 NBA 官方选秀媒体肖像，不使用灰色占位剪影
+- NBA CDN 尚未更新头像的 3 名现役球员使用 ESPN 官方球员资料大头照作为备用源，并一并本地缓存
 - 历史球员头像由 NBA CDN 批量抓取并本地化，失败时回退到项目历史头像缓存
 - 头像与游戏数据均从网页本地资源加载
 - `tools/generate_ai_avatars.py` 可使用 DashScope API 重新生成头像；API Key 只从环境变量读取，不写入仓库
@@ -49,3 +51,4 @@ python tools/fetch_historical_headshots.py
 虎扑参考页：<https://activity-static.hupu.com/colorbox-activities/activity-project-ai-1783761934042/__ai_app.html>。
 现役头像模板：`https://cdn.nba.com/headshots/nba/latest/260x190/{nbaId}.png`。
 历史头像来源模板：`https://cdn.nba.com/headshots/nba/latest/1040x760/{nbaId}.png`。下载后的静态图片随网页发布，运行时不依赖外部头像接口。
+2026 选秀头像清单：`assets/data/official-headshot-manifest.json`；抓取脚本：`tools/fetch-official-headshots.js`。

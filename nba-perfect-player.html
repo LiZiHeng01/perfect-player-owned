@@ -1687,6 +1687,46 @@ var HEADSHOT_NAME_FIX = {
   'Kel\'el Ware': "Kel'el Ware",
   'KyShawn George': "Kyshawn George",
 };
+// NBA 官方目录里已入队、但旧版名字表还没有收录的球员 ID。
+// 统一走官方 CDN，并在发布构建中缓存到本地，避免 GitHub Pages 外链失败后退回首字母头像。
+var PERFECT_PLAYER_HEADSHOT_ID_FIX = {
+  'Keshon Gilbert': 1642933,
+  'Chaney Johnson': 1643052,
+  'Malachi Smith': 1641869,
+  'Tristan Enaruna': 1642400,
+  'John Poulakidas': 1642967,
+  'LJ Cryer': 1643018,
+  'Norchad Omier': 1641807,
+  'Sean Pedulla': 1642951,
+  'Jahmai Mashack': 1642942,
+  'Adama Bal': 1642380,
+  'Cormac Ryan': 1642504,
+  'Josh Oduro': 1642490,
+  'Alex Morales': 1631457,
+  'Jayson Kent': 1643257,
+  'Blake Hinson': 1642396,
+  'Bez Mbeng': 1643016,
+  'Hayden Gray': 1643060,
+  'Julian Reese': 1642882,
+  'KyShawn George': 1642273,
+  'Jimmy Butler': 202710,
+};
+// 少量新签约球员的 NBA CDN 仍是灰色占位图；本地缓存使用 ESPN 官方球员资料头像，
+// 外链兜底也保持同一来源，避免头像加载失败时再次露出剪影。
+var PERFECT_PLAYER_HEADSHOT_URL_FIX = {
+  1630286: 'https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/3934620.png',
+  1642380: 'https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/4896365.png',
+  1643257: 'https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/4703889.png',
+};
+// 2026 NBA Draft 官方顺位对应的球员 ID（来源：NBA.com Players / League Roster）。
+var PERFECT_PLAYER_HEADSHOT_DRAFT_2026_IDS = [
+  1643407, 1643408, 1643409, 1643410, 1643413, 1643414, 1643411, 1643412, 1643516, 1643415,
+  1642865, 1643530, 1643417, 1643419, 1643517, 1642892, 1643536, 1643515, 1643512, 1643519,
+  1643510, 1642889, 1643544, 1643418, 1643547, 1643542, 1643416, 1643538, 1642284, 1643520,
+  1643570, 1643563, 1642912, 1643509, 1642350, 1642394, 1643553, 1643552, 1643583, 1641759,
+  1642923, 1643551, 1643548, 1643576, 1643567, 1643590, 1643589, 1643588, 1643624, 1643558,
+  1643593, 1643539, 1642391, 1643650, 1643568, 1643585, 1643712, 1643555, 1643626, 1641831
+];
 /** 名字归一化：去重音、统一直/弯撇号、去除空格标点，用于宽松匹配头像。
  *  Why: 花名册里的名字常用弯引号(’)与重音字母(Dončić)，而 NBA_PLAYER_IMAGES
  *  用直引号/去重音写法，导致 Jokić、O’Neale、De’Aaron Fox 等匹配失败露出灰头像。 */
@@ -1707,6 +1747,59 @@ function _hsGetNormIndex() {
     }
   }
   return _hsNormIndex;
+}
+function _hsPlayerLookupName(player) {
+  if (player && typeof player === 'object') {
+    return player.name || player.nameEn || player.nameEN || player.cname || '';
+  }
+  return String(player || '');
+}
+function _hsReverseNormKey(name) {
+  var parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+  if (parts.length < 2) return '';
+  return _hsNormKey(parts[parts.length - 1] + parts.slice(0, -1).join(''));
+}
+function getOfficialPlayerHeadshotId(player) {
+  var record = player && typeof player === 'object' ? player : null;
+  var name = _hsPlayerLookupName(player);
+  var numericId = record && (record.nbaId || record.nbaID || record.personId || record.personID);
+  if (numericId && /^\d+$/.test(String(numericId))) return Number(numericId);
+  var fixedName = HEADSHOT_NAME_FIX[name] || name;
+  var pid = PERFECT_PLAYER_HEADSHOT_ID_FIX[name] || PERFECT_PLAYER_HEADSHOT_ID_FIX[fixedName] || 0;
+  if (!pid && typeof NBA_PLAYER_IMAGES !== 'undefined') {
+    pid = NBA_PLAYER_IMAGES[fixedName] || NBA_PLAYER_IMAGES[name] || 0;
+    if (!pid) {
+      var idx = _hsGetNormIndex();
+      var nk = _hsNormKey(name);
+      if (nk && (nk in idx)) pid = idx[nk];
+      if (!pid) {
+        var reverseNk = _hsReverseNormKey(name);
+        if (reverseNk && (reverseNk in idx)) pid = idx[reverseNk];
+      }
+    }
+  }
+  return pid ? Number(pid) : 0;
+}
+function _hsOfficialLocalPath(playerId) {
+  return playerId ? 'assets/images/Player/nba-official/' + playerId + '.png' : '';
+}
+function _hsOfficialRemotePath(playerId) {
+  return (playerId && PERFECT_PLAYER_HEADSHOT_URL_FIX[playerId])
+    || (playerId ? 'https://cdn.nba.com/headshots/nba/latest/260x190/' + playerId + '.png' : '');
+}
+function attachOfficialPlayerHeadshots() {
+  if (typeof NBA2K_TEAMS === 'undefined' || typeof NBA2K_DATA === 'undefined') return;
+  NBA2K_TEAMS.forEach(function(team) {
+    (NBA2K_DATA[team] || []).forEach(function(player) {
+      var pid = getOfficialPlayerHeadshotId(player);
+      if (!pid) return;
+      player.nbaId = pid;
+      player.photoUrl = _hsOfficialRemotePath(pid);
+      player.photoLocal = player.photoLocal || _hsOfficialLocalPath(pid);
+      player.photoSource = player.photoSource || (PERFECT_PLAYER_HEADSHOT_URL_FIX[pid] ? 'espn-official-player-headshot' : 'nba-official-headshot');
+      player.photoStatus = 'cached';
+    });
+  });
 }
 /** 无照片球员的兜底头像：用姓名首字母生成彩色 SVG，比灰圈更体面。 */
 function _hsInitialsAvatar(name, displaySize) {
@@ -1730,39 +1823,34 @@ function _hsInitialsAvatar(name, displaySize) {
 /** 获取球员头像样式（本地缓存 → NBA CDN → 归一化匹配 → 首字母兜底） */
 function getPlayerHeadshotStyle(playerName, displaySize) {
   if (!playerName) return '';
+  var playerRecord = playerName && typeof playerName === 'object' ? playerName : null;
+  var lookupName = _hsPlayerLookupName(playerName);
   displaySize = displaySize || 30;
-  if (window.PERFECT_PLAYER_PHOTO_BY_NAME && window.PERFECT_PLAYER_PHOTO_BY_NAME[playerName]) {
-    var localPhoto = window.PERFECT_PLAYER_PHOTO_BY_NAME[playerName];
-    return 'background-image:url(' + localPhoto + ');background-size:cover;background-position:center top;background-repeat:no-repeat;width:' + displaySize + 'px;height:' + displaySize + 'px;';
-  }
-  if (typeof NBA_PLAYER_IMAGES !== 'undefined') {
-    // 尝试名字修正后再查找
-    var fixedName = HEADSHOT_NAME_FIX[playerName] || playerName;
-    var pid = NBA_PLAYER_IMAGES[fixedName];
-    if (!pid) {
-      // 模糊匹配
-      for (var key in NBA_PLAYER_IMAGES) {
-        if (key.indexOf(playerName) >= 0 || playerName.indexOf(key) >= 0) {
-          pid = NBA_PLAYER_IMAGES[key]; break;
-        }
-        // 也用修正名做模糊匹配
-        if (fixedName !== playerName && (key.indexOf(fixedName) >= 0 || fixedName.indexOf(key) >= 0)) {
-          pid = NBA_PLAYER_IMAGES[key]; break;
+  if (!playerRecord && typeof NBA2K_TEAMS !== 'undefined' && typeof NBA2K_DATA !== 'undefined') {
+    for (var teamIndex = 0; teamIndex < NBA2K_TEAMS.length && !playerRecord; teamIndex++) {
+      var roster = NBA2K_DATA[NBA2K_TEAMS[teamIndex]] || [];
+      for (var playerIndex = 0; playerIndex < roster.length; playerIndex++) {
+        var candidate = roster[playerIndex];
+        if (candidate && (candidate.name === lookupName || candidate.nameEn === lookupName || candidate.nameEN === lookupName || candidate.cname === lookupName)) {
+          playerRecord = candidate;
+          break;
         }
       }
     }
-    // 归一化匹配（去重音/撇号/标点）——解决 Jokić、O’Neale、De’Aaron Fox 等
-    if (!pid) {
-      var idx = _hsGetNormIndex();
-      var nk = _hsNormKey(playerName);
-      if (nk && (nk in idx)) pid = idx[nk];
-    }
-    if (pid) {
-      return 'background-image:url(https://cdn.nba.com/headshots/nba/latest/260x190/' + pid + '.png);background-size:cover;background-position:center;background-repeat:no-repeat;width:' + (displaySize||30) + 'px;height:' + (displaySize||30) + 'px;';
-    }
+  }
+  var localPhoto = playerRecord && (playerRecord.photoLocal || playerRecord._photoLocal);
+  if (!localPhoto && window.PERFECT_PLAYER_PHOTO_BY_NAME) {
+    localPhoto = window.PERFECT_PLAYER_PHOTO_BY_NAME[lookupName] || (playerRecord && window.PERFECT_PLAYER_PHOTO_BY_NAME[playerRecord.cname]);
+  }
+  if (localPhoto) {
+    return 'background-image:url(' + localPhoto + ');background-size:cover;background-position:center top;background-repeat:no-repeat;width:' + displaySize + 'px;height:' + displaySize + 'px;';
+  }
+  var pid = getOfficialPlayerHeadshotId(playerRecord || lookupName);
+  if (pid) {
+    return 'background-image:url(' + _hsOfficialRemotePath(pid) + ');background-size:cover;background-position:center;background-repeat:no-repeat;width:' + displaySize + 'px;height:' + displaySize + 'px;';
   }
   // 兜底：无任何照片时给出首字母彩色头像，避免空白灰圈
-  return _hsInitialsAvatar(playerName, displaySize);
+  return _hsInitialsAvatar(lookupName, displaySize);
 }
 </script>
 <script src="assets/js/hupu/script-01-2678-5hu3djrc-upload-1783494754597-12.js"></script>
@@ -2505,6 +2593,7 @@ function initGame() {
   delete STATE._mobilityChoice;
   clearLineupCache();
   
+  try { attachOfficialPlayerHeadshots(); } catch(e) {}
   try { applyDraftClass2026(); } catch(e) {}
 
   // 属性槽初始化为空
@@ -17450,9 +17539,16 @@ function applyDraftClass2026() {
       var pad = String(pk.pick);
       while (pad.length < 2) pad = '0' + pad;
       var ovr = draftOvrByPick(pk.pick);
+      var rookieId = Number(pk.nbaId || PERFECT_PLAYER_HEADSHOT_DRAFT_2026_IDS[pk.pick - 1] || 0);
       var rookie = {
         name: 'Draft2026_' + pad,
         cname: pk.cn,
+        nbaId: rookieId,
+        nameEn: pk.en || '',
+        photoUrl: rookieId ? 'https://cdn.nba.com/headshots/nba/latest/260x190/' + rookieId + '.png' : '',
+        photoLocal: rookieId ? 'assets/images/Player/rookies-2026/rookie-' + pad + '.jpg' : '',
+        photoSource: rookieId ? 'nba-official-draft-profile' : '',
+        photoStatus: rookieId ? 'cached' : 'missing',
         pos: draftPosToCode(pk.pos),
         height: pk.height,
         type: '新秀',
