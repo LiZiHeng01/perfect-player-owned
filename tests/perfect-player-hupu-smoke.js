@@ -51,6 +51,13 @@ async function waitForHttp(url) {
 async function main() {
   const pool = JSON.parse(fs.readFileSync(path.join(root, 'assets', 'data', 'perfect-player-pool.json'), 'utf8'));
   const officialHeadshots = JSON.parse(fs.readFileSync(path.join(root, 'assets', 'data', 'official-headshot-manifest.json'), 'utf8'));
+  const generatedHeadshots = JSON.parse(fs.readFileSync(path.join(root, 'assets', 'data', 'generated-rookie-headshots.json'), 'utf8'));
+  assert.equal(generatedHeadshots.count, 50, '后续随机新秀头像池应有 50 张');
+  assert.equal(generatedHeadshots.transparent, true, '后续随机新秀头像应为透明 PNG');
+  assert.equal(new Set(generatedHeadshots.headshots.map(item => item.photoLocal)).size, 50, '随机新秀头像路径不能重复');
+  generatedHeadshots.headshots.forEach(item => {
+    assert.ok(fs.existsSync(path.join(root, item.photoLocal)), item.id + ' 缺少透明头像文件');
+  });
   assert.equal(officialHeadshots.currentPlayers.length, 525, '现役/轮换名单应全部登记官方头像');
   assert.equal(officialHeadshots.draft2026.length, 60, '2026 新秀应全部登记官方头像');
   officialHeadshots.currentPlayers.concat(officialHeadshots.draft2026).forEach(player => {
@@ -157,6 +164,9 @@ async function main() {
     assert.equal(leagueHeadshots.rookieCount, 60, '2026 新秀应全部进入选秀名单');
     assert.deepEqual(leagueHeadshots.rookieMissing, [], '2026 新秀应全部有官方头像缓存');
     assert.ok(leagueHeadshots.rookieStyle.includes('assets/images/Player/rookies-2026/rookie-01.jpg'), '2026 新秀头像应使用 NBA 官方资料页肖像缓存');
+    const generatedRookiePhotos = await page.evaluate(() => Array.from({ length: 50 }, () => nextGeneratedRookiePortrait()));
+    assert.equal(new Set(generatedRookiePhotos).size, 50, '50 张随机新秀头像应在一轮内不重复');
+    assert.ok(generatedRookiePhotos.every(photo => /^assets\/images\/Player\/generated-rookies\/generated-rookie-\d{3}\.png$/.test(photo)), '随机新秀应使用新头像池');
     assert.equal(await page.evaluate(() => window.PERFECT_PLAYER_EVENT_REPORT.added), 12, '应扩充 12 个原机制事件');
     assert.equal(await page.evaluate(() => window.PERFECT_PLAYER_EVENT_REPORT.seasonAdded), 21, '应新增 21 个可直接抽取的赛季日常事件');
     assert.deepEqual(await page.evaluate(() => ({

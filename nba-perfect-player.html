@@ -18379,6 +18379,7 @@ var _usedRookieCandidateNames = {};
 var _rngState = null;
 var _rookieNameSeq = 0;
 var _starRookieKeys = {};
+var _rookiePortraitQueue = [];
 
 function rngReset() {
   var seed = 0;
@@ -18403,6 +18404,20 @@ function rngNext() {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 }
 
+function nextGeneratedRookiePortrait() {
+  if (_rookiePortraitQueue.length === 0) {
+    for (var i = 1; i <= 50; i++) _rookiePortraitQueue.push(i);
+    for (var j = _rookiePortraitQueue.length - 1; j > 0; j--) {
+      var swapIndex = Math.floor(rngNext() * (j + 1));
+      var temp = _rookiePortraitQueue[j];
+      _rookiePortraitQueue[j] = _rookiePortraitQueue[swapIndex];
+      _rookiePortraitQueue[swapIndex] = temp;
+    }
+  }
+  var portraitId = _rookiePortraitQueue.pop();
+  return 'assets/images/Player/generated-rookies/generated-rookie-' + String(portraitId).padStart(3, '0') + '.png';
+}
+
 Math.random = rngNext;
 STAR_ROOKIES.forEach(function(s) { _starRookieKeys[s.en] = true; });
 var ROOKIE_CANDIDATES = DRAFT_CLASS_2027
@@ -18425,6 +18440,9 @@ function generateRookie() {
     cname: pick.cn,
     pos: pos, height: '6\'7"', type: '新秀', ovr: ovr,
     _age: 19 + Math.floor(rngNext() * 3),
+    photoLocal: nextGeneratedRookiePortrait(),
+    photoStatus: 'cached',
+    photoSource: 'generated-rookie-pool',
   };
   var attrKeys = SIM_CONFIG.ATTR_LIST || ['threePT','MID','FIN','DNK','HAN','PAS','PDEF','IDEF','BLK','REB','ATH','STR','CLU'];
   attrKeys.forEach(function(k) { p[k] = Math.max(25, Math.min(99, ovr + Math.floor(rngNext() * 16) - 8)); });
