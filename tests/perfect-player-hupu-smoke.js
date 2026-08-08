@@ -817,6 +817,7 @@ async function main() {
         twoUniqueFormats: new Set(sample.endingMediaMoments.map(item => item.formatId)).size === 2,
         posterSectionCount: posterSections.length,
         posterContainsBothMediaStories: posterSections.some(item => item.text.includes('戒指陈列柜')) && posterSections.some(item => item.text.includes('历史第一的争论')),
+        posterContainsExactRank: posterSections.some(item => item.title === '历史百大' && item.text.includes('最终排名：第1名')),
         firstStory: card && card.dataset.mediaStory,
         firstFormat: card && card.dataset.mediaFormat,
         hasHeadline: !!document.querySelector('#legacy-modal .legacy-media-headline'),
@@ -826,7 +827,7 @@ async function main() {
     assert.ok(endingMediaProbe.formatCount >= 8, '结局媒体模板至少应有 8 种：' + JSON.stringify(endingMediaProbe));
     assert.ok(endingMediaProbe.storyCount >= 32, '结局媒体报道角度至少应有 32 条：' + JSON.stringify(endingMediaProbe));
     assert.ok(endingMediaProbe.sampledFormats >= 8 && endingMediaProbe.sampledStories >= 12, '多次生涯应产生足够不同的结局组合：' + JSON.stringify(endingMediaProbe));
-    assert.ok(endingMediaProbe.posterSectionCount === 6 && endingMediaProbe.posterContainsBothMediaStories, '退役长海报必须同步收录两段媒体回声：' + JSON.stringify(endingMediaProbe));
+    assert.ok(endingMediaProbe.posterSectionCount === 6 && endingMediaProbe.posterContainsBothMediaStories && endingMediaProbe.posterContainsExactRank, '退役长海报必须同步收录两段媒体回声和百大具体名次：' + JSON.stringify(endingMediaProbe));
     assert.ok(endingMediaProbe.twoUniqueStories && endingMediaProbe.twoUniqueFormats && endingMediaProbe.hasHeadline && endingMediaProbe.singleScreen, '单局两段时代回声必须不重复且保持单屏：' + JSON.stringify(endingMediaProbe));
     await page.waitForTimeout(500);
     await page.screenshot({ path: path.join(outputDir, '05-ending-media-first.png'), fullPage: false });
@@ -840,6 +841,61 @@ async function main() {
     assert.notEqual(secondEndingMediaProbe.story, endingMediaProbe.firstStory, '同一结局的两段报道主题不能重复');
     assert.notEqual(secondEndingMediaProbe.format, endingMediaProbe.firstFormat, '同一结局的两种媒体版式不能重复');
     await page.screenshot({ path: path.join(outputDir, '06-ending-media-second.png'), fullPage: false });
+    await page.evaluate(() => document.getElementById('legacy-modal')?.remove());
+    const legacyRankingProbe = await page.evaluate(() => {
+      const legacy = Object.assign({}, STATE.career.legacy, {
+        score: 170,
+        goat: false,
+        tier: '历史前二十级别',
+        top100: true,
+        championships: 1,
+        mvp: 2,
+        fmvp: 1,
+        dpoy: 1,
+        allNBA: 8,
+        allStar: 8,
+        longestYears: 15,
+        scoreBreakdown: null
+      });
+      ensureLegacyRankingDetails(legacy);
+      STATE.career.legacy = legacy;
+      showLegacyModal(5, 0);
+      const modal = document.querySelector('#legacy-modal .team-picker-modal');
+      const target = document.querySelector('#legacy-modal .legacy-rank-row.is-player');
+      const top100Rows = Array.from(document.querySelectorAll('#legacy-modal .legacy-rank-row')).filter(row => Number(row.dataset.rank) <= 100);
+      return {
+        baselineCount: LEGACY_TOP100_BASELINE.length,
+        top100Rows: top100Rows.length,
+        rank: legacy.historicalRank,
+        targetRank: Number(target && target.dataset.rank),
+        hasPlayerAvatar: !!(target && target.querySelector('.legacy-row-avatar')),
+        finishLocked: !!document.querySelector('#legacy-modal .legacy-rank-finish:disabled'),
+        settlement: document.querySelector('#legacy-modal .legacy-rank-settlement')?.textContent.replace(/\s+/g, ' ').trim() || '',
+        singleScreen: !!modal && modal.getBoundingClientRect().top >= -1 && modal.getBoundingClientRect().bottom <= innerHeight + 1,
+        outsideRank: calculateLegacyHistoricalRank(120, false),
+        goatRank: calculateLegacyHistoricalRank(250, true)
+      };
+    });
+    assert.equal(legacyRankingProbe.baselineCount, 100, '游戏历史百大基准榜必须包含完整 100 名');
+    assert.equal(legacyRankingProbe.top100Rows, 100, '百大详情界面必须真正渲染 1–100 名');
+    assert.equal(legacyRankingProbe.targetRank, legacyRankingProbe.rank, '主角头像必须落在计算出的最终名次');
+    assert.ok(legacyRankingProbe.rank >= 11 && legacyRankingProbe.rank <= 20 && legacyRankingProbe.hasPlayerAvatar, '170 历史分应进入历史前二十并显示主角头像：' + JSON.stringify(legacyRankingProbe));
+    assert.ok(legacyRankingProbe.finishLocked && legacyRankingProbe.singleScreen, '排名动画期间应锁定结算按钮且手机单屏可见：' + JSON.stringify(legacyRankingProbe));
+    assert.ok(legacyRankingProbe.settlement.includes('最终第 ' + legacyRankingProbe.rank + ' 名') && legacyRankingProbe.settlement.includes('从第150名上升'), '百大结算必须详细显示最终名次和上升位数：' + legacyRankingProbe.settlement);
+    assert.ok(legacyRankingProbe.outsideRank > 100 && legacyRankingProbe.goatRank === 1, '百大门外与 GOAT 名次映射必须正确');
+    await page.waitForTimeout(900);
+    await page.screenshot({ path: path.join(outputDir, '07-top100-climbing.png'), fullPage: false });
+    await page.waitForTimeout(1800);
+    const rankingSettledProbe = await page.evaluate(() => ({
+      complete: document.querySelector('.legacy-top100-wrap')?.dataset.animationComplete === '1',
+      landed: !!document.querySelector('.legacy-rank-row.is-player.landed'),
+      finishEnabled: !document.querySelector('.legacy-rank-finish')?.disabled,
+      textState: JSON.parse(render_game_to_text()).legacyRanking
+    }));
+    assert.ok(rankingSettledProbe.complete && rankingSettledProbe.landed && rankingSettledProbe.finishEnabled, '头像上升后必须停在最终名次并解锁结算按钮：' + JSON.stringify(rankingSettledProbe));
+    assert.equal(rankingSettledProbe.textState.rank, legacyRankingProbe.rank, '文本状态必须同步百大最终名次');
+    assert.equal(rankingSettledProbe.textState.animationComplete, true, '文本状态必须同步动画完成状态');
+    await page.screenshot({ path: path.join(outputDir, '08-top100-landed.png'), fullPage: false });
     await page.evaluate(() => document.getElementById('legacy-modal')?.remove());
     const achievementPanelProbe = await page.evaluate(() => {
       PP_FX.resetAchievements();

@@ -565,6 +565,7 @@
       draftEvents: window.PERFECT_PLAYER_DRAFT_EVENT_REPORT || null,
       seasonEvents: window.PERFECT_PLAYER_SEASON_EVENT_REPORT || null,
       seasonEventState: career._lastSeasonEventState || null,
+      legacyRanking: career.legacy ? { rank:career.legacy.historicalRank || null, score:career.legacy.score || 0, top100:!!career.legacy.top100, animationComplete:!!document.querySelector('.legacy-top100-wrap[data-animation-complete="1"]') } : null,
       simulation: window.PERFECT_PLAYER_SIM_REPORT || null
     });
   };

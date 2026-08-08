@@ -16286,6 +16286,142 @@ function buildTop100Copy(r) {
   });
 }
 
+// 游戏内历史百大基准榜。最终结算会按生涯历史分把主角插入榜单，
+// 这是游戏评价模型，不代表联盟或媒体的官方排名。
+var LEGACY_TOP100_BASELINE = [
+  '迈克尔·乔丹','勒布朗·詹姆斯','卡里姆·阿卜杜尔-贾巴尔','比尔·拉塞尔','魔术师约翰逊',
+  '拉里·伯德','威尔特·张伯伦','蒂姆·邓肯','科比·布莱恩特','沙奎尔·奥尼尔',
+  '斯蒂芬·库里','哈基姆·奥拉朱旺','奥斯卡·罗伯特森','凯文·杜兰特','杰里·韦斯特',
+  '摩西·马龙','朱利叶斯·欧文','凯文·加内特','德克·诺维茨基','扬尼斯·阿德托昆博',
+  '大卫·罗宾逊','尼古拉·约基奇','卡尔·马龙','查尔斯·巴克利','埃尔金·贝勒',
+  '德维恩·韦德','科怀·伦纳德','伊塞亚·托马斯','克里斯·保罗','约翰·斯托克顿',
+  '斯科蒂·皮蓬','约翰·哈夫利切克','里克·巴里','史蒂夫·纳什','阿伦·艾弗森',
+  '帕特里克·尤因','鲍勃·佩蒂特','詹姆斯·哈登','拉塞尔·威斯布鲁克','克莱德·德雷克斯勒',
+  '乔治·麦肯','凯文·麦克海尔','鲍勃·库西','杰森·基德','加里·佩顿',
+  '乔治·格文','埃尔文·海耶斯','保罗·皮尔斯','雷吉·米勒','德怀特·霍华德',
+  '安东尼·戴维斯','雷·阿伦','卡梅隆·安东尼','多米尼克·威尔金斯','戴夫·考恩斯',
+  '沃尔特·弗雷泽','威利斯·里德','韦斯·昂塞尔德','内特·瑟蒙德','鲍勃·麦卡杜',
+  '比尔·沃顿','戴夫·德布斯切尔','萨姆·琼斯','哈尔·格里尔','多尔夫·谢伊斯',
+  '保罗·阿里金','比利·坎宁安','皮特·马拉维奇','厄尔·门罗','杰里·卢卡斯',
+  '罗伯特·帕里什','詹姆斯·沃西','丹尼斯·罗德曼','托尼·帕克','马努·吉诺比利',
+  '保罗·加索尔','文斯·卡特','特雷西·麦克格雷迪','格兰特·希尔','阿隆佐·莫宁',
+  '迪肯贝·穆托姆博','本·华莱士','克里斯·韦伯','亚历克斯·英格利什','伯纳德·金',
+  '鲍勃·兰尼尔','悉尼·蒙克利夫','丹尼斯·约翰逊','乔·杜马斯','阿蒂斯·吉尔摩',
+  '康尼·霍金斯','戴夫·宾','内特·阿奇博尔德','比尔·沙曼','兰尼·威尔肯斯',
+  '切特·沃克','杰克·西克马','阿德里安·丹特利','克里斯·波什','德雷蒙德·格林'
+];
+
+function calculateLegacyHistoricalRank(score, goat) {
+  score = Math.max(0, Number(score) || 0);
+  if (goat) return 1;
+  if (score >= 220) return 2;
+  if (score >= 180) return 3 + Math.round((219 - Math.min(219, score)) / 39 * 7);
+  if (score >= 155) return 11 + Math.round((179 - score) / 24 * 9);
+  if (score >= 140) return 21 + Math.round((154 - score) / 14 * 79);
+  return 101 + Math.round((139 - Math.min(139, score)) / 139 * 49);
+}
+
+function buildLegacyScoreBreakdown(r) {
+  var c = STATE.career || {};
+  var teamYears = Number(r.longestYears || r.teamYears) || 0;
+  var flags = c.flags || {};
+  return {
+    championships: (Number(r.championships) || 0) * 18,
+    fmvp: (Number(r.fmvp) || 0) * 14,
+    mvp: (Number(r.mvp) || 0) * 16,
+    dpoy: (Number(r.dpoy) || 0) * 10,
+    allNBA: (Number(r.allNBA) || 0) * 5,
+    allStar: (Number(r.allStar) || 0) * 3,
+    points: Math.min(35, Math.floor((Number(r.points) || 0) / 2500)),
+    games: Math.min(18, Math.floor((Number(r.games) || 0) / 120)),
+    loyalty: teamYears >= 8 ? 10 : 0,
+    peak: STATE.finalOVR >= 94 ? 8 : 0,
+    farewell: (flags.finalShow ? 2 : 0) - (flags.finalHurt ? 1 : 0) + (flags.farewellHomeTeam ? 3 : 0) + (flags.countdownLegend ? 2 : 0)
+  };
+}
+
+function ensureLegacyRankingDetails(r) {
+  if (!r) return r;
+  r.historicalRank = calculateLegacyHistoricalRank(r.score, r.goat);
+  r.top100 = r.historicalRank <= 100;
+  r.rankStart = 150;
+  r.rankClimbed = Math.max(0, r.rankStart - r.historicalRank);
+  r.rankGapToTop100 = Math.max(0, r.historicalRank - 100);
+  r.scoreBreakdown = r.scoreBreakdown || buildLegacyScoreBreakdown(r);
+  return r;
+}
+
+function escapeLegacyHtml(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch) {
+    return ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[ch];
+  });
+}
+
+function renderLegacyTop100Ranking(r) {
+  ensureLegacyRankingDetails(r);
+  var rank = r.historicalRank;
+  var playerName = escapeLegacyHtml(typeof getHupuDisplayName === 'function' ? getHupuDisplayName() : '我的球员');
+  var avatar = escapeLegacyHtml(typeof getHupuAvatarUrl === 'function' ? getHupuAvatarUrl() : '');
+  var rowCount = Math.max(100, rank);
+  var rows = '';
+  for (var i = 1; i <= rowCount; i++) {
+    var isPlayer = i === rank;
+    var name = isPlayer ? playerName : (i <= 100 ? LEGACY_TOP100_BASELINE[i - 1] : '百大候选球星');
+    rows += '<div class="legacy-rank-row' + (isPlayer ? ' is-player' : '') + '" data-rank="' + i + '">' +
+      '<span class="legacy-rank-number">' + i + '</span>' +
+      (isPlayer ? '<img class="legacy-row-avatar" src="' + avatar + '" alt="主角头像">' : '<span class="legacy-rank-dot"></span>') +
+      '<span class="legacy-rank-name">' + name + '</span>' +
+      (isPlayer ? '<span class="legacy-rank-you">你的最终位置</span>' : '') +
+      '</div>';
+  }
+  var rankLabel = rank <= 100 ? 'NBA历史百大第 ' + rank + ' 名' : '百大候选第 ' + rank + ' 名';
+  var gapText = rank <= 100 ? '进入历史百大，超越榜单中 ' + (100 - rank) + ' 个席位' : '距离历史百大还差 ' + r.rankGapToTop100 + ' 位';
+  var b = r.scoreBreakdown || {};
+  var honorScore = (b.championships || 0) + (b.fmvp || 0) + (b.mvp || 0) + (b.dpoy || 0) + (b.allNBA || 0) + (b.allStar || 0);
+  var careerScore = (b.points || 0) + (b.games || 0);
+  var bonusScore = (b.loyalty || 0) + (b.peak || 0) + (b.farewell || 0);
+  return '<div class="legacy-top100-wrap" data-final-rank="' + rank + '">' +
+    '<div class="legacy-rank-summary"><div><span class="legacy-rank-kicker">ALL-TIME TOP 100</span><strong>' + rankLabel + '</strong><small>' + gapText + '</small></div><div class="legacy-rank-score">' + r.score + '<small>历史分</small></div></div>' +
+    '<div class="legacy-score-grid"><span>荣誉贡献<b>+' + honorScore + '</b></span><span>生涯数据<b>+' + careerScore + '</b></span><span>巅峰与忠诚<b>+' + bonusScore + '</b></span><span>历史档位<b>' + escapeLegacyHtml(r.tier) + '</b></span></div>' +
+    '<div class="legacy-ranking-stage">' +
+      '<div class="legacy-ranking-caption"><span>游戏历史百大完整榜</span><small>可上下滑动查看 1–100 名</small></div>' +
+      '<div class="legacy-ranking-list">' + rows + '</div>' +
+      '<div class="legacy-rank-climber"><img src="' + avatar + '" alt="上升中的主角头像"><span>从第150名向上冲刺</span></div>' +
+    '</div>' +
+    '<div class="legacy-rank-settlement"><b>排名结算</b><span>最终第 ' + rank + ' 名 · 从第150名上升 ' + r.rankClimbed + ' 位</span><span>' + (rank <= 100 ? '正式入选NBA历史百大' : '未入选百大，' + gapText) + '</span><small>依据：总冠军、MVP、FMVP、DPOY、最佳阵容、全明星、生涯总得分、出场数、巅峰能力与球队忠诚。</small></div>' +
+  '</div>';
+}
+
+function startLegacyRankClimb() {
+  var wrap = document.querySelector('#legacy-modal .legacy-top100-wrap');
+  if (!wrap || wrap.dataset.started === '1') return;
+  wrap.dataset.started = '1';
+  var list = wrap.querySelector('.legacy-ranking-list');
+  var target = wrap.querySelector('.legacy-rank-row.is-player');
+  var climber = wrap.querySelector('.legacy-rank-climber');
+  var button = document.querySelector('#legacy-modal .legacy-rank-finish');
+  if (!list || !target || !climber) return;
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  list.scrollTop = list.scrollHeight;
+  if (button) { button.disabled = true; button.textContent = '排名揭晓中…'; }
+  function settle() {
+    target.classList.add('landed');
+    climber.classList.add('landed');
+    if (button) { button.disabled = false; button.textContent = '查看生涯总览'; }
+    wrap.dataset.animationComplete = '1';
+  }
+  if (reduced) {
+    list.scrollTop = Math.max(0, target.offsetTop - list.clientHeight / 2 + target.offsetHeight / 2);
+    settle();
+    return;
+  }
+  requestAnimationFrame(function() {
+    climber.classList.add('climbing');
+    list.scrollTo({ top: Math.max(0, target.offsetTop - list.clientHeight / 2 + target.offsetHeight / 2), behavior:'smooth' });
+    window.setTimeout(settle, 2400);
+  });
+}
+
 // ── GOAT 退役发布会：8 条专属文案 ──
 var GOAT_COPY = [
     "你坐到话筒前，还没有开口，{longestTeam}的球馆已经先响了一遍掌声。{achievement}。记者问你想对历史说什么，你说：历史不用我说，它自己会记得。{seasonsCount} 个赛季、{games} 场比赛、{points} 分，今天终于可以交给后人去争论了。",
@@ -16874,19 +17010,21 @@ function calculateLegacyResult() {
   jerseyTeams.sort(function(a, b) { return (a.firstSeason - b.firstSeason) || (b.teamLegacy - a.teamLegacy); });
   var jersey = jerseyTeams.length > 0;
   var result = { score: score, tier: tier, hof: hof, hofCopyVariant: hofCopyVariant, top100: top100, top100CopyVariant: top100CopyVariant, retirementCopyVariant: retirementCopyVariant, goat: goat, goatCopyVariant: goatCopyVariant, seasonsCount: seasons.length, jersey: jersey, jerseyTeams: jerseyTeams, team: longestTeam, longestTeam: longestTeam, longestYears: teamYears[longestTeam] || 0, teamCount: teamCount, teamList: teamList, firstTeam: firstTeam, lastTeam: lastTeam, teamYears: teamYears[longestTeam] || 0, championships: championships, fmvp: fmvp, mvp: mvp, dpoy: dpoy, allNBA: allNBA, allStar: allStar, points: points, games: games };
+  ensureLegacyRankingDetails(result);
   result.endingMediaMoments = pickEndingMediaMoments(result, 2);
   return result;
 }
 
 function showLegacyModal(step, jerseyIdx) {
   var r = STATE.career.legacy || calculateLegacyResult();
+  ensureLegacyRankingDetails(r);
   var mediaMoments = ensureEndingMediaMoments(r);
   var title = '退役发布会';
   var body = '';
   var next = step + 1;
   var nextJersey = 0;
   if (step === 0) {
-    body = buildRetirementCopy(r) + '<br><br>生涯总结：' + r.games + '场，' + Math.round(r.points) + '分，' + r.mvp + '次MVP，' + r.championships + '次总冠军，' + r.allNBA + '次最佳阵容。<br><br>历史分：' + r.score + ' · ' + r.tier + '。';
+    body = buildRetirementCopy(r) + '<br><br>生涯总结：' + r.games + '场，' + Math.round(r.points) + '分，' + r.mvp + '次MVP，' + r.championships + '次总冠军，' + r.allNBA + '次最佳阵容。<br><br>历史分：' + r.score + ' · ' + r.tier + ' · 历史排名第 ' + r.historicalRank + ' 名。';
   } else if (step === 1 || step === 2) {
     var mediaIdx = step - 1;
     var moment = mediaMoments[mediaIdx];
@@ -16915,10 +17053,8 @@ function showLegacyModal(step, jerseyIdx) {
     if (r.hof) body = buildHofCopy(r) + '<br><br>结果：入选名人堂。';
     else body = buildHofCopy(r) + '<br><br>结果：暂未入选名人堂。';
   } else {
-    title = 'NBA历史地位';
-    if (r.goat) body = buildGoatHistoryCopy(r) + '<br><br>结果：GOAT级别。';
-    else if (r.top100) body = buildTop100Copy(r) + '<br><br>结果：入选NBA历史百大。';
-    else body = buildTop100Copy(r) + '<br><br>结果：未入选NBA历史百大。';
+    title = 'NBA历史百大榜';
+    body = renderLegacyTop100Ranking(r);
     next = -1;
   }
   var html = '<div class="team-picker-overlay" id="legacy-modal">';
@@ -16926,9 +17062,10 @@ function showLegacyModal(step, jerseyIdx) {
   html += '<div class="team-picker-header"><span>' + title + '</span></div>';
   html += '<div style="padding:14px;">';
   html += '<div style="font-size:13px;color:var(--text-dim);line-height:1.65;margin-bottom:14px;">' + body + '</div>';
-  html += '<button class="btn btn-primary btn-sm" style="width:100%;" onclick="' + (next >= 0 ? 'closeLegacyAndShow(' + next + ',' + nextJersey + ')' : 'finishLegacyStory()') + '">' + (next >= 0 ? '继续' : '完成') + '</button>';
+  html += '<button class="btn btn-primary btn-sm' + (next < 0 ? ' legacy-rank-finish' : '') + '" style="width:100%;" onclick="' + (next >= 0 ? 'closeLegacyAndShow(' + next + ',' + nextJersey + ')' : 'finishLegacyStory()') + '"' + (next < 0 ? ' disabled' : '') + '>' + (next >= 0 ? '继续' : '排名揭晓中…') + '</button>';
   html += '</div></div></div>';
   document.body.insertAdjacentHTML('beforeend', html);
+  if (next < 0) requestAnimationFrame(startLegacyRankClimb);
 }
 
 function closeLegacyAndShow(next, jerseyIdx) {
@@ -23666,9 +23803,10 @@ function generateCareerPoster() {
   ctx.font = '500 13px ' + C.fd;
   ctx.fillText(retired && legacy ? '🏅 历史地位' : '🏷️ 最终模板', cardX + 14, y + 8);
   if (retired && legacy) {
+    ensureLegacyRankingDetails(legacy);
     infoRow('历史档位', legacy.tier || '—', y + 32);
     infoRow('名人堂', legacy.hof ? '✅ 入选' : '未入选', y + 54);
-    infoRow('历史百大', legacy.top100 ? '✅ 入选' : '未入选', y + 76);
+    infoRow('历史百大', (legacy.top100 ? '✅ 第' : '候选第') + legacy.historicalRank + '名', y + 76);
   } else {
     var archMatch = (typeof matchPlayerArchetype === 'function') ? matchPlayerArchetype(s.attrs, 1) : [];
     var archInfo = archMatch.length > 0 ? archMatch[0] : null;
@@ -23721,6 +23859,7 @@ function stripPosterHtml(text) {
 
 function buildRetirementStoryPosterSections(r) {
   r = r || calculateLegacyResult();
+  ensureLegacyRankingDetails(r);
   var c = STATE.career || {};
   var displayName = (typeof getHupuDisplayName === 'function') ? getHupuDisplayName() : '我的球员';
   var jerseyTeams = Array.isArray(r.jerseyTeams) ? r.jerseyTeams : [];
@@ -23761,7 +23900,7 @@ function buildRetirementStoryPosterSections(r) {
     {
       title: '历史百大',
       kicker: 'All-Time Top 100',
-      text: buildTop100Copy(r)
+      text: buildTop100Copy(r) + '\n\n最终排名：第' + r.historicalRank + '名；历史分：' + r.score + '分；' + (r.top100 ? '正式入选NBA历史百大。' : '距离历史百大还差' + r.rankGapToTop100 + '位。')
     }
   ];
   sections.splice.apply(sections, [1, 0].concat(mediaSections));

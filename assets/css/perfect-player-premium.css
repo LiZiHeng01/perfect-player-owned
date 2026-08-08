@@ -145,3 +145,66 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .feature-card::before { transition: none; }
 }
+
+/* ---------- 退役结算：历史百大完整榜与头像攀升 ---------- */
+#legacy-modal .team-picker-modal:has(.legacy-top100-wrap) {
+  width: min(94vw, 460px);
+  max-height: 94vh;
+}
+#legacy-modal .team-picker-modal:has(.legacy-top100-wrap) > div:nth-child(2) {
+  padding: 10px !important;
+}
+.legacy-top100-wrap { color: var(--text); }
+.legacy-rank-summary {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px;
+  background: linear-gradient(135deg, #fff8ec, #fff 62%, rgba(255,107,53,.09));
+}
+.legacy-rank-summary > div:first-child { display: flex; min-width: 0; flex-direction: column; }
+.legacy-rank-kicker { color: var(--orange); font: 800 9px/1 var(--font-athletic); letter-spacing: 1.4px; }
+.legacy-rank-summary strong { margin-top: 4px; font: 800 19px/1.15 var(--font-athletic); }
+.legacy-rank-summary small { margin-top: 4px; color: var(--text-dim); font-size: 10px; }
+.legacy-rank-score {
+  min-width: 58px; text-align: center; color: var(--orange);
+  font: 900 29px/1 var(--font-athletic); font-variant-numeric: tabular-nums;
+}
+.legacy-rank-score small { display: block; margin-top: 3px; color: var(--text-dim); font: 700 9px/1 var(--font-body); }
+.legacy-score-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 4px; margin: 6px 0; }
+.legacy-score-grid span { min-width: 0; padding: 6px 3px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-card); text-align: center; color: var(--text-dim); font-size: 8px; }
+.legacy-score-grid b { display: block; margin-top: 2px; overflow: hidden; color: var(--text); font: 800 11px/1.15 var(--font-athletic); text-overflow: ellipsis; white-space: nowrap; }
+.legacy-ranking-stage { position: relative; overflow: hidden; border: 1px solid var(--border); border-radius: 12px; background: #f6efe4; }
+.legacy-ranking-caption { display: flex; align-items: center; justify-content: space-between; height: 34px; padding: 0 10px; border-bottom: 1px solid var(--border); background: #2a1c10; color: #fff; }
+.legacy-ranking-caption span { font: 800 11px/1 var(--font-athletic); letter-spacing: .4px; }
+.legacy-ranking-caption small { color: #decdb8; font-size: 8px; }
+.legacy-ranking-list { height: 250px; overflow-y: auto; scroll-behavior: smooth; scrollbar-width: thin; overscroll-behavior: contain; }
+.legacy-rank-row { display: grid; grid-template-columns: 32px 22px minmax(0,1fr) auto; align-items: center; min-height: 31px; padding: 3px 8px; border-bottom: 1px solid rgba(197,169,133,.36); background: rgba(255,255,255,.78); }
+.legacy-rank-row:nth-child(even) { background: rgba(250,244,234,.9); }
+.legacy-rank-number { color: var(--text-dim); font: 800 12px/1 var(--font-athletic); font-variant-numeric: tabular-nums; }
+.legacy-rank-dot { width: 7px; height: 7px; border: 2px solid #c8b293; border-radius: 50%; }
+.legacy-rank-name { overflow: hidden; color: var(--text); font-size: 11px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.legacy-rank-you { color: var(--orange); font-size: 8px; font-weight: 800; }
+.legacy-row-avatar { width: 25px; height: 25px; object-fit: contain; object-position: center bottom; opacity: .28; transform: scale(.72); transition: opacity .35s, transform .45s; }
+.legacy-rank-row.is-player { position: relative; border: 1px solid rgba(255,107,53,.6); background: linear-gradient(90deg, #fff3df, #fff); box-shadow: inset 3px 0 0 var(--orange); }
+.legacy-rank-row.is-player.landed { animation: legacyRankLand .65s ease-out; }
+.legacy-rank-row.is-player.landed .legacy-row-avatar { opacity: 1; transform: scale(1.15); }
+.legacy-rank-climber { position: absolute; z-index: 4; left: 50%; bottom: 8px; display: flex; flex-direction: column; align-items: center; transform: translate(-50%,0) scale(1); transition: transform 2.25s cubic-bezier(.17,.82,.22,1), opacity .25s 2.15s; pointer-events: none; }
+.legacy-rank-climber img { width: 58px; height: 58px; object-fit: contain; object-position: center bottom; border: 3px solid var(--orange); border-radius: 50%; background: #1d2838; box-shadow: 0 5px 18px rgba(81,43,13,.35); }
+.legacy-rank-climber span { margin-top: 3px; padding: 3px 7px; border-radius: 9px; background: rgba(42,28,16,.9); color: #fff; font-size: 8px; white-space: nowrap; }
+.legacy-rank-climber.climbing { transform: translate(-50%,-144px) scale(.76); }
+.legacy-rank-climber.landed { opacity: 0; }
+.legacy-rank-settlement { display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; margin: 6px 1px 8px; padding: 7px 9px; border-left: 3px solid var(--orange); border-radius: 7px; background: var(--orange-bg); font-size: 9px; line-height: 1.35; }
+.legacy-rank-settlement b { grid-row: 1 / span 3; color: var(--orange); font: 800 11px/1.2 var(--font-athletic); }
+.legacy-rank-settlement span { color: var(--text); font-weight: 700; }
+.legacy-rank-settlement small { grid-column: 1 / -1; margin-top: 2px; color: var(--text-dim); font-size: 8px; }
+.legacy-rank-finish:disabled { filter: grayscale(.35); opacity: .68; }
+@keyframes legacyRankLand { 0% { transform: scale(.96); } 55% { transform: scale(1.035); box-shadow: 0 0 0 5px rgba(255,107,53,.16); } 100% { transform: scale(1); } }
+@media (max-height: 720px) {
+  .legacy-ranking-list { height: 205px; }
+  .legacy-rank-row { min-height: 29px; }
+  .legacy-rank-climber.climbing { transform: translate(-50%,-118px) scale(.76); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .legacy-ranking-list { scroll-behavior: auto; }
+  .legacy-rank-climber, .legacy-row-avatar { transition: none; }
+  .legacy-rank-row.is-player.landed { animation: none; }
+}
