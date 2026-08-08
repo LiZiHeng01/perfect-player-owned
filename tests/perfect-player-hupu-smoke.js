@@ -131,6 +131,9 @@ async function main() {
       assert.equal(player.peakRating, player.rating, player.nameEn + ' 巅峰评分标记不一致');
     });
   });
+  const correctedHallOfFamers = ['Kevin McHale','Dave Debusschere','Hal Greer','Artis Gilmore','Dennis Rodman','Joe Dumars','Dominique Wilkins','Bernard King','Wes Unseld','David Thompson','Dan Issel','Bill Walton','Bob McAdoo','Mitch Richmond','Tony Parker'];
+  const historicalByName = new Map(teams.flatMap(team => team.historicalPlayers).map(player => [player.nameEn, player]));
+  assert.deepEqual(correctedHallOfFamers.filter(name => historicalByName.get(name)?.historicalTier !== 'hall-of-fame'), [], '已入选 Naismith 名人堂的球员必须正确标记');
   const lakers = pool.teams['23'];
   const currentLeBron = lakers.players.find(player => player.nameEn === 'LeBron James');
   const peakLeBron = lakers.historicalPlayers.find(player => player.nameEn === 'LeBron James');
@@ -636,6 +639,37 @@ async function main() {
     assert.ok(historicalList.every(player => player.peak && player.peakRating > 0), '历史候选必须显式使用巅峰标记');
     assert.equal(await page.locator('.bp-detail').evaluateAll(nodes => nodes.filter(node => /名人堂惊喜|近代全明星惊喜/.test(node.textContent)).length), 5, '历史候选应显式标注惊喜层级');
     assert.equal(await page.locator('.bp-detail').evaluateAll(nodes => nodes.filter(node => /巅峰/.test(node.textContent)).length), 5, '历史候选界面应显式标注巅峰状态');
+
+    const hallOfFameEffect = await page.evaluate(() => {
+      const cards = PERFECT_PLAYER_HISTORICAL_SURPRISE_DATA.BOS;
+      STATE.currentTeam = 'BOS';
+      STATE._drawPlayers = cards;
+      STATE.selectedPlayer = null;
+      renderRosterPlayers('BOS', cards, PERFECT_PLAYER_BUILD_DATA.BOS);
+      const first = document.querySelector('.hall-of-fame-card');
+      return {
+        cards:document.querySelectorAll('.hall-of-fame-card').length,
+        badges:document.querySelectorAll('.hall-of-fame-badge').length,
+        arrival:document.querySelectorAll('.hall-of-fame-arrival').length,
+        animation:first ? getComputedStyle(first).animationName : ''
+      };
+    });
+    assert.deepEqual({ cards:hallOfFameEffect.cards, badges:hallOfFameEffect.badges, arrival:hallOfFameEffect.arrival }, { cards:5, badges:5, arrival:1 }, '凯尔特人五张名人堂卡应全部显示降临特效与 HOF 徽章');
+    assert.ok(hallOfFameEffect.animation.includes('hofCardReveal') && hallOfFameEffect.animation.includes('hofCardAura'), '名人堂卡应包含入场与持续光晕动画');
+    await page.waitForTimeout(520);
+    await page.locator('.hall-of-fame-card').first().click();
+    assert.ok(await page.locator('.hall-of-fame-card').first().evaluate(node => node.classList.contains('selected')), '名人堂特效卡必须仍可点击选中');
+    const hallTextState = JSON.parse(await page.evaluate(() => render_game_to_text()));
+    assert.equal(hallTextState.build.hallOfFameCandidates, 5, '文本状态应暴露当前名人堂候选数');
+    await page.screenshot({ path: path.join(outputDir, '02c-hall-of-fame-effect.png'), fullPage: false });
+    const noHallEffect = await page.evaluate(() => {
+      const cards = PERFECT_PLAYER_HISTORICAL_SURPRISE_DATA.MEM;
+      STATE.currentTeam = 'MEM';
+      STATE._drawPlayers = cards;
+      renderRosterPlayers('MEM', cards, PERFECT_PLAYER_BUILD_DATA.MEM);
+      return { cards:document.querySelectorAll('.hall-of-fame-card').length, arrival:document.querySelectorAll('.hall-of-fame-arrival').length };
+    });
+    assert.deepEqual(noHallEffect, { cards:0, arrival:0 }, '非名人堂巅峰卡不应误用名人堂特效');
 
     const surpriseRolls = await page.evaluate(() => {
       const originalRandom = Math.random;

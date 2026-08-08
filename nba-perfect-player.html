@@ -3150,17 +3150,19 @@ function renderRosterPlayers(team, shown, allPool) {
   const rosterArea = document.getElementById('br-roster-area');
   if (!rosterArea) return;
   
+  const hasHallOfFame = shown.some(p => p._sourceKind === 'historical' && p._historicalTier === 'hall-of-fame');
   let listHtml = `<div style="display:flex;align-items:center;gap:6px;padding-bottom:4px;flex-wrap:wrap;">
     <span style="font-size:13px;font-weight:700;font-family:var(--font-display);letter-spacing:1px;">${getTeamName(team)}</span>
     <span style="font-size:11px;color:var(--text-dim);">本轮抽取 ${shown.length} 人 · 同轮不重复 · 名人堂惊喜低概率出现</span>
-  </div><div class="br-roster-list" style="max-height:none;">`;
+  </div>${hasHallOfFame ? '<div class="hall-of-fame-arrival"><span>✦</span><b>名人堂球星降临</b><span>✦</span></div>' : ''}<div class="br-roster-list" style="max-height:none;">`;
   
   shown.forEach((p, drawIndex) => {
     const sel = STATE.selectedPlayer === p || (STATE.selectedPlayer && STATE.selectedPlayer.name === p.name);
     const playerPos = getPlayerMainPos(p);
     const hsStyle = getPlayerHeadshotStyle(p, 32);
     const ovrGrade = getOvrGrade(parseInt(p.ovr) || 50);
-    listHtml += `<div class="br-player${sel ? ' selected' : ''}" data-draw-index="${drawIndex}" onclick="pickPlayerAt(${drawIndex})">
+    const hallOfFame = p._sourceKind === 'historical' && p._historicalTier === 'hall-of-fame';
+    listHtml += `<div class="br-player${hallOfFame ? ' hall-of-fame-card' : ''}${sel ? ' selected' : ''}" data-draw-index="${drawIndex}" onclick="pickPlayerAt(${drawIndex})">
       <div class="bp-left">
         <div class="bp-headshot" style="${hsStyle}"></div>
         <div>
@@ -3169,6 +3171,7 @@ function renderRosterPlayers(team, shown, allPool) {
         </div>
       </div>
       <div class="bp-meta">
+        ${hallOfFame ? '<span class="hall-of-fame-badge">HOF</span>' : ''}
         <span class="bp-ovr">${p.ovr}</span>
       </div>
     </div>`;

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-08-08T11:41:26.280934+00:00",
+  "generatedAt": "2026-08-08T12:01:21.478697+00:00",
   "rules": {
     "targetRosterSize": 12,
     "currentTarget": 12,
@@ -1176,7 +1176,7 @@
             1
           ],
           "starScore": 8.0,
-          "historicalTier": "modern-all-star",
+          "historicalTier": "hall-of-fame",
           "peakSource": "all-time peak template",
           "historicalPeak": true,
           "peakRating": 95
@@ -3356,7 +3356,7 @@
             3
           ],
           "starScore": 8.0,
-          "historicalTier": "modern-all-star",
+          "historicalTier": "hall-of-fame",
           "peakSource": "all-time peak template",
           "historicalPeak": true,
           "peakRating": 95
@@ -4319,7 +4319,7 @@
             4
           ],
           "starScore": 4.0,
-          "historicalTier": "modern-all-star",
+          "historicalTier": "hall-of-fame",
           "peakSource": "all-time peak template",
           "historicalPeak": true,
           "peakRating": 85
@@ -6638,7 +6638,7 @@
             6
           ],
           "starScore": 6.0,
-          "historicalTier": "modern-all-star",
+          "historicalTier": "hall-of-fame",
           "peakSource": "all-time peak template",
           "historicalPeak": true,
           "peakRating": 90
@@ -6701,7 +6701,7 @@
             20
           ],
           "starScore": 6.0,
-          "historicalTier": "modern-all-star",
+          "historicalTier": "hall-of-fame",
           "peakSource": "all-time peak template",
           "historicalPeak": true,
           "peakRating": 90
@@ -8693,7 +8693,7 @@
             8
           ],
           "starScore": 6.8,
-          "historicalTier": "modern-all-star",
+          "historicalTier": "hall-of-fame",
           "peakSource": "all-time peak template",
           "historicalPeak": true,
           "peakRating": 92
@@ -8820,7 +8820,7 @@
             6
           ],
           "starScore": 6.0,
-          "historicalTier": "modern-all-star",
+          "historicalTier": "hall-of-fame",
           "peakSource": "all-time peak template",
           "historicalPeak": true,
           "peakRating": 90
@@ -12029,7 +12029,7 @@
             11
           ],
           "starScore": 6.8,
-          "historicalTier": "modern-all-star",
+          "historicalTier": "hall-of-fame",
           "peakSource": "all-time peak template",
           "historicalPeak": true,
           "peakRating": 92
@@ -16402,7 +16402,7 @@
             3
           ],
           "starScore": 5.2,
-          "historicalTier": "modern-all-star",
+          "historicalTier": "hall-of-fame",
           "peakSource": "all-time peak template",
           "historicalPeak": true,
           "peakRating": 88
@@ -16526,7 +16526,7 @@
             15
           ],
           "starScore": 7.6,
-          "historicalTier": "modern-all-star",
+          "historicalTier": "hall-of-fame",
           "peakSource": "all-time peak template",
           "historicalPeak": true,
           "peakRating": 94
@@ -17442,7 +17442,7 @@
             24
           ],
           "starScore": 6.8,
-          "historicalTier": "modern-all-star",
+          "historicalTier": "hall-of-fame",
           "peakSource": "all-time peak template",
           "historicalPeak": true,
           "peakRating": 92
@@ -17564,7 +17564,7 @@
             21
           ],
           "starScore": 6.0,
-          "historicalTier": "modern-all-star",
+          "historicalTier": "hall-of-fame",
           "peakSource": "all-time peak template",
           "historicalPeak": true,
           "peakRating": 90
@@ -20948,7 +20948,7 @@
             27
           ],
           "starScore": 6.8,
-          "historicalTier": "modern-all-star",
+          "historicalTier": "hall-of-fame",
           "peakSource": "all-time peak template",
           "historicalPeak": true,
           "peakRating": 92
@@ -24263,7 +24263,7 @@
             28
           ],
           "starScore": 7.2,
-          "historicalTier": "modern-all-star",
+          "historicalTier": "hall-of-fame",
           "peakSource": "all-time peak template",
           "historicalPeak": true,
           "peakRating": 93
@@ -27394,7 +27394,7 @@
             30
           ],
           "starScore": 6.4,
-          "historicalTier": "modern-all-star",
+          "historicalTier": "hall-of-fame",
           "peakSource": "all-time peak template",
           "historicalPeak": true,
           "peakRating": 91
@@ -32889,7 +32889,7 @@
             20
           ],
           "starScore": 6.0,
-          "historicalTier": "modern-all-star",
+          "historicalTier": "hall-of-fame",
           "peakSource": "all-time peak template",
           "historicalPeak": true,
           "peakRating": 90
