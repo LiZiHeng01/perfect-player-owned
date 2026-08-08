@@ -127,7 +127,9 @@
       cname: player.nameCn || player.name,
       pos: pos,
       height: POSITION_HEIGHT[mainPos],
-      type: historical ? '历史全明星' : '现役球员',
+      type: historical
+        ? (player.historicalTier === 'hall-of-fame' ? '名人堂惊喜' : '近代全明星惊喜')
+        : '现役球员',
       ovr: clamp(player.rating, 50, 99),
       threePT: clamp(attrs.shotExt, 35, 99),
       MID: clamp(attrs.shotInt, 35, 99),
@@ -145,6 +147,7 @@
       _sourceKind: historical ? 'historical' : 'current',
       _sourceYear: player.source ? player.source.year : 2025,
       _sourceLabel: player.source ? player.source.label : '2025-26',
+      _historicalTier: player.historicalTier || '',
       _photoLocal: player.photoLocal,
       _photoUrl: player.photoUrl || '',
       _poolUid: player.uid
@@ -154,7 +157,8 @@
   window.PERFECT_PLAYER_PHOTO_BY_NAME = window.PERFECT_PLAYER_PHOTO_BY_NAME || {};
   window.PERFECT_PLAYER_DISPLAY_BY_NAME = window.PERFECT_PLAYER_DISPLAY_BY_NAME || {};
   window.PERFECT_PLAYER_BUILD_DATA = window.PERFECT_PLAYER_BUILD_DATA || {};
-  window.PERFECT_PLAYER_DATA_READY = fetch('assets/data/perfect-player-pool.json?v=20260807')
+  window.PERFECT_PLAYER_HISTORICAL_SURPRISE_DATA = window.PERFECT_PLAYER_HISTORICAL_SURPRISE_DATA || {};
+  window.PERFECT_PLAYER_DATA_READY = fetch('assets/data/perfect-player-pool.json?v=20260808')
     .then(function (response) {
       if (!response.ok) throw new Error('球员库加载失败：' + response.status);
       return response.json();
@@ -162,7 +166,8 @@
     .then(function (payload) {
       var report = {
         teams: 0,
-        teamsWithTarget18: 0,
+        teamsWithTarget12: 0,
+        teamsWithHistorical5: 0,
         current: 0,
         historical: 0,
         total: 0,
@@ -174,15 +179,18 @@
         var abbr = TEAM_TO_ABBR[sourceTeam.name];
         if (!abbr || typeof NBA2K_DATA === 'undefined' || !NBA2K_DATA[abbr]) return;
         var converted = (sourceTeam.players || []).map(convertPlayer);
-        converted.forEach(function (player) {
+        var historicalSurprises = (sourceTeam.historicalPlayers || []).map(convertPlayer);
+        converted.concat(historicalSurprises).forEach(function (player) {
           window.PERFECT_PLAYER_PHOTO_BY_NAME[player.name] = player._photoLocal || player._photoUrl || '';
           window.PERFECT_PLAYER_DISPLAY_BY_NAME[player.name] = player.cname || player.name;
           report[player._sourceKind] += 1;
         });
         window.PERFECT_PLAYER_BUILD_DATA[abbr] = converted;
+        window.PERFECT_PLAYER_HISTORICAL_SURPRISE_DATA[abbr] = historicalSurprises;
         report.teams += 1;
-        if (sourceTeam.currentCount === 12 && sourceTeam.historicalCount === 6) report.teamsWithTarget18 += 1;
-        report.total += converted.length;
+        if (sourceTeam.currentCount === 12 && converted.length === 12) report.teamsWithTarget12 += 1;
+        if (sourceTeam.historicalCount === 5 && historicalSurprises.length === 5) report.teamsWithHistorical5 += 1;
+        report.total += converted.length + historicalSurprises.length;
       });
       window.PERFECT_PLAYER_POOL_REPORT = report;
       return report;

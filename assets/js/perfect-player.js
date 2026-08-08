@@ -141,7 +141,7 @@
     { year: 1984, label: '1983-84', sub: '黑白双雄' }
   ];
   const SINGLE_SEASON = { year: 2025, label: '虎扑单赛季 · 2025-26' };
-  const ATTRIBUTE_POOL_URL = 'assets/data/perfect-player-pool.json?v=20260807';
+  const ATTRIBUTE_POOL_URL = 'assets/data/perfect-player-pool.json?v=20260808';
 
   // 真人风格球员大头照（由 tools/generate_ai_avatars.py 生成，顺序固定以兼容旧存档）
   const AI_AVATAR_META = [
@@ -340,7 +340,8 @@
 
   function sourceKindLabel(player) {
     if (!player || !player.source) return '当前名单';
-    return player.source.kind === 'historical' ? '历史全明星+' : '现役';
+    if (player.source.kind !== 'historical') return '现役';
+    return player.historicalTier === 'hall-of-fame' ? '名人堂惊喜' : '近代全明星惊喜';
   }
 
   function sourcePlayerLabel(player) {
@@ -356,7 +357,7 @@
     if (!teams) return [];
     const seen = {};
     Object.keys(teams).forEach(id => {
-      (teams[id].players || []).forEach(player => {
+      (teams[id].players || []).concat(teams[id].historicalPlayers || []).forEach(player => {
         const source = player.source || {};
         const year = parseNum(source.year, 0);
         if (year && !seen[year]) seen[year] = { year, label: source.label || `${year}-${String((year + 1) % 100).padStart(2, '0')}` };
@@ -420,7 +421,10 @@
       let id = pick(eligibleIds);
       let guard = 0;
       while (id === PP.build.team && eligibleIds.length > 1 && guard++ < 8) id = pick(eligibleIds);
-      const roster = (pool[id].players || []).slice(0, 15);
+      const currentRoster = (pool[id].players || []).slice(0, 12);
+      const historicalRoster = (pool[id].historicalPlayers || []).slice(0, 5);
+      const roster = currentRoster.slice();
+      if (historicalRoster.length && Math.random() < 0.10) roster.push(pick(historicalRoster));
       const fresh = roster.filter(p => !PP.build.usedPlayers.has(sourcePlayerKey(p)));
       const matching = (fresh.length ? fresh : roster).filter(p => parseNum(p.source && p.source.year, 0) === requested.year);
       const candidates = matching.length ? matching : (fresh.length ? fresh : roster);
@@ -443,7 +447,7 @@
     while (id === PP.build.team && guard++ < 8) id = pick(ids);
     PP.build.team = id;
     PP.build.showTeam = id;
-    PP.build.roster = teams[id].slice(0, 15);
+    PP.build.roster = teams[id].slice(0, 5);
     PP.build.swapsLeft = 3;
     PP.build.selectedPlayer = null;
     PP.build.sourceRoll = { requestedYear: PP.era, requestedLabel: (ERAS.find(e => e.year === PP.era) || ERAS[0]).label, teamId: id };
@@ -1313,7 +1317,7 @@
           ${teamLogoHtml(meta, 44)}
           <div>
             <div class="slot-team-name">${esc(meta.z || meta.n)}</div>
-            <div class="slot-team-sub">${meta.a} · 精选 12 现役 + 3 历史全明星+ · 还需锁定 ${remaining.length} 项</div>
+            <div class="slot-team-sub">${meta.a} · 12 现役 + 5 名人堂惊喜卡（低概率） · 还需锁定 ${remaining.length} 项</div>
           </div>
         </div>
         <div class="slot-source-chain">
@@ -1431,7 +1435,7 @@
         <div class="reveal-ovr">${c.ovr}</div>
         <div class="reveal-grade">${grade}</div>
         <div class="reveal-archetype">🏷️ ${c.archetype}</div>
-        <div class="slot-source-note" style="margin:10px 0 0;">🏀 虎扑单赛季 · 13 项属性均来自随机 年份 → 球队 → 球员 · 每队 12 现役 + 3 历史全明星+</div>
+        <div class="slot-source-note" style="margin:10px 0 0;">🏀 虎扑单赛季 · 13 项属性均来自随机 年份 → 球队 → 球员 · 历史惊喜卡每轮最多 1 张</div>
         <div class="reveal-attrs">${attrRows}</div>
         <div class="similar-title">🏀 相似球员（按属性画像）</div>
         <div class="similar-list">${similar}</div>
@@ -2395,7 +2399,7 @@
 
   /* ==================== 玩法说明 ==================== */
   const HELP_PAGES = [
-    { title: '建球员', content: '本项目固定一个虎扑风格单赛季。建球员时每轮按“随机年份 → 随机球队 → 随机球员”抽取属性来源，共锁定 13 项；每队精选 12 名现役 + 3 名历史全明星以上球员，每轮可换球员 3 次，跨位置锁定会触发属性衰减。' },
+    { title: '建球员', content: '本项目固定一个虎扑风格单赛季。建球员时每轮按“随机年份 → 随机球队 → 随机球员”抽取属性来源，共锁定 13 项；每队有 12 名现役和 5 张名人堂/近代全明星历史惊喜卡，历史卡低概率出现且每轮最多 1 张。' },
     { title: '赛季', content: '选择生涯球队后进入 82 场常规赛。可以逐场模拟或批量快进，比赛由本项目模拟引擎按真实属性规则生成。比赛中途会出现随机事件与周行动，影响媒体压力、热度、球迷支持、体力与士气等数值（均在界面上以 0-100 明确展示）。' },
     { title: '季后赛', content: '常规赛结束后按战绩排名，7-10 名先打附加赛，随后东西部各 8 强进行七场四胜系列赛，直至总决赛。我的系列赛逐场模拟并生成数据。' },
     { title: '单赛季结算', content: '季后赛结束后进入最终总结，展示常规赛/季后赛数据、荣誉和冠军结果。完成总结后回到首页；本模式不进入休赛期，也没有下一赛季入口。' }

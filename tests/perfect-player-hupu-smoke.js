@@ -61,12 +61,25 @@ async function main() {
   });
   const teams = Object.values(pool.teams || {});
   assert.equal(teams.length, 30);
+  const historicalCacheDir = path.join(root, 'assets', 'images', 'Player', 'historical-nba');
+  const historicalCachePlaceholders = fs.readdirSync(historicalCacheDir)
+    .filter(file => file.endsWith('.png'))
+    .filter(file => fs.statSync(path.join(historicalCacheDir, file)).size === 12430);
+  assert.deepEqual(historicalCachePlaceholders, [], '历史头像缓存不应残留 NBA 灰色占位图');
   teams.forEach(team => {
-    assert.equal(team.players.length, 18, team.name + ' 应有 18 人');
+    assert.equal(team.players.length, 12, team.name + ' 常规池应有 12 名现役球员');
+    assert.equal(team.historicalPlayers.length, 5, team.name + ' 应有 5 张历史惊喜卡');
     assert.equal(team.currentCount, 12, team.name + ' 应有 12 名现役');
-    assert.equal(team.historicalCount, 6, team.name + ' 应有 6 名历史巅峰球员');
+    assert.equal(team.historicalCount, 5, team.name + ' 应有 5 名历史惊喜球员');
     team.players.forEach(player => {
       assert.ok(fs.existsSync(path.join(root, player.photoLocal)), player.name + ' 缺少本地头像');
+    });
+    team.historicalPlayers.forEach(player => {
+      const photoPath = path.join(root, player.photoLocal);
+      assert.ok(fs.existsSync(photoPath), player.name + ' 缺少本地历史头像');
+      assert.notEqual(fs.statSync(photoPath).size, 12430, player.name + ' 不能使用 NBA 灰色占位头像');
+      assert.ok(!['Terry Cummings', 'Norm Nixon', 'Norman Ellard Nixon'].includes(player.nameEn), player.nameEn + ' 不应进入历史惊喜池');
+      assert.ok(['hall-of-fame', 'modern-all-star'].includes(player.historicalTier), player.nameEn + ' 历史层级缺失');
     });
   });
 
@@ -98,25 +111,27 @@ async function main() {
     });
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForSelector('#screen-menu.active');
-    await page.waitForFunction(() => window.PERFECT_PLAYER_POOL_REPORT && window.PERFECT_PLAYER_POOL_REPORT.total === 540);
+    await page.waitForFunction(() => window.PERFECT_PLAYER_POOL_REPORT && window.PERFECT_PLAYER_POOL_REPORT.total === 510);
 
     assert.equal(await page.locator('.feature-card').count(), 1, '首页只应有虎扑原生涯入口');
     assert.equal(await page.locator('#screen-achievements').count(), 0, '征服联盟占位页应移除');
     assert.equal(await page.locator('.btn-share-poster').count(), 0, 'JRs 发帖入口应移除');
     const poolReport = await page.evaluate(() => window.PERFECT_PLAYER_POOL_REPORT);
     assert.deepEqual(poolReport, {
-      teams: 30, teamsWithTarget18: 30, current: 360, historical: 180, total: 540,
+      teams: 30, teamsWithTarget12: 30, teamsWithHistorical5: 30, current: 360, historical: 150, total: 510,
       historicalBuildOnly: true, competitionRosterSource: 'NBA2K_DATA (current-only)'
     });
     const poolSeparation = await page.evaluate(() => ({
       buildSize: PERFECT_PLAYER_BUILD_DATA.LAL.length,
-      buildHistorical: PERFECT_PLAYER_BUILD_DATA.LAL.filter(player => player._sourceKind === 'historical').length,
+      buildHistorical: PERFECT_PLAYER_HISTORICAL_SURPRISE_DATA.LAL.length,
+      buildHistoricalNames: PERFECT_PLAYER_HISTORICAL_SURPRISE_DATA.LAL.map(player => player.name),
       leagueSize: NBA2K_DATA.LAL.length,
       leagueHistorical: NBA2K_DATA.LAL.filter(player => player._sourceKind === 'historical').length,
       lineupHistorical: Object.values(calcTeamLineup('LAL').starters).concat(calcTeamLineup('LAL').bench).filter(player => player._sourceKind === 'historical').length
     }));
-    assert.equal(poolSeparation.buildSize, 18, '建模候选池应保留每队 18 人');
-    assert.equal(poolSeparation.buildHistorical, 6, '建模候选池应有六名历史巅峰球员');
+    assert.equal(poolSeparation.buildSize, 12, '建模常规池应保留每队 12 名现役球员');
+    assert.equal(poolSeparation.buildHistorical, 5, '建模历史惊喜池应有五名球员');
+    assert.ok(!poolSeparation.buildHistoricalNames.includes('Terry Cummings') && !poolSeparation.buildHistoricalNames.includes('Norm Nixon'), '非名人堂球员不应进入历史惊喜池');
     assert.ok(poolSeparation.leagueSize >= 10, '正式球队应保留原现役轮换');
     assert.equal(poolSeparation.leagueHistorical, 0, '正式比赛名单不应注入经典球员');
     assert.equal(poolSeparation.lineupHistorical, 0, '比赛轮换不应出现经典球员');
@@ -192,13 +207,31 @@ async function main() {
     await page.screenshot({ path: path.join(outputDir, '02-five-player-build.png'), fullPage: false });
 
     const historicalList = await page.evaluate(() => {
-      const historical = PERFECT_PLAYER_BUILD_DATA.LAL.filter(player => player._sourceKind === 'historical');
+      const historical = PERFECT_PLAYER_HISTORICAL_SURPRISE_DATA.LAL;
       renderRosterPlayers('LAL', historical, PERFECT_PLAYER_BUILD_DATA.LAL);
       return historical.map(player => ({ name: player.name, label: player._sourceLabel, photo: player._photoLocal }));
     });
-    assert.equal(historicalList.length, 6, '每队建模池应有六名历史巅峰球员');
+    assert.equal(historicalList.length, 5, '每队历史惊喜池应有五名球员');
     assert.ok(historicalList.every(player => player.label && player.photo), '历史球员应有赛季与本地头像');
-    assert.equal(await page.locator('.bp-detail').evaluateAll(nodes => nodes.filter(node => /经典|生涯巅峰/.test(node.textContent)).length), 6, '历史候选应显式标注经典赛季');
+    assert.equal(await page.locator('.bp-detail').evaluateAll(nodes => nodes.filter(node => /名人堂惊喜|近代全明星惊喜/.test(node.textContent)).length), 5, '历史候选应显式标注惊喜层级');
+
+    const surpriseRolls = await page.evaluate(() => {
+      const originalRandom = Math.random;
+      Math.random = () => 0.05;
+      const surprise = drawBuildPlayers(PERFECT_PLAYER_BUILD_DATA.LAL, 5, 'LAL');
+      Math.random = () => 0.99;
+      const normal = drawBuildPlayers(PERFECT_PLAYER_BUILD_DATA.LAL, 5, 'LAL');
+      Math.random = originalRandom;
+      return {
+        surprise: surprise.map(player => player._sourceKind),
+        normal: normal.map(player => player._sourceKind),
+        surpriseUnique: new Set(surprise.map(player => player.name)).size,
+        normalUnique: new Set(normal.map(player => player.name)).size
+      };
+    });
+    assert.equal(surpriseRolls.surprise.filter(kind => kind === 'historical').length, 1, '低概率命中时最多只插入一张历史惊喜卡');
+    assert.equal(surpriseRolls.normal.filter(kind => kind === 'historical').length, 0, '未命中时不应固定出现历史球员');
+    assert.equal(surpriseRolls.surpriseUnique, 5, '历史惊喜轮次仍需五人且同轮不重复');
 
     for (let index = 0; index < 13; index++) {
       await page.evaluate(() => {
@@ -316,7 +349,7 @@ async function main() {
     const localBadResponses = badResponses.filter(item => item.includes(`127.0.0.1:${port}`));
     assert.deepEqual(localBadResponses, [], '不应有本地 4xx 资源：' + localBadResponses.join(', '));
     assert.deepEqual(errors, [], '浏览器错误：' + errors.join('\n') + '\n4xx：' + badResponses.join('\n'));
-    console.log(JSON.stringify({ ok: true, pool: 540, current: 360, historical: 180, injuryEventsAdded: 12, draftEvents: 19, simulation, screenshots: outputDir }, null, 2));
+    console.log(JSON.stringify({ ok: true, pool: 510, current: 360, historical: 150, injuryEventsAdded: 12, draftEvents: 19, simulation, screenshots: outputDir }, null, 2));
   } finally {
     if (browser) await browser.close();
     server.kill();

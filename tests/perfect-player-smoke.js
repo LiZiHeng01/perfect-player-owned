@@ -89,15 +89,17 @@ async function main() {
   const poolTeams = Object.values(pool.teams || {});
   assert.equal(poolTeams.length, 30, '精选球员池应有 30 支球队');
   poolTeams.forEach(team => {
-    assert.equal(team.players.length, 15, `${team.name} 应有 15 名精选球员`);
-    assert.equal(team.currentCount, 12, `${team.name} 应保持 80% 现役球员`);
-    assert.equal(team.historicalCount, 3, `${team.name} 应保持 20% 历史全明星球员`);
+    assert.equal(team.players.length, 12, `${team.name} 常规池应有 12 名现役球员`);
+    assert.equal(team.historicalPlayers.length, 5, `${team.name} 应有 5 张历史惊喜卡`);
+    assert.equal(team.currentCount, 12, `${team.name} 应保持 12 名现役球员`);
+    assert.equal(team.historicalCount, 5, `${team.name} 应保持 5 名历史惊喜球员`);
     team.players.filter(player => player.source && player.source.kind === 'current').forEach(player => {
       assert.ok(player.photoUrl && /\/260x190\/\d+\.png$/.test(player.photoUrl), `${player.name} 应使用虎扑同款 260x190 头像地址`);
       assert.ok(player.photoLocal && fs.existsSync(path.join(root, player.photoLocal)), `${player.name} 现役头像应已本地化`);
     });
-    team.players.filter(player => player.source && player.source.kind === 'historical').forEach(player => {
+    team.historicalPlayers.forEach(player => {
       assert.ok(player.photoLocal && fs.existsSync(path.join(root, player.photoLocal)), `${player.name} 历史头像应已本地化`);
+      assert.notEqual(fs.statSync(path.join(root, player.photoLocal)).size, 12430, `${player.name} 不应使用历史灰色占位头像`);
     });
   });
 
