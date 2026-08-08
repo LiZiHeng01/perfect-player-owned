@@ -549,7 +549,64 @@ async function main() {
       mvpUnlocked: { mvp: true, fmvp: false },
       hasSeparateAchievement: true
     }, 'FMVP 与常规赛 MVP 成就必须完全分开：' + JSON.stringify(mvpSplitProbe));
+    const singleCareerAchievementProbe = await page.evaluate(() => {
+      const user = getHupuDisplayName();
+      function honors(act, label, count) {
+        return Array.from({ length: count }, (_, i) => ({ act, label, seasonNum: i + 1, winner: user, isUser: true }));
+      }
+
+      // 旧版可能把多个生涯的次数写进隐藏计数并提前解锁；当前生涯只有 1 冠时必须撤回。
+      PP_FX.resetAchievements();
+      STATE.gameId = 'career-migration';
+      STATE.season.awards = [];
+      STATE.career.seasons = [];
+      STATE.career.honors = honors('champion', '总冠军', 1);
+      PP_FX.getUnlocked().champion_x3 = { at: 1 };
+      PP_FX.getUnlocked().__counters = { champion: 3 };
+      PP_FX.syncAchievements();
+      const legacyFalseUnlockRemoved = !PP_FX.getUnlocked().champion_x3 && !PP_FX.getUnlocked().__counters;
+
+      // 分开的两次生涯各有冠军，永久的“总冠军”可以保留，但不能拼成“三冠”。
+      PP_FX.resetAchievements();
+      STATE.gameId = 'career-one';
+      STATE.career.honors = honors('champion', '总冠军', 2);
+      PP_FX.syncAchievements();
+      STATE.gameId = 'career-two';
+      STATE.career.honors = honors('champion', '总冠军', 1);
+      PP_FX.syncAchievements();
+      const splitCareersDoNotStack = !!PP_FX.getUnlocked().champion && !PP_FX.getUnlocked().champion_x3;
+
+      // 同一生涯达到 3 次后写入凭证；之后开始新生涯，已合法获得的成就永久保留。
+      STATE.gameId = 'career-three';
+      STATE.career.honors = honors('champion', '总冠军', 3);
+      PP_FX.syncAchievements();
+      const champRecord = PP_FX.getUnlocked().champion_x3;
+      const sameCareerChampUnlocks = !!(champRecord && champRecord.singleCareer && champRecord.singleCareer.gameId === 'career-three' && champRecord.singleCareer.count === 3);
+      STATE.gameId = 'career-four';
+      STATE.career.honors = honors('champion', '总冠军', 1);
+      PP_FX.syncAchievements();
+      const validUnlockSurvivesNewCareer = !!PP_FX.getUnlocked().champion_x3;
+
+      PP_FX.resetAchievements();
+      STATE.gameId = 'career-mvp';
+      STATE.career.honors = honors('mvp', 'MVP', 3);
+      PP_FX.syncAchievements();
+      const mvpRecord = PP_FX.getUnlocked().mvp_x3;
+      const sameCareerMvpUnlocks = !!(mvpRecord && mvpRecord.singleCareer && mvpRecord.singleCareer.gameId === 'career-mvp' && mvpRecord.singleCareer.count === 3);
+      const descriptionsExplicit = PP_FX.ACHIEVEMENTS.filter(item => item.id === 'mvp_x3' || item.id === 'champion_x3').every(item => item.desc.includes('同一生涯'));
+
+      return { legacyFalseUnlockRemoved, splitCareersDoNotStack, sameCareerChampUnlocks, validUnlockSurvivesNewCareer, sameCareerMvpUnlocks, descriptionsExplicit };
+    });
+    assert.deepEqual(singleCareerAchievementProbe, {
+      legacyFalseUnlockRemoved: true,
+      splitCareersDoNotStack: true,
+      sameCareerChampUnlocks: true,
+      validUnlockSurvivesNewCareer: true,
+      sameCareerMvpUnlocks: true,
+      descriptionsExplicit: true
+    }, '累计成就必须在同一次生涯内达成：' + JSON.stringify(singleCareerAchievementProbe));
     const achievementPanelProbe = await page.evaluate(() => {
+      PP_FX.resetAchievements();
       const got = PP_FX.getUnlocked();
       got.mvp = { at: 1 };
       got.fmvp = { at: 1 };

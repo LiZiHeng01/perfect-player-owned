@@ -14,9 +14,9 @@
   function rand(min, max) { return min + Math.random() * (max - min); }
   function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
 
-  // 成就数据独立持久化（与主存档解耦：跨生涯累计），localStorage 直存。
-  // Why: achievements are meta-progression that should survive a career reset,
-  // so they are intentionally NOT part of the lenf_auto_slot save blob.
+  // 成就数据独立持久化（与主存档解耦），localStorage 直存。
+  // 已经合法解锁的成就是跨生涯保留的；但“3 座 MVP / 3 座总冠军”这类
+  // 累计条件必须先在同一次生涯中达成，不能把多个新存档的次数相加。
   var ACH_KEY = 'pp_achievements_v1';
 
   var PP_FX = window.PP_FX = {};
@@ -291,12 +291,12 @@
     { id: 'sixth_man', icon: '🛋️', name: '超级第六人', desc: '当选最佳第六人', rarity: 'rare' },
     { id: 'mvp', icon: '🏆', name: '联盟 MVP', desc: '荣膺常规赛最有价值球员', rarity: 'legend' },
     { id: 'fmvp', icon: '👑', name: '总决赛 MVP', desc: '荣膺总决赛最有价值球员', rarity: 'legend' },
-    { id: 'mvp_x3', icon: '🐐', name: 'MVP 王朝', desc: '生涯累计 3 座 MVP', rarity: 'legend' },
+    { id: 'mvp_x3', icon: '🐐', name: 'MVP 王朝', desc: '同一生涯累计 3 座常规赛 MVP', rarity: 'legend' },
     // — 球队战绩 —
     { id: 'playoffs', icon: '🎟️', name: '季后赛门票', desc: '首次带队打进季后赛', rarity: 'common' },
     { id: 'win_60', icon: '🎊', name: '60 胜赛季', desc: '单赛季常规赛拿下 60 胜', rarity: 'epic' },
     { id: 'champion', icon: '🏆', name: '总冠军', desc: '夺得总冠军', rarity: 'legend' },
-    { id: 'champion_x3', icon: '💍', name: '三连话题', desc: '生涯累计 3 座总冠军', rarity: 'legend' },
+    { id: 'champion_x3', icon: '💍', name: '三连话题', desc: '同一生涯累计 3 座总冠军', rarity: 'legend' },
     // — 数据里程碑（单场） —
     { id: 'game_40', icon: '🔥', name: '40 分之夜', desc: '单场砍下 40+ 得分', rarity: 'rare' },
     { id: 'game_50', icon: '💥', name: '50 分神迹', desc: '单场砍下 50+ 得分', rarity: 'epic' },
@@ -343,11 +343,20 @@
   PP_FX.unlockedCount = unlockedCount;
 
   // 解锁一个成就；已解锁则忽略。返回是否为新解锁。
-  PP_FX.unlock = function (id) {
+  PP_FX.unlock = function (id, evidence) {
     var def = ACH_MAP[id];
     if (!def) return false;
-    if (unlocked[id]) return false;
+    if (unlocked[id]) {
+      // 旧版累计成就只有解锁时间，没有“同一生涯达成”的凭证。当前生涯
+      // 确实达到门槛时补写凭证，之后换新生涯也可正常永久保留。
+      if (evidence && !unlocked[id].singleCareer) {
+        unlocked[id].singleCareer = evidence;
+        saveUnlocked(unlocked);
+      }
+      return false;
+    }
     unlocked[id] = { at: Date.now() };
+    if (evidence) unlocked[id].singleCareer = evidence;
     saveUnlocked(unlocked);
     showUnlockPopup(def);
     // 元成就：解锁数量里程碑（延迟以免与当前弹窗叠加）
@@ -626,14 +635,46 @@
   }
   function displayName() { try { return window.getHupuDisplayName ? getHupuDisplayName() : ''; } catch (e) { return ''; } }
 
-  // 累计计数（跨赛季，存在成就存档里的隐藏计数中）
-  function bumpCounter(key) {
-    unlocked.__counters = unlocked.__counters || {};
-    unlocked.__counters[key] = (unlocked.__counters[key] || 0) + 1;
-    saveUnlocked(unlocked);
-    return unlocked.__counters[key];
+  // 只有这两项是“同一生涯内多次达成”的累计成就。成就解锁后仍永久保留，
+  // 但首次解锁必须附带当前 gameId 和当前生涯计数，杜绝跨存档拼次数。
+  var SINGLE_CAREER_CUMULATIVE = {
+    mvp_x3: { fact: 'mvp', threshold: 3 },
+    champion_x3: { fact: 'champion', threshold: 3 }
+  };
+
+  function singleCareerEvidence(s, count) {
+    return { version: 1, gameId: String((s && s.gameId) || 'current-career'), count: count };
   }
-  function getCounter(key) { return (unlocked.__counters && unlocked.__counters[key]) || 0; }
+
+  function hasSingleCareerEvidence(record, threshold) {
+    var proof = record && record.singleCareer;
+    return !!(proof && proof.version === 1 && proof.gameId && Number(proof.count) >= threshold);
+  }
+
+  function repairCumulativeAchievements(s, facts) {
+    var changed = false;
+    Object.keys(SINGLE_CAREER_CUMULATIVE).forEach(function (id) {
+      var rule = SINGLE_CAREER_CUMULATIVE[id];
+      var count = Number(facts[rule.fact]) || 0;
+      if (!unlocked[id] || hasSingleCareerEvidence(unlocked[id], rule.threshold)) return;
+      if (count >= rule.threshold) {
+        unlocked[id].singleCareer = singleCareerEvidence(s, count);
+      } else {
+        // 旧版本可能通过跨生涯隐藏计数误解锁。无法证明来自同一生涯时撤回。
+        delete unlocked[id];
+      }
+      changed = true;
+    });
+    // 清掉旧版跨生涯计数，避免以后任何逻辑再次把不同生涯相加。
+    if (unlocked.__counters) { delete unlocked.__counters; changed = true; }
+    if (changed) {
+      var realCount = unlockedCount();
+      if (unlocked.collector && realCount - 1 < 20) delete unlocked.collector;
+      realCount = unlockedCount();
+      if (unlocked.explorer && realCount - 1 < 10) delete unlocked.explorer;
+      saveUnlocked(unlocked);
+    }
+  }
 
   // 0) 传承加成：在揭晓(计算OVR)之前，把已购强化加到初始属性上。每个生涯只应用一次。
   function applyLegacyBeforeReveal() {
@@ -741,6 +782,8 @@
       if (draft.round === 1 && draft.pick >= 1 && draft.pick <= 14) PP_FX.unlock('lottery_pick');
       if (draft.round === 1 && draft.pick === 1) PP_FX.unlock('first_pick');
     }
+    // 先修复旧版跨生涯累计的误解锁，再按本次生涯事实判定累计成就。
+    repairCumulativeAchievements(s, facts);
     // 旧版本把 FMVP 的“MVP”子串当成常规赛 MVP，已经存进本地成就的
     // 误判在当前生涯只有 FMVP 时一并撤回；有真实常规赛 MVP 则保留。
     if (facts.fmvp > 0 && facts.mvp === 0) {
@@ -751,14 +794,14 @@
     }
     if (facts.mvp > 0) PP_FX.unlock('mvp');
     if (facts.fmvp > 0) PP_FX.unlock('fmvp');
-    if (facts.mvp >= 3) PP_FX.unlock('mvp_x3');
+    if (facts.mvp >= 3) PP_FX.unlock('mvp_x3', singleCareerEvidence(s, facts.mvp));
     if (facts.dpoy) PP_FX.unlock('dpoy');
     if (facts.roty) PP_FX.unlock('roty');
     if (facts.sixthman) PP_FX.unlock('sixth_man');
     if (facts.allStar) PP_FX.unlock('all_star');
     if (facts.allNBA) PP_FX.unlock('all_nba');
     if (facts.champion > 0) PP_FX.unlock('champion');
-    if (facts.champion >= 3) PP_FX.unlock('champion_x3');
+    if (facts.champion >= 3) PP_FX.unlock('champion_x3', singleCareerEvidence(s, facts.champion));
     // 赛季场均里程碑
     var ps = s.season && s.season.playerStats;
     if (ps && ps.games >= 40) {
