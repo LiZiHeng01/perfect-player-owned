@@ -605,6 +605,57 @@ async function main() {
       sameCareerMvpUnlocks: true,
       descriptionsExplicit: true
     }, '累计成就必须在同一次生涯内达成：' + JSON.stringify(singleCareerAchievementProbe));
+    const endingMediaProbe = await page.evaluate(() => {
+      const sample = {
+        score: 188, tier: '历史前十级别', hof: true, top100: true, goat: true,
+        seasonsCount: 15, games: 1180, points: 32600, championships: 6, mvp: 5, fmvp: 6,
+        dpoy: 2, allNBA: 11, allStar: 13, teamCount: 1, teamList: '芝加哥公牛',
+        firstTeam: '芝加哥公牛', lastTeam: '芝加哥公牛', jerseyTeams: []
+      };
+      const sampled = [];
+      for (let i = 0; i < 80; i++) sampled.push(...pickEndingMediaMoments(sample, 2));
+      // 视觉回归固定覆盖报纸与电视；随机性由上面的 80 轮采样验证。
+      sample.endingMediaMoments = [
+        { storyId: 'ring_case', formatId: 'newspaper' },
+        { storyId: 'goat_debate', formatId: 'broadcast' }
+      ];
+      STATE.career.legacy = sample;
+      const posterSections = buildRetirementStoryPosterSections(sample);
+      showLegacyModal(1, 0);
+      const card = document.querySelector('#legacy-modal .legacy-media-card');
+      return {
+        formatCount: ENDING_MEDIA_FORMATS.length,
+        storyCount: ENDING_MEDIA_STORIES.length,
+        sampledFormats: new Set(sampled.map(item => item.formatId)).size,
+        sampledStories: new Set(sampled.map(item => item.storyId)).size,
+        twoUniqueStories: new Set(sample.endingMediaMoments.map(item => item.storyId)).size === 2,
+        twoUniqueFormats: new Set(sample.endingMediaMoments.map(item => item.formatId)).size === 2,
+        posterSectionCount: posterSections.length,
+        posterContainsBothMediaStories: posterSections.some(item => item.text.includes('戒指陈列柜')) && posterSections.some(item => item.text.includes('历史第一的争论')),
+        firstStory: card && card.dataset.mediaStory,
+        firstFormat: card && card.dataset.mediaFormat,
+        hasHeadline: !!document.querySelector('#legacy-modal .legacy-media-headline'),
+        singleScreen: !!card && document.querySelector('#legacy-modal .team-picker-modal').scrollHeight <= window.innerHeight * .85 + 2
+      };
+    });
+    assert.ok(endingMediaProbe.formatCount >= 8, '结局媒体模板至少应有 8 种：' + JSON.stringify(endingMediaProbe));
+    assert.ok(endingMediaProbe.storyCount >= 32, '结局媒体报道角度至少应有 32 条：' + JSON.stringify(endingMediaProbe));
+    assert.ok(endingMediaProbe.sampledFormats >= 8 && endingMediaProbe.sampledStories >= 12, '多次生涯应产生足够不同的结局组合：' + JSON.stringify(endingMediaProbe));
+    assert.ok(endingMediaProbe.posterSectionCount === 6 && endingMediaProbe.posterContainsBothMediaStories, '退役长海报必须同步收录两段媒体回声：' + JSON.stringify(endingMediaProbe));
+    assert.ok(endingMediaProbe.twoUniqueStories && endingMediaProbe.twoUniqueFormats && endingMediaProbe.hasHeadline && endingMediaProbe.singleScreen, '单局两段时代回声必须不重复且保持单屏：' + JSON.stringify(endingMediaProbe));
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: path.join(outputDir, '05-ending-media-first.png'), fullPage: false });
+    await page.click('#legacy-modal .btn-primary');
+    await page.waitForTimeout(500);
+    const secondEndingMediaProbe = await page.evaluate(() => {
+      const card = document.querySelector('#legacy-modal .legacy-media-card');
+      return { story: card && card.dataset.mediaStory, format: card && card.dataset.mediaFormat, headline: document.querySelector('#legacy-modal .legacy-media-headline')?.textContent || '' };
+    });
+    assert.ok(secondEndingMediaProbe.story && secondEndingMediaProbe.format && secondEndingMediaProbe.headline, '第二段结局媒体事件必须可操作显示：' + JSON.stringify(secondEndingMediaProbe));
+    assert.notEqual(secondEndingMediaProbe.story, endingMediaProbe.firstStory, '同一结局的两段报道主题不能重复');
+    assert.notEqual(secondEndingMediaProbe.format, endingMediaProbe.firstFormat, '同一结局的两种媒体版式不能重复');
+    await page.screenshot({ path: path.join(outputDir, '06-ending-media-second.png'), fullPage: false });
+    await page.evaluate(() => document.getElementById('legacy-modal')?.remove());
     const achievementPanelProbe = await page.evaluate(() => {
       PP_FX.resetAchievements();
       const got = PP_FX.getUnlocked();

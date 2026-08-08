@@ -123,6 +123,23 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 .team-picker-modal{background:var(--bg);border:2px solid var(--border);border-radius:var(--radius);width:100%;max-width:400px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 8px 48px rgba(0,0,0,0.25);animation:slideUp .25s ease}
 .team-picker-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
 .team-picker-header span{font-family:var(--font-display);font-size:16px;font-weight:700}
+.legacy-media-card{position:relative;overflow:hidden;border:1px solid var(--border);border-radius:12px;background:var(--bg-card);padding:14px;margin-bottom:14px;box-shadow:var(--shadow)}
+.legacy-media-card::after{content:'🏀';position:absolute;right:-10px;bottom:-20px;font-size:76px;opacity:.045;transform:rotate(-12deg)}
+.legacy-media-kicker{font-size:9px;font-weight:900;letter-spacing:1.6px;text-transform:uppercase;color:var(--orange);margin-bottom:7px}
+.legacy-media-source{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:7px;margin-bottom:9px;border-bottom:2px solid currentColor;font-family:var(--font-display);font-size:12px;font-weight:900}
+.legacy-media-source small{font-family:var(--font-body);font-size:9px;font-weight:700;opacity:.62}
+.legacy-media-headline{position:relative;z-index:1;font-family:var(--font-display);font-size:21px;font-weight:900;line-height:1.18;color:var(--text);margin-bottom:8px}
+.legacy-media-body{position:relative;z-index:1;font-size:12.5px;line-height:1.65;color:var(--text-dim)}
+.legacy-media-quote{position:relative;z-index:1;margin-top:10px;padding:8px 10px;border-left:4px solid var(--orange);background:rgba(255,107,53,.07);font-size:11.5px;font-weight:700;color:var(--text)}
+.legacy-media-card.newspaper{font-family:serif;background:#f4eedf;color:#25211b;border-color:#a99e89;border-radius:2px;box-shadow:2px 3px 0 rgba(45,31,14,.18)}
+.legacy-media-card.newspaper .legacy-media-source{font-size:16px;border-top:4px double #25211b;border-bottom:4px double #25211b;padding:5px 0}.legacy-media-card.newspaper .legacy-media-headline{font-family:serif;font-size:23px}
+.legacy-media-card.broadcast{background:linear-gradient(145deg,#17243b,#0d1422);border-color:#e84c3d;color:#fff}.legacy-media-card.broadcast .legacy-media-headline,.legacy-media-card.broadcast .legacy-media-body{color:#fff}.legacy-media-card.broadcast .legacy-media-kicker{display:inline-block;background:#e84c3d;color:#fff;padding:3px 7px}.legacy-media-card.broadcast .legacy-media-source{color:#fff}.legacy-media-card.broadcast .legacy-media-quote{border-color:#ff6b55;background:rgba(255,107,85,.14);color:#fff}
+.legacy-media-card.magazine{background:linear-gradient(150deg,#fff8e9,#ffd7a5);border:3px solid #ff6b35}.legacy-media-card.magazine .legacy-media-source{color:#e84c24}.legacy-media-card.magazine .legacy-media-headline{font-size:24px;text-transform:uppercase}
+.legacy-media-card.teamwire{background:linear-gradient(135deg,#eef5ff,#fff);border-color:#6b91c7}.legacy-media-card.teamwire .legacy-media-source{color:#315f9e}.legacy-media-card.teamwire .legacy-media-quote{border-color:#315f9e;background:rgba(49,95,158,.08)}
+.legacy-media-card.fanzine{background:#fff5dc;border:2px dashed #e09a2c;transform:rotate(-.25deg)}.legacy-media-card.fanzine .legacy-media-source{color:#b66d00;border-bottom-style:dashed}.legacy-media-card.fanzine .legacy-media-headline{font-size:20px}
+.legacy-media-card.podcast{background:linear-gradient(135deg,#33224f,#171025);border-color:#9a68d5}.legacy-media-card.podcast .legacy-media-source,.legacy-media-card.podcast .legacy-media-headline,.legacy-media-card.podcast .legacy-media-body{color:#fff}.legacy-media-card.podcast .legacy-media-quote{border-color:#b68ae8;background:rgba(182,138,232,.14);color:#fff}
+.legacy-media-card.documentary{background:#171717;border-color:#555}.legacy-media-card.documentary .legacy-media-source,.legacy-media-card.documentary .legacy-media-headline,.legacy-media-card.documentary .legacy-media-body{color:#f6f0e6}.legacy-media-card.documentary .legacy-media-kicker{color:#e6b84e}.legacy-media-card.documentary .legacy-media-quote{border-color:#e6b84e;background:rgba(230,184,78,.1);color:#f6f0e6}
+.legacy-media-card.wire{background:#f7f7f7;border-color:#bbb;border-radius:4px}.legacy-media-card.wire .legacy-media-source{font-family:monospace;color:#333}.legacy-media-card.wire .legacy-media-headline{font-size:18px}.legacy-media-card.wire .legacy-media-body{font-family:monospace;color:#444;font-size:11.5px}
 .team-picker-close{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg-card);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:var(--text-dim);transition:all .1s}
 .team-picker-close:active{border-color:var(--orange);color:var(--orange)}
 .team-picker-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:10px 12px;overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1}
@@ -16407,6 +16424,111 @@ var RETIREMENT_COPY = [
 
 ;
 
+// ── 结局媒体时代回声：8 种版式 × 32 个报道角度 ──
+// 每次生涯固定抽取两条，避免在同一结局流程中刷新变文案；新生涯重新抽取。
+var ENDING_MEDIA_FORMATS = [
+  { id:'newspaper', icon:'📰', source:'篮坛纪事报', kicker:'退役特刊', stamp:'清晨头版' },
+  { id:'broadcast', icon:'📺', source:'全场紧逼 TV', kicker:'突发新闻', stamp:'晚间直播' },
+  { id:'magazine', icon:'📕', source:'终场哨声', kicker:'封面人物', stamp:'收藏特刊' },
+  { id:'teamwire', icon:'🏟️', source:'球队官方通讯', kicker:'官方公告', stamp:'球队档案' },
+  { id:'fanzine', icon:'📣', source:'第六人看台报', kicker:'球迷自印刊', stamp:'主场门口派发' },
+  { id:'podcast', icon:'🎙️', source:'加时赛播客', kicker:'特别节目', stamp:'第 4 节录音室' },
+  { id:'documentary', icon:'🎬', source:'最后一舞纪录片', kicker:'未公开片段', stamp:'镜头之外' },
+  { id:'wire', icon:'📠', source:'联盟新闻社', kicker:'新闻快讯', stamp:'即时电讯' }
+];
+
+var ENDING_MEDIA_STORIES = [
+  { id:'empty_locker', tag:'general', headline:'更衣柜已经清空，名字还留在门上', body:'工作人员把最后一双球鞋装进纸箱。第二天训练开始时，队友仍下意识望向那个位置。', quote:'离开的是球员，留下的是所有人已经习惯的标准。' },
+  { id:'last_bus', tag:'general', headline:'球队大巴少了一个永远提前到的人', body:'司机记得你总坐同一个位置，也记得客场输球后你常常最后一个下车。漫长赛季结束了，那张座位第一次一直空着。', quote:'有些生涯写在奖杯上，有些写在每天准时出发的大巴里。' },
+  { id:'kids_court', tag:'general', headline:'城市球场突然多了很多同样的号码', body:'退役消息公布后的周末，社区球馆里到处是模仿你动作的孩子。动作还不标准，庆祝姿势却学得一模一样。', quote:'一个球员真正留下来，是孩子开始假装自己就是他。' },
+  { id:'old_tape', tag:'general', headline:'录像室把你的比赛单独留了一块硬盘', body:'助教说新人以后还会反复看这些片段：怎样跑位、怎样回应低谷、怎样在最后两分钟保持安静。', quote:'数据告诉后来者你做到了什么，录像告诉他们你是怎么做到的。' },
+  { id:'schedule_gap', tag:'general', headline:'新赛季赛程公布，人们先找不见的那个名字', body:'联盟照常向前，新的明星登上揭幕战海报。球迷翻到最后，才真正意识到你的职业生涯已经结束。', quote:'时代结束时没有哨声，只有下一张赛程表上少了一个熟悉的人。' },
+  { id:'opponent_salute', tag:'general', headline:'老对手发来一句：终于不用防你了', body:'那条消息后面跟着一个笑脸。几分钟后，他又补了一句：说真的，和你打球让我变得更好。', quote:'最诚实的致敬，常常来自那些曾经最想击败你的人。' },
+  { id:'trainer_room', tag:'general', headline:'训练师收起那份用了多年的身体报告', body:'纸页上记着每一次扭伤、每一次恢复和每一次坚持出场。最后一页只有一行字：任务完成。', quote:'伟大不仅是高光，也是把身体一次次带回球场。' },
+  { id:'one_ticket', tag:'general', headline:'一张旧球票，讲完了整段生涯', body:'一位球迷晒出你新秀首战的票根，又放上最后一战的照片。两张纸之间，是他和你一起长大的岁月。', quote:'球员计算赛季，球迷计算青春。' },
+  { id:'quiet_morning', tag:'general', headline:'退役后的第一个清晨，没有训练提醒', body:'你还是在熟悉的时间醒来。窗外很安静，身体却已经准备好去球馆。多年形成的节奏，不会在一夜之间消失。', quote:'告别比赛很快，学会不再比赛需要更久。' },
+  { id:'locker_story', tag:'general', headline:'年轻队友开始讲“他以前会怎么做”', body:'战术暂停遇到混乱时，有人重复你说过的话。你已经不在名单里，却依然参与着这支球队的决定。', quote:'传承不是雕像，是你的习惯变成了别人的本能。' },
+  { id:'ring_case', tag:'champion', headline:'戒指陈列柜合上，冠军故事仍在继续', body:'你赢得的 {championships} 座总冠军被摆进同一束灯光里。每一枚戒指背后，都是一支完全不同却同样相信你的球队。', quote:'冠军不是生涯的全部，但它证明你曾把一个赛季带到最后。' },
+  { id:'parade_route', tag:'champion', headline:'夺冠游行路线再次挂起你的照片', body:'城市没有重新封路，只是在熟悉的街角放上那年夏天的画面。人们路过时，仍会指认自己当年站的位置。', quote:'奖杯属于球队，游行属于整座城市的记忆。' },
+  { id:'clutch_archive', tag:'champion', headline:'联盟重播你最关键的第四节', body:'节目没有只剪进球，也保留了暂停时的眼神和最后一次防守。那是冠军真正形成的几分钟。', quote:'关键时刻不是一个投篮，而是所有人都知道球该交给谁。' },
+  { id:'banner_shadow', tag:'champion', headline:'冠军旗帜下，多出一个不能被跳过的名字', body:'新球员第一次走进主场时抬头看见那些年份。教练告诉他们，{player}曾经把这里的标准推到那么高。', quote:'王朝会结束，冠军建立的尺度不会。' },
+  { id:'goat_debate', tag:'goat', headline:'历史第一的争论，从你退役这天重新开始', body:'每档节目都列出自己的标准，但 {mvp} 座MVP、{championships} 座冠军和 {fmvp} 座FMVP让任何榜单都无法绕开你。', quote:'争论不会给出终点，却已经说明你站在最前面。' },
+  { id:'goat_museum', tag:'goat', headline:'联盟博物馆为你的时代腾出整面墙', body:'球衣、球鞋、比赛用球和手写战术被放在一起。策展人说，单独一件都讲不完这段生涯。', quote:'有人进入历史，有人迫使历史重新布置展厅。' },
+  { id:'goat_standard', tag:'goat', headline:'后来者不再追一个纪录，而是追你的整段生涯', body:'得分、奖杯、持续时间和关键比赛被放在同一张表里。比较变得近乎苛刻，因为你的答案太完整。', quote:'纪录可以被拆开超越，完整的时代很难复制。' },
+  { id:'one_city_map', tag:'one_team', headline:'一座城市，用 {seasonsCount} 年把你变成自己人', body:'从新秀公寓到最后一场比赛，你的路线几乎可以画成城市地图。每个街区都有人拥有一段与你有关的记忆。', quote:'忠诚不是从未想过离开，而是一次次选择留下。' },
+  { id:'one_city_store', tag:'one_team', headline:'主场商店决定永久保留你的球衣', body:'新赛季球衣已经上架，你的号码仍放在最醒目的位置。店员说，那不是旧款，是城市的常备款。', quote:'有些号码不会过季。' },
+  { id:'one_city_key', tag:'one_team', headline:'市长把城市钥匙交给最熟悉的球员', body:'仪式不长，你却在台上认出了很多老面孔。他们从新秀年就在看台上，今天头发已经白了。', quote:'你守住一支球队，城市也会替你守住名字。' },
+  { id:'many_passports', tag:'journeyman', headline:'多座城市同时刊出同一句：谢谢你来过', body:'从{firstTeam}到{lastTeam}，每一站记住你的方式不同。有人记得绝杀，有人记得更衣室，也有人只记得你从不敷衍。', quote:'辗转不是漂泊，是把同一种认真带到更多地方。' },
+  { id:'many_jerseys', tag:'journeyman', headline:'衣柜里每件球衣，都是一段没有被抹掉的关系', body:'你把效力过的球队球衣按时间排好。颜色彼此冲突，放在一起却正好拼成完整的职业生涯。', quote:'换队会改变地址，不会取消在那里认真生活过的年份。' },
+  { id:'airport_map', tag:'journeyman', headline:'机场航线图，意外成了你的生涯地图', body:'你曾无数次拖着行李去往新城市。退役后回看，那些转机、酒店和陌生球馆都成了故事的一部分。', quote:'不是每条传奇之路都笔直。' },
+  { id:'scoring_book', tag:'scorer', headline:'技术台封存那支写下 {points} 分的笔', body:'记分员说，很多夜晚只要你开始连续得分，他就知道自己的工作会变得很忙。', quote:'篮筐不会记住每一球，观众会记住比赛被你点燃的声音。' },
+  { id:'shot_chart', tag:'scorer', headline:'一张投篮热区图，几乎没有冷色', body:'数据节目把你整个生涯的出手叠在一张图上。密密麻麻的落点像一座只属于得分手的城市。', quote:'你把球场每一块地板，都变成过自己的位置。' },
+  { id:'defense_tape', tag:'defender', headline:'最好的致敬片里，主角很少碰球', body:'剪辑全是换防、协防和把对手逼向错误方向。没有华丽数字，教练们却看得比任何人都认真。', quote:'防守的伟大，是让本来会发生的事情没有发生。' },
+  { id:'opponent_relief', tag:'defender', headline:'得分手们公开承认：今晚终于能睡好了', body:'他们讲起被你缠住的夜晚，语气像抱怨，脸上却全是尊敬。', quote:'最好的防守奖杯，有时写在对手的噩梦里。' },
+  { id:'assist_tree', tag:'playmaker', headline:'联盟画出一棵由你传球长成的得分树', body:'每条枝杈连接一位曾接到你助攻的队友。图越画越大，最后几乎装下了一个时代。', quote:'组织者最伟大的统计，是让多少人的高光成为可能。' },
+  { id:'teammate_contracts', tag:'playmaker', headline:'多位队友说，他们的下一份合同里有你一份功劳', body:'你的传球让年轻人被看见，也让老将重新找到位置。助攻表只记一次，职业生涯却因此延长很多年。', quote:'真正的控卫不只传出得分，也传出队友的未来。' },
+  { id:'no_ring_respect', tag:'no_ring', headline:'没有戒指，同行投票仍把你列入最难对付的人', body:'冠军栏保持空白，但对手没有用它否定你。他们记得每轮系列赛前，教练都必须先写下你的名字。', quote:'遗憾会留在履历里，尊重留在真正交过手的人心里。' },
+  { id:'no_ring_city', tag:'no_ring', headline:'城市没有等到冠军，仍为你站到最后', body:'最后一场结束后，看台迟迟没有清空。球迷知道故事不够圆满，也知道认真不该只由奖杯证明。', quote:'无冕不是无名，有些爱不需要冠军游行。' },
+  { id:'no_ring_letter', tag:'no_ring', headline:'一封公开信写道：谢谢你让等待也有意义', body:'球迷没有假装那些失利不疼。他们只是说，在最难的年份里，你从来没有先放弃这座城市。', quote:'结局可以遗憾，陪伴不会因此作废。' }
+];
+
+function endingMediaStoryEligible(story, r) {
+  if (story.tag === 'general') return true;
+  if (story.tag === 'champion') return (r.championships || 0) > 0;
+  if (story.tag === 'goat') return !!r.goat;
+  if (story.tag === 'one_team') return (r.teamCount || 0) === 1 && (r.seasonsCount || 0) >= 4;
+  if (story.tag === 'journeyman') return (r.teamCount || 0) >= 3;
+  if (story.tag === 'scorer') return (r.games || 0) > 0 && (r.points || 0) / r.games >= 24;
+  if (story.tag === 'defender') return (r.dpoy || 0) > 0;
+  if (story.tag === 'playmaker') return !!(STATE.career && STATE.career.totalStats && (STATE.career.totalStats.ast || 0) / Math.max(1, STATE.career.totalStats.games || 0) >= 7);
+  if (story.tag === 'no_ring') return (r.championships || 0) === 0 && (r.score || 0) >= 60;
+  return true;
+}
+
+function pickEndingMediaMoments(r, count) {
+  count = count || 2;
+  var eligible = ENDING_MEDIA_STORIES.filter(function(story) { return endingMediaStoryEligible(story, r); });
+  var special = eligible.filter(function(story) { return story.tag !== 'general'; });
+  var general = eligible.filter(function(story) { return story.tag === 'general'; });
+  function shuffled(list) { return list.slice().sort(function() { return Math.random() - .5; }); }
+  var ordered = shuffled(special).concat(shuffled(general));
+  var formats = shuffled(ENDING_MEDIA_FORMATS);
+  var moments = [];
+  for (var i = 0; i < ordered.length && moments.length < count; i++) {
+    moments.push({ storyId: ordered[i].id, formatId: formats[moments.length % formats.length].id });
+  }
+  return moments;
+}
+
+function ensureEndingMediaMoments(r) {
+  if (!Array.isArray(r.endingMediaMoments) || r.endingMediaMoments.length < 2) {
+    r.endingMediaMoments = pickEndingMediaMoments(r, 2);
+  }
+  return r.endingMediaMoments;
+}
+
+function fillEndingMediaText(text, r) {
+  var vars = {
+    player: (typeof getHupuDisplayName === 'function') ? getHupuDisplayName() : '你的名字',
+    seasonsCount: r.seasonsCount || 0, games: r.games || 0, points: Math.round(r.points || 0),
+    championships: r.championships || 0, mvp: r.mvp || 0, fmvp: r.fmvp || 0,
+    firstTeam: r.firstTeam || '', lastTeam: r.lastTeam || '', teamList: r.teamList || ''
+  };
+  return String(text || '').replace(/\{(\w+)\}/g, function(m, key) { return key in vars ? String(vars[key]) : m; });
+}
+
+function renderEndingMediaMoment(moment, r, index, total) {
+  var story = ENDING_MEDIA_STORIES.find(function(item) { return item.id === moment.storyId; }) || ENDING_MEDIA_STORIES[0];
+  var format = ENDING_MEDIA_FORMATS.find(function(item) { return item.id === moment.formatId; }) || ENDING_MEDIA_FORMATS[0];
+  return '<div class="legacy-media-card ' + format.id + '" data-media-story="' + story.id + '" data-media-format="' + format.id + '">' +
+    '<div class="legacy-media-kicker">' + format.kicker + ' · 时代回声 ' + (index + 1) + '/' + total + '</div>' +
+    '<div class="legacy-media-source"><span>' + format.icon + ' ' + format.source + '</span><small>' + format.stamp + '</small></div>' +
+    '<div class="legacy-media-headline">' + fillEndingMediaText(story.headline, r) + '</div>' +
+    '<div class="legacy-media-body">' + fillEndingMediaText(story.body, r) + '</div>' +
+    '<div class="legacy-media-quote">“' + fillEndingMediaText(story.quote, r) + '”</div>' +
+    '</div>';
+}
+
 function buildRetirementCopy(r) {
   var pool = r.goat ? GOAT_COPY : RETIREMENT_COPY;
   var variant = (r.goat && typeof r.goatCopyVariant === 'number') ? r.goatCopyVariant : r.retirementCopyVariant;
@@ -16529,18 +16651,27 @@ function calculateLegacyResult() {
   });
   jerseyTeams.sort(function(a, b) { return (a.firstSeason - b.firstSeason) || (b.teamLegacy - a.teamLegacy); });
   var jersey = jerseyTeams.length > 0;
-  return { score: score, tier: tier, hof: hof, hofCopyVariant: hofCopyVariant, top100: top100, top100CopyVariant: top100CopyVariant, retirementCopyVariant: retirementCopyVariant, goat: goat, goatCopyVariant: goatCopyVariant, seasonsCount: seasons.length, jersey: jersey, jerseyTeams: jerseyTeams, team: longestTeam, longestTeam: longestTeam, longestYears: teamYears[longestTeam] || 0, teamCount: teamCount, teamList: teamList, firstTeam: firstTeam, lastTeam: lastTeam, teamYears: teamYears[longestTeam] || 0, championships: championships, fmvp: fmvp, mvp: mvp, dpoy: dpoy, allNBA: allNBA, allStar: allStar, points: points, games: games };
+  var result = { score: score, tier: tier, hof: hof, hofCopyVariant: hofCopyVariant, top100: top100, top100CopyVariant: top100CopyVariant, retirementCopyVariant: retirementCopyVariant, goat: goat, goatCopyVariant: goatCopyVariant, seasonsCount: seasons.length, jersey: jersey, jerseyTeams: jerseyTeams, team: longestTeam, longestTeam: longestTeam, longestYears: teamYears[longestTeam] || 0, teamCount: teamCount, teamList: teamList, firstTeam: firstTeam, lastTeam: lastTeam, teamYears: teamYears[longestTeam] || 0, championships: championships, fmvp: fmvp, mvp: mvp, dpoy: dpoy, allNBA: allNBA, allStar: allStar, points: points, games: games };
+  result.endingMediaMoments = pickEndingMediaMoments(result, 2);
+  return result;
 }
 
 function showLegacyModal(step, jerseyIdx) {
   var r = STATE.career.legacy || calculateLegacyResult();
+  var mediaMoments = ensureEndingMediaMoments(r);
   var title = '退役发布会';
   var body = '';
   var next = step + 1;
   var nextJersey = 0;
   if (step === 0) {
     body = buildRetirementCopy(r) + '<br><br>生涯总结：' + r.games + '场，' + Math.round(r.points) + '分，' + r.mvp + '次MVP，' + r.championships + '次总冠军，' + r.allNBA + '次最佳阵容。<br><br>历史分：' + r.score + ' · ' + r.tier + '。';
-  } else if (step === 1) {
+  } else if (step === 1 || step === 2) {
+    var mediaIdx = step - 1;
+    var moment = mediaMoments[mediaIdx];
+    var mediaFormat = ENDING_MEDIA_FORMATS.find(function(item) { return item.id === moment.formatId; }) || ENDING_MEDIA_FORMATS[0];
+    title = mediaFormat.icon + ' 退役后的媒体回声';
+    body = renderEndingMediaMoment(moment, r, mediaIdx, mediaMoments.length);
+  } else if (step === 3) {
     var jerseyTeams = r.jerseyTeams || [];
     if (jerseyTeams.length > 0) {
       var idx = jerseyIdx || 0;
@@ -16550,14 +16681,14 @@ function showLegacyModal(step, jerseyIdx) {
       var lead = (jerseyTeams.length > 1 && idx === 0) ? '你的名字，同时被 ' + jerseyTeams.length + ' 座城市记住。<br><br>' : '';
       body = lead + buildJerseyCeremonyCopy(info) + '<br><br>结果：' + getTeamName(info.team) + ' 退役你的球衣。';
       if (idx + 1 < jerseyTeams.length) {
-        next = 1;
+        next = 3;
         nextJersey = idx + 1;
       }
     } else {
       title = '退役球衣';
       body = '你的老东家为你准备了致敬短片，但球衣没有升上球馆上空。管理层给出的说法很体面：你属于很多城市，也属于这个时代。<br><br>结果：未触发退役球衣。';
     }
-  } else if (step === 2) {
+  } else if (step === 4) {
     title = '名人堂投票';
     if (r.hof) body = buildHofCopy(r) + '<br><br>结果：入选名人堂。';
     else body = buildHofCopy(r) + '<br><br>结果：暂未入选名人堂。';
@@ -23375,7 +23506,17 @@ function buildRetirementStoryPosterSections(r) {
     jerseyText = displayName + '离开球场时，没有球衣被升上屋顶。可有些号码不需要仪式确认，记住它的人会在多年后提起某个夜晚、某个回合、某次沉默的掌声。';
   }
 
-  return [
+  var mediaSections = ensureEndingMediaMoments(r).map(function(moment) {
+    var story = ENDING_MEDIA_STORIES.find(function(item) { return item.id === moment.storyId; }) || ENDING_MEDIA_STORIES[0];
+    var format = ENDING_MEDIA_FORMATS.find(function(item) { return item.id === moment.formatId; }) || ENDING_MEDIA_FORMATS[0];
+    return {
+      title: format.icon + ' ' + format.source,
+      kicker: format.kicker,
+      text: fillEndingMediaText(story.headline, r) + '\n\n' + fillEndingMediaText(story.body, r) + '\n\n“' + fillEndingMediaText(story.quote, r) + '”'
+    };
+  });
+
+  var sections = [
     {
       title: '退役发言',
       kicker: 'Final Words',
@@ -23396,7 +23537,9 @@ function buildRetirementStoryPosterSections(r) {
       kicker: 'All-Time Top 100',
       text: buildTop100Copy(r)
     }
-  ].map(function(section) {
+  ];
+  sections.splice.apply(sections, [1, 0].concat(mediaSections));
+  return sections.map(function(section) {
     section.text = stripPosterHtml(section.text);
     return section;
   });
