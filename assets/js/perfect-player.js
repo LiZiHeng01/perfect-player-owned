@@ -143,15 +143,13 @@
   const SINGLE_SEASON = { year: 2025, label: '虎扑单赛季 · 2025-26' };
   const ATTRIBUTE_POOL_URL = 'assets/data/perfect-player-pool.json?v=20260808-peak';
 
-  // 真人风格球员大头照（由 tools/generate_ai_avatars.py 生成，顺序固定以兼容旧存档）
-  const AI_AVATAR_META = [
-    { src: 'assets/images/Player/ai-avatars/avatar-01.png', group: '亚洲', role: '后卫', tone: '冷静控场' },
-    { src: 'assets/images/Player/ai-avatars/avatar-02.png', group: '亚洲', role: '锋线', tone: '沉着终结' },
-    { src: 'assets/images/Player/ai-avatars/avatar-03.png', group: '白人', role: '得分后卫', tone: '精准投射' },
-    { src: 'assets/images/Player/ai-avatars/avatar-04.png', group: '白人', role: '内线', tone: '强硬对抗' },
-    { src: 'assets/images/Player/ai-avatars/avatar-05.png', group: '黑人', role: '锋线', tone: '爆发攻框' },
-    { src: 'assets/images/Player/ai-avatars/avatar-06.png', group: '黑人', role: '中锋', tone: '禁区护框' }
-  ];
+  // 18 张透明真人风格主角头像：亚洲、白人、黑人各 6 张。
+  const AI_AVATAR_META = Array.from({ length: 18 }, (_, index) => ({
+    src: `assets/images/Player/ai-avatars/avatar-${String(index + 1).padStart(2, '0')}.png`,
+    group: index < 6 ? '亚洲' : (index < 12 ? '白人' : '黑人'),
+    role: ['后卫','锋线','内线'][index % 3],
+    tone: ['冷静控场','精准投射','强硬对抗','爆发攻框','沉着终结','禁区护框'][index % 6]
+  }));
   const AI_AVATARS = AI_AVATAR_META.map(item => item.src);
   const RANDOM_NAMES = ['林一飞', '陈慕白', '苏星河', '陆星辰', '赵子龙', '王一鸣', '周天宇', '吴昊', '郑凯文', '唐纳德·杨', 'Alex Wang', 'Leo Chen'];
 

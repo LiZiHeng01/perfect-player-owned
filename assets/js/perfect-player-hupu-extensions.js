@@ -10,14 +10,18 @@
   }
 
   var PROFILE_KEY = 'perfect-player-profile-v1';
-  var AVATARS = [
-    'assets/images/Player/ai-avatars/avatar-01.png',
-    'assets/images/Player/ai-avatars/avatar-02.png',
-    'assets/images/Player/ai-avatars/avatar-03.png',
-    'assets/images/Player/ai-avatars/avatar-04.png',
-    'assets/images/Player/ai-avatars/avatar-05.png',
-    'assets/images/Player/ai-avatars/avatar-06.png'
-  ];
+  var AVATAR_GROUPS = ['亚洲', '白人', '黑人'];
+  var AVATAR_META = [];
+  AVATAR_GROUPS.forEach(function (group, groupIndex) {
+    for (var index = 1; index <= 6; index++) {
+      var id = groupIndex * 6 + index;
+      AVATAR_META.push({
+        src: 'assets/images/Player/ai-avatars/avatar-' + String(id).padStart(2, '0') + '.png',
+        group: group
+      });
+    }
+  });
+  var AVATARS = AVATAR_META.map(function (avatar) { return avatar.src; });
 
   function readProfile() {
     try {
@@ -44,16 +48,24 @@
 
   applyProfile(readProfile());
   var selectedAvatar = window.PERFECT_PLAYER_PROFILE ? window.PERFECT_PLAYER_PROFILE.avatar : AVATARS[0];
+  var selectedAvatarMeta = AVATAR_META.filter(function (avatar) { return avatar.src === selectedAvatar; })[0];
+  var activeAvatarGroup = selectedAvatarMeta ? selectedAvatarMeta.group : AVATAR_GROUPS[0];
 
   window.renderCharacterCreator = function () {
     var grid = document.getElementById('character-avatar-grid');
+    var tabs = document.getElementById('character-avatar-tabs');
     var input = document.getElementById('character-name');
-    if (!grid || !input) return;
+    if (!grid || !tabs || !input) return;
     input.value = window.PERFECT_PLAYER_PROFILE ? window.PERFECT_PLAYER_PROFILE.name : '';
-    grid.innerHTML = AVATARS.map(function (src, index) {
+    tabs.innerHTML = AVATAR_GROUPS.map(function (group) {
+      return '<button type="button" class="character-avatar-tab' + (group === activeAvatarGroup ? ' active' : '') + '" onclick="selectCharacterAvatarGroup(\'' + group + '\')">' + group + ' · 6</button>';
+    }).join('');
+    var visibleAvatars = AVATAR_META.filter(function (avatar) { return avatar.group === activeAvatarGroup; });
+    grid.innerHTML = visibleAvatars.map(function (avatar, index) {
+      var src = avatar.src;
       var selected = src === selectedAvatar ? ' selected' : '';
-      return '<button type="button" class="character-avatar' + selected + '" data-avatar="' + src + '" onclick="selectCharacterAvatar(\'' + src + '\')" aria-label="选择头像' + (index + 1) + '">' +
-        '<img src="' + src + '" alt="球员头像' + (index + 1) + '">' +
+      return '<button type="button" class="character-avatar' + selected + '" data-avatar="' + src + '" onclick="selectCharacterAvatar(\'' + src + '\')" aria-label="选择' + activeAvatarGroup + '头像' + (index + 1) + '">' +
+        '<img src="' + src + '" alt="' + activeAvatarGroup + '球员头像' + (index + 1) + '">' +
       '</button>';
     }).join('');
     input.oninput = function () {
@@ -298,6 +310,12 @@
       prepAdjustment: prep,
       rangeLabel: rank == null ? '次轮末 / 落选' : getDraftRoundRange(rangeStart, rangeEnd)
     };
+  };
+
+  window.selectCharacterAvatarGroup = function (group) {
+    if (AVATAR_GROUPS.indexOf(group) < 0) return;
+    activeAvatarGroup = group;
+    window.renderCharacterCreator();
   };
 
   window.renderPerfectPlayerDraftProjection = function (contextTitle) {

@@ -52,6 +52,12 @@ async function main() {
   const pool = JSON.parse(fs.readFileSync(path.join(root, 'assets', 'data', 'perfect-player-pool.json'), 'utf8'));
   const officialHeadshots = JSON.parse(fs.readFileSync(path.join(root, 'assets', 'data', 'official-headshot-manifest.json'), 'utf8'));
   const generatedHeadshots = JSON.parse(fs.readFileSync(path.join(root, 'assets', 'data', 'generated-rookie-headshots.json'), 'utf8'));
+  const characterAvatars = JSON.parse(fs.readFileSync(path.join(root, 'assets', 'data', 'character-avatar-manifest.json'), 'utf8'));
+  assert.equal(characterAvatars.count, 18, '主角头像池应有 18 张');
+  assert.equal(characterAvatars.transparent, true, '主角头像应为透明 PNG');
+  assert.deepEqual(characterAvatars.groups, { 亚洲: 6, 白人: 6, 黑人: 6 });
+  assert.equal(new Set(characterAvatars.avatars.map(item => item.sha256)).size, 18, '18 张主角头像不能重复');
+  characterAvatars.avatars.forEach(item => assert.ok(fs.existsSync(path.join(root, item.photoLocal)), item.id + ' 缺少头像文件'));
   assert.equal(generatedHeadshots.count, 100, '后续随机新秀头像池应有 100 张');
   assert.equal(generatedHeadshots.transparent, true, '后续随机新秀头像应为透明 PNG');
   assert.equal(new Set(generatedHeadshots.headshots.map(item => item.photoLocal)).size, 100, '随机新秀头像路径不能重复');
@@ -261,7 +267,15 @@ async function main() {
 
     await page.click('#feature-grid .fc-btn');
     await page.waitForSelector('#screen-character.active');
-    assert.equal(await page.locator('.character-avatar').count(), 6, '角色创建应有六张真人大头照');
+    assert.equal(await page.locator('.character-avatar-tab').count(), 3, '角色创建应有亚洲、白人、黑人三个头像分组');
+    const availableAvatarPaths = [];
+    for (const group of ['亚洲', '白人', '黑人']) {
+      await page.locator('.character-avatar-tab').filter({ hasText: group }).click();
+      assert.equal(await page.locator('.character-avatar').count(), 6, group + '分组应有 6 张真人大头照');
+      availableAvatarPaths.push(...await page.$$eval('.character-avatar', nodes => nodes.map(node => node.getAttribute('data-avatar'))));
+    }
+    assert.equal(new Set(availableAvatarPaths).size, 18, '三个分组应提供 18 张不同主角头像');
+    await page.locator('.character-avatar-tab').filter({ hasText: '白人' }).click();
     await page.waitForFunction(() => [...document.querySelectorAll('.character-avatar img')].every(image => image.complete && image.naturalWidth > 0), null, { timeout: 15000 });
     const avatarLoads = await page.$$eval('.character-avatar img', images => images.map(image => image.complete && image.naturalWidth > 0));
     assert.ok(avatarLoads.every(Boolean), '六张头像都应完成加载');
@@ -366,7 +380,7 @@ async function main() {
     }
     await page.waitForSelector('#screen-reveal.active', { timeout: 5000 });
     assert.equal((await page.textContent('.big-cname')).trim(), '林一飞', '创建姓名应进入虎扑原揭幕页');
-    assert.ok((await page.getAttribute('.reveal-player-avatar', 'src')).includes('avatar-04'), '创建头像应进入虎扑原揭幕页');
+    assert.ok((await page.getAttribute('.reveal-player-avatar', 'src')).includes('avatar-10'), '创建头像应进入虎扑原揭幕页');
 
     const states = await page.evaluate(() => {
       STATE.careerTeam = 'LAL';

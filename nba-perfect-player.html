@@ -482,11 +482,14 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
     .character-label{display:block;margin-bottom:7px;font-family:var(--font-display);font-size:12px;font-weight:700;color:var(--text-dim)}
     .character-name{width:100%;height:46px;padding:0 14px;border:2px solid var(--border);border-radius:10px;background:#fff;color:var(--text);font-family:var(--font-body);font-size:16px;outline:none}
     .character-name:focus{border-color:var(--orange);box-shadow:0 0 0 3px var(--orange-dim)}
-    .character-avatar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
-    .character-avatar{position:relative;aspect-ratio:1/1.12;padding:0;overflow:hidden;border:2px solid var(--border);border-radius:12px;background:var(--bg-elevated);cursor:pointer;transition:all .15s}
+    .character-avatar-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}
+    .character-avatar-tab{padding:7px 4px;border:1px solid var(--border);border-radius:9px;background:var(--bg-card);color:var(--text-dim);font-family:var(--font-body);font-size:12px;font-weight:700;cursor:pointer}
+    .character-avatar-tab.active{border-color:var(--orange);background:var(--orange-bg);color:var(--orange)}
+    .character-avatar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 12px}
+    .character-avatar{position:relative;aspect-ratio:1/1.12;padding:0;overflow:hidden;border:2px solid var(--border);border-radius:12px;background:radial-gradient(circle at 50% 115%,rgba(255,107,53,.28),transparent 48%),linear-gradient(160deg,#2a3448,#111827);cursor:pointer;transition:all .15s}
     .character-avatar:active{transform:scale(.96)}
     .character-avatar.selected{border-color:var(--orange);box-shadow:0 0 0 2px var(--orange-dim)}
-    .character-avatar img{display:block;width:100%;height:100%;object-fit:cover;object-position:center top}
+    .character-avatar img{display:block;width:100%;height:100%;object-fit:contain;object-position:center bottom}
     .character-avatar.selected::after{content:'✓';position:absolute;right:5px;bottom:5px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--orange);color:#fff;font-size:13px;font-weight:900}
     .character-error{min-height:20px;margin:2px 0 5px;text-align:center;font-size:12px;color:var(--red)}
 
@@ -1470,6 +1473,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
       <label class="character-label" for="character-name">球员姓名</label>
       <input class="character-name" id="character-name" maxlength="12" autocomplete="off" placeholder="输入球员姓名">
       <div class="character-label" style="margin-top:14px;">选择头像</div>
+      <div class="character-avatar-tabs" id="character-avatar-tabs"></div>
       <div class="character-avatar-grid" id="character-avatar-grid"></div>
       <div class="character-error" id="character-error"></div>
       <button class="btn btn-primary" onclick="confirmCharacter()">确认创建</button>
