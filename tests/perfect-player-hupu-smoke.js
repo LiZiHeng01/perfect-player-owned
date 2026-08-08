@@ -184,7 +184,7 @@ async function main() {
     })), {
       added: 200,
       ids: 200,
-      config: { chancePercent: 14, cooldownGames: 7, maxPerSeason: 7, maxWithRelationship: 6, openingGames: 12, recentWindow: 40 },
+      config: { chancePercent: 14, cooldownGames: 7, maxPerSeason: 5, maxWithRelationship: 5, openingGames: 12, noRepeatCareer: true },
       openingPoolOnly: true
     });
     assert.deepEqual(await page.evaluate(() => window.PERFECT_PLAYER_DRAFT_EVENT_REPORT), {
@@ -325,7 +325,8 @@ async function main() {
           totalStats: Object.assign({}, savedCareer.totalStats || {}, { games: 4 }),
           branchSeasonEvents: { _season: 0, _count: 4 },
           _lastSeasonBranchGame: 75,
-          _recentSeasonEventIds: []
+          _recentSeasonEventIds: [],
+          _seenSeasonEventIds: []
         });
         STATE.season = {
           isPlayoffs: false,
@@ -341,7 +342,7 @@ async function main() {
           id: picked && picked.id,
           count: STATE.career.branchSeasonEvents._count,
           lastGame: STATE.career._lastSeasonBranchGame,
-          recent: STATE.career._recentSeasonEventIds.slice()
+          seen: STATE.career._seenSeasonEventIds.slice()
         };
       } finally {
         Math.random = originalRandom;
@@ -354,7 +355,57 @@ async function main() {
     assert.ok(openingEventProbe.id && openingEventProbe.id.startsWith('pp_season_'), '新生涯首条事件必须来自扩充池，而不是固定城市/失利事件：' + JSON.stringify(openingEventProbe));
     assert.equal(openingEventProbe.count, 1, '跨赛季事件计数应重置后重新开始');
     assert.equal(openingEventProbe.lastGame, 4, '跨赛季冷却场次必须重置，不能沿用上一季场次');
-    assert.deepEqual(openingEventProbe.recent, [openingEventProbe.id], '最近事件应进入跨赛季防重复记录');
+    assert.deepEqual(openingEventProbe.seen, [openingEventProbe.id], '出现过的事件应进入整个生涯的永久防重复记录');
+    const seasonEventLimitProbe = await page.evaluate(() => {
+      const savedCareer = STATE.career;
+      const savedSeason = STATE.season;
+      const savedTeam = STATE.careerTeam;
+      const originalRandom = Math.random;
+      try {
+        const historyId = 'pp_season_empty_gym';
+        const legacyRecentId = 'pp_season_film_detail';
+        const directSeenId = 'pp_season_road_sleep';
+        STATE.career = Object.assign({}, savedCareer, {
+          seasonCount: 2,
+          branches: {},
+          branchHistory: [{ phase:'season', eventId:historyId }],
+          _recentSeasonEventIds: [legacyRecentId],
+          _seenSeasonEventIds: [directSeenId],
+          branchSeasonEvents: { _season:2, _count:5 },
+          _lastSeasonBranchGame: 10
+        });
+        STATE.careerTeam = 'LAL';
+        STATE.season = {
+          isPlayoffs:false,
+          wins:18,
+          losses:12,
+          standings:{ LAL:{ streak:'W', streakLen:2 } },
+          games:Array.from({ length:30 }, () => ({ result:{ won:true }, stats:{ pts:24 } })),
+          schedule:Array.from({ length:82 }, () => ({})),
+          playerStats:{ games:30, pts:720 },
+          events:{}
+        };
+        const seen = getSeenSeasonEventIds(STATE.career).slice();
+        markSeasonEventSeen({ id:directSeenId }, STATE.career);
+        Math.random = () => 0;
+        const blockedAtCap = checkSeasonBranchEvent({ home:true, day:60, opponent:'BOS' }, { won:true }, { pts:25, fgm:9, fga:18, tov:2 });
+        return {
+          seen,
+          uniqueAfterDuplicateMark: new Set(STATE.career._seenSeasonEventIds).size === STATE.career._seenSeasonEventIds.length,
+          blockedAtCap: blockedAtCap === null
+        };
+      } finally {
+        Math.random = originalRandom;
+        STATE.career = savedCareer;
+        STATE.season = savedSeason;
+        STATE.careerTeam = savedTeam;
+      }
+    });
+    assert.ok(seasonEventLimitProbe.seen.includes('pp_season_empty_gym'), '旧存档的赛季事件历史必须迁移到永久去重集合');
+    assert.ok(seasonEventLimitProbe.seen.includes('pp_season_film_detail'), '旧版最近事件记录必须迁移到永久去重集合');
+    assert.ok(seasonEventLimitProbe.seen.includes('pp_season_road_sleep'), '新版已出现事件记录必须保留');
+    assert.ok(seasonEventLimitProbe.uniqueAfterDuplicateMark, '同一事件重复登记时不能产生重复 ID');
+    assert.ok(seasonEventLimitProbe.blockedAtCap, '每季达到 5 次后不得继续弹出普通赛季事件');
 
     await page.click('#feature-grid .fc-btn');
     await page.waitForSelector('#screen-character.active');

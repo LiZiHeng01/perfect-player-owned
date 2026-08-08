@@ -9972,11 +9972,36 @@ function recordBranchChoice(ev, ch, msg, phase) {
 var SEASON_BRANCH_EVENT_CONFIG = {
   chancePercent: 14,
   cooldownGames: 7,
-  maxPerSeason: 7,
-  maxWithRelationship: 6,
+  maxPerSeason: 5,
+  maxWithRelationship: 5,
   openingGames: 12,
-  recentWindow: 40
+  noRepeatCareer: true
 };
+
+function getSeenSeasonEventIds(career) {
+  var c = career || STATE.career || {};
+  var ids = [];
+  (c._seenSeasonEventIds || []).forEach(function(id) { if (id && ids.indexOf(id) < 0) ids.push(id); });
+  // 兼容旧存档：把旧的最近事件记录和已完成的赛季事件迁移为生涯永久记录。
+  (c._recentSeasonEventIds || []).forEach(function(id) { if (id && ids.indexOf(id) < 0) ids.push(id); });
+  (c.branchHistory || []).forEach(function(entry) {
+    if (entry && entry.phase === 'season' && entry.eventId && ids.indexOf(entry.eventId) < 0) ids.push(entry.eventId);
+  });
+  c._seenSeasonEventIds = ids;
+  return ids;
+}
+
+function hasSeasonEventBeenSeen(event, career) {
+  return !!(event && event.id && getSeenSeasonEventIds(career).indexOf(event.id) >= 0);
+}
+
+function markSeasonEventSeen(event, career) {
+  if (!event || !event.id) return;
+  var c = career || STATE.career || {};
+  var ids = getSeenSeasonEventIds(c);
+  if (ids.indexOf(event.id) < 0) ids.push(event.id);
+  c._seenSeasonEventIds = ids;
+}
 
 function getSeasonEventState(game, result, stats) {
   var season = STATE.season || {};
@@ -10113,6 +10138,7 @@ function checkSeasonBranchEvent(game, result, stats) {
       var ev = getBranchEventById(st.id);
       if (!ev) return;
       if (getEventPhases(ev).indexOf('season') < 0) return;
+      if (hasSeasonEventBeenSeen(ev, c)) return;
       try {
         if (ev.requires && !ev.requires({ game: game, result: result, stats: stats })) return;
       } catch(e) { return; }
@@ -10123,6 +10149,7 @@ function checkSeasonBranchEvent(game, result, stats) {
       var forced = pickBranchEvent(countdownPool, true);
       if (forced) {
         c._lastSeasonBranchGame = (STATE.season.games || []).length;
+        markSeasonEventSeen(forced, c);
         return forced;
       }
     }
@@ -10140,6 +10167,7 @@ function checkSeasonBranchEvent(game, result, stats) {
     romanceStepPool = getBranchEventSource().filter(function(ev) {
       if (ev.branch !== 'relationship') return false;
       if (getEventPhases(ev).indexOf('season') < 0) return false;
+      if (hasSeasonEventBeenSeen(ev, c)) return false;
       return !ev.requires || ev.requires({ game: game, result: result, stats: stats });
     });
   }
@@ -10151,12 +10179,13 @@ function checkSeasonBranchEvent(game, result, stats) {
         c._lastSeasonBranchGame = (STATE.season.games || []).length;
         c.branchSeasonEvents.relationship = true;
         c.branchSeasonEvents._count = (c.branchSeasonEvents._count || 0) + 1;
+        markSeasonEventSeen(forcedRomance, c);
         return forcedRomance;
       }
     }
   }
-  // 每个赛季第 4 场起保证出现一条随机日常，之后平均每季约 6–7 次；
-  // 仍保留 7 场冷却，避免连续弹窗。
+  // 每个赛季第 4 场起保证出现一条随机日常，之后每季最多约 5 次；
+  // 仍保留 14% 概率与 7 场冷却，降低全年弹窗总量但不改变事件间隔手感。
   var openingEventDue = gamesPlayed >= 4
     && gamesPlayed <= SEASON_BRANCH_EVENT_CONFIG.openingGames
     && (c.branchSeasonEvents._count || 0) === 0;
@@ -10168,6 +10197,7 @@ function checkSeasonBranchEvent(game, result, stats) {
   var pool = getBranchEventSource().filter(function(ev) {
     if (getEventPhases(ev).indexOf('season') < 0) return false;
     if (c.branchSeasonEvents[ev.branch]) return false;
+    if (hasSeasonEventBeenSeen(ev, c)) return false;
     if (!isSeasonEventStateEligible(ev, eventState)) return false;
     try { return !ev.requires || ev.requires({ game: game, result: result, stats: stats, state: eventState }); }
     catch(e) { return false; }
@@ -10178,17 +10208,13 @@ function checkSeasonBranchEvent(game, result, stats) {
     var openingPool = pool.filter(function(ev) { return ev.id && ev.id.indexOf('pp_season_') === 0; });
     if (openingPool.length > 0) pool = openingPool;
   }
-  // 跨赛季记住最近事件，事件池够用时不在短期内重复同一条。
-  var recentIds = c._recentSeasonEventIds || [];
-  var freshPool = pool.filter(function(ev) { return recentIds.indexOf(ev.id) < 0; });
-  if (freshPool.length > 0) pool = freshPool;
   if (pool.length === 0) return null;
   var picked = pickSeasonStateAwareEvent(pool, eventState);
   if (!picked) return null;
   c._lastSeasonBranchGame = (STATE.season.games || []).length;
   c.branchSeasonEvents[picked.branch] = true;
   c.branchSeasonEvents._count = (c.branchSeasonEvents._count || 0) + 1;
-  c._recentSeasonEventIds = recentIds.concat([picked.id]).slice(-SEASON_BRANCH_EVENT_CONFIG.recentWindow);
+  markSeasonEventSeen(picked, c);
   return picked;
 }
 
