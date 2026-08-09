@@ -904,13 +904,204 @@ async function main() {
       return { facts, firstPick: !!got.first_pick, lottery: !!got.lottery_pick, allStar: !!got.all_star, roty: !!got.roty };
     });
     assert.ok(achievementProbe.firstPick && achievementProbe.lottery && achievementProbe.allStar && achievementProbe.roty, '选秀/全明星/最佳新秀成就应能完成：' + JSON.stringify(achievementProbe));
+    const achievementRuleAudit = await page.evaluate(() => {
+      const saved = {
+        career: STATE.career,
+        season: STATE.season,
+        finalOVR: STATE.finalOVR,
+        finalPosition: STATE.finalPosition,
+        position: STATE.position,
+        careerTeam: STATE.careerTeam,
+        gameId: STATE.gameId,
+        careerSaved: STATE._careerSaved,
+        hadCareerSaved: Object.prototype.hasOwnProperty.call(STATE, '_careerSaved'),
+        suppress: PP_FX._suppressAchievementPopups
+      };
+      const results = {};
+      const user = getHupuDisplayName();
+      let careerSeq = 0;
+      function resetState() {
+        PP_FX.resetAchievements();
+        PP_FX._suppressAchievementPopups = true;
+        STATE.gameId = Date.now().toString(36) + '-achievement-audit-' + (++careerSeq);
+        STATE.finalOVR = 0;
+        STATE.finalPosition = null;
+        STATE.position = 'PG';
+        STATE.careerTeam = 'LAL';
+        STATE._careerSaved = false;
+        STATE.career = { seasonCount:0, seasons:[], honors:[], draft:null, retired:false };
+        STATE.season = {
+          games:[], wins:0, losses:0, awards:[], playerStats:{},
+          isPlayoffs:false, playoffBracket:null, playoffResult:null
+        };
+      }
+      function award(act, label, seasonNum) {
+        return { act, label, seasonNum:seasonNum || 1, winner:user, isUser:true };
+      }
+      function run(id, setup) {
+        resetState();
+        setup();
+        PP_FX.syncAchievements();
+        results[id] = !!PP_FX.getUnlocked()[id];
+      }
+      try {
+        run('create_player', () => { STATE.finalOVR = 70; });
+        run('ovr_80', () => { STATE.finalOVR = 80; });
+        run('ovr_90', () => { STATE.finalOVR = 90; });
+        run('ovr_95', () => { STATE.finalOVR = 95; });
+        run('lottery_pick', () => { STATE.career.draft = { type:'lottery', round:'1', pick:'14' }; });
+        run('first_pick', () => { STATE.career.draft = { type:'lottery', round:'1', pick:'1' }; });
+        run('undrafted', () => { STATE.career.draft = { type:'undrafted' }; });
+        run('all_star', () => { STATE.season.awards = [award('allStar', '全明星')]; });
+        run('all_nba', () => { STATE.season.awards = [award('allNBA', '最佳阵容')]; });
+        run('roty', () => { STATE.season.awards = [award('roty', '年度最佳新秀')]; });
+        run('dpoy', () => { STATE.season.awards = [award('dpoy', 'DPOY')]; });
+        run('sixth_man', () => { STATE.season.awards = [award('sixthman', '最佳第六人')]; });
+        run('mvp', () => { STATE.season.awards = [award('mvp', 'MVP')]; });
+        run('fmvp', () => { STATE.season.awards = [award('fmvp', '总决赛MVP')]; });
+        run('mvp_x3', () => { STATE.career.honors = [1,2,3].map(n => award('mvp', 'MVP', n)); });
+        run('playoffs', () => { STATE.career.seasonCount = 1; STATE.career.seasons = [{ seasonNum:1, playoffResult:'首轮', awards:[] }]; });
+        run('win_60', () => { STATE.career.seasonCount = 1; STATE.career.seasons = [{ seasonNum:1, wins:60, playoffResult:'未晋级', awards:[] }]; });
+        run('champion', () => { STATE.season.awards = [award('champion', '总冠军')]; });
+        run('champion_x3', () => { STATE.career.honors = [1,2,3].map(n => award('champion', '总冠军', n)); });
+        run('game_40', () => { STATE.season.games = [{ stats:{ pts:40, reb:2, ast:2 } }]; });
+        run('game_50', () => { STATE.season.games = [{ stats:{ pts:50, reb:2, ast:2 } }]; });
+        results.game_50_also_40 = !!PP_FX.getUnlocked().game_40;
+        run('triple_double', () => { STATE.season.games = [{ stats:{ pts:20, reb:10, ast:10 } }]; });
+        run('avg_30', () => { STATE.career.seasonCount = 1; STATE.career.seasons = [{ seasonNum:1, playerStats:{ games:40, pts:1200, reb:200 }, awards:[] }]; });
+        run('season_25_10', () => { STATE.career.seasonCount = 1; STATE.career.seasons = [{ seasonNum:1, playerStats:{ games:40, pts:1000, reb:400 }, awards:[] }]; });
+        run('season_5', () => { STATE.career.seasonCount = 5; });
+        run('season_10', () => { STATE.career.seasonCount = 10; });
+        run('retire', () => { STATE.career.retired = true; });
+
+        resetState();
+        PP_FX.ACHIEVEMENTS.filter(item => item.id !== 'explorer' && item.id !== 'collector').slice(0, 19)
+          .forEach(item => PP_FX.unlock(item.id));
+        PP_FX.syncMetaAchievements();
+        results.explorer = !!PP_FX.getUnlocked().explorer;
+        results.collector = !!PP_FX.getUnlocked().collector;
+
+        resetState();
+        STATE.gameId = Date.now().toString(36) + '-cursor-career-one';
+        STATE.season.games = [{ stats:{ pts:20 } }];
+        PP_FX.checkLatestGameMilestones();
+        PP_FX.resetAchievements();
+        STATE.gameId = (Date.now() + 1).toString(36) + '-cursor-career-two';
+        STATE.season.games = [{ stats:{ pts:40 } }];
+        PP_FX.checkLatestGameMilestones();
+        const firstGameOfNewCareerChecked = !!PP_FX.getUnlocked().game_40;
+
+        return {
+          results,
+          firstGameOfNewCareerChecked,
+          definitions: PP_FX.ACHIEVEMENTS.map(item => item.id).sort(),
+          tested: Object.keys(results).filter(id => id !== 'game_50_also_40').sort()
+        };
+      } finally {
+        STATE.career = saved.career;
+        STATE.season = saved.season;
+        STATE.finalOVR = saved.finalOVR;
+        STATE.finalPosition = saved.finalPosition;
+        STATE.position = saved.position;
+        STATE.careerTeam = saved.careerTeam;
+        STATE.gameId = saved.gameId;
+        if (saved.hadCareerSaved) STATE._careerSaved = saved.careerSaved;
+        else delete STATE._careerSaved;
+        PP_FX._suppressAchievementPopups = saved.suppress;
+      }
+    });
+    assert.ok(Object.values(achievementRuleAudit.results).every(Boolean), '全部成就正例必须可达成：' + JSON.stringify(achievementRuleAudit.results));
+    assert.ok(achievementRuleAudit.firstGameOfNewCareerChecked, '新生涯第一场必须使用独立检查游标');
+    assert.deepEqual(achievementRuleAudit.tested, achievementRuleAudit.definitions, '29 项成就必须全部有判定正例覆盖');
+
+    const achievementFalsePositiveAudit = await page.evaluate(() => {
+      const saved = {
+        career: STATE.career, season:STATE.season, finalOVR:STATE.finalOVR,
+        gameId:STATE.gameId, careerSaved:STATE._careerSaved,
+        hadCareerSaved:Object.prototype.hasOwnProperty.call(STATE, '_careerSaved'),
+        suppress:PP_FX._suppressAchievementPopups
+      };
+      const user = getHupuDisplayName();
+      function base(startedAt) {
+        PP_FX.resetAchievements();
+        PP_FX._suppressAchievementPopups = true;
+        STATE.gameId = (startedAt || Date.now()).toString(36) + '-false-positive-audit';
+        STATE.finalOVR = 79;
+        STATE._careerSaved = false;
+        STATE.career = { seasonCount:4, seasons:[], honors:[], draft:{ type:'lottery', round:1, pick:15 }, retired:false };
+        STATE.season = {
+          games:[{ stats:{ pts:39, reb:9, ast:9 } }], wins:59, awards:[],
+          playerStats:{ games:40, pts:1199, reb:399 }, isPlayoffs:false,
+          playoffBracket:null, playoffResult:null
+        };
+      }
+      try {
+        base();
+        STATE.season.awards = [
+          { act:'roty', label:'年度最佳新秀', winner:'其他新秀', isUser:false },
+          { act:'allRookie', label:'最佳新秀阵容', winner:user, isUser:true },
+          { act:'mvp', label:'MVP', winner:'其他球员', isUser:false },
+          { act:'dpoy', label:'DPOY', winner:'其他球员', isUser:false },
+          'MVP 候选', '最佳新秀候选', '全明星级别', '最佳防守阵容', '总冠军候选'
+        ];
+        const negativeFacts = PP_FX.syncAchievements();
+        const negativeUnlocked = Object.keys(PP_FX.getUnlocked());
+
+        const startedAt = Date.now() - 5000;
+        base(startedAt);
+        PP_FX.getUnlocked().roty = { at:startedAt + 1000 };
+        STATE.season.awards = [
+          { act:'roty', label:'年度最佳新秀', winner:'其他新秀', isUser:false },
+          { act:'allRookie', label:'最佳新秀阵容', winner:user, isUser:true }
+        ];
+        PP_FX.syncAchievements();
+        const currentCareerFalseRotyRemoved = !PP_FX.getUnlocked().roty;
+
+        base(startedAt);
+        PP_FX.getUnlocked().roty = { at:startedAt - 1000 };
+        STATE.season.awards = [{ act:'allRookie', label:'最佳新秀阵容', winner:user, isUser:true }];
+        PP_FX.syncAchievements();
+        const previousCareerRotyPreserved = !!PP_FX.getUnlocked().roty;
+
+        base(startedAt);
+        STATE.season.awards = [{ act:'roty', label:'年度最佳新秀', winner:user, isUser:true }];
+        PP_FX.syncAchievements();
+        const validEvidence = PP_FX.getUnlocked().roty && PP_FX.getUnlocked().roty.factEvidence;
+        STATE.gameId = Date.now().toString(36) + '-next-career';
+        STATE.season.awards = [{ act:'allRookie', label:'最佳新秀阵容', winner:user, isUser:true }];
+        PP_FX.syncAchievements();
+        const provenRotySurvivesNewCareer = !!PP_FX.getUnlocked().roty;
+
+        return {
+          negativeFacts:{ roty:negativeFacts.roty, allRookie:negativeFacts.allRookie, mvp:negativeFacts.mvp, dpoy:negativeFacts.dpoy },
+          negativeUnlocked,
+          currentCareerFalseRotyRemoved,
+          previousCareerRotyPreserved,
+          validEvidence:!!validEvidence,
+          provenRotySurvivesNewCareer
+        };
+      } finally {
+        STATE.career = saved.career;
+        STATE.season = saved.season;
+        STATE.finalOVR = saved.finalOVR;
+        STATE.gameId = saved.gameId;
+        if (saved.hadCareerSaved) STATE._careerSaved = saved.careerSaved;
+        else delete STATE._careerSaved;
+        PP_FX._suppressAchievementPopups = saved.suppress;
+      }
+    });
+    assert.deepEqual(achievementFalsePositiveAudit.negativeFacts, { roty:false, allRookie:true, mvp:0, dpoy:false }, '最佳新秀阵容/候选文字不得冒充正式奖项');
+    const forbiddenFalseUnlocks = ['ovr_80','lottery_pick','first_pick','all_star','all_nba','roty','dpoy','sixth_man','mvp','champion','win_60','game_40','game_50','triple_double','avg_30','season_25_10','season_5','retire'];
+    assert.deepEqual(forbiddenFalseUnlocks.filter(id => achievementFalsePositiveAudit.negativeUnlocked.includes(id)), [], '未达到阈值或仅为候选时不得解锁：' + JSON.stringify(achievementFalsePositiveAudit));
+    assert.ok(achievementFalsePositiveAudit.currentCareerFalseRotyRemoved, '当前生涯由最佳新秀阵容造成的旧误解锁必须自动撤回');
+    assert.ok(achievementFalsePositiveAudit.previousCareerRotyPreserved && achievementFalsePositiveAudit.validEvidence && achievementFalsePositiveAudit.provenRotySurvivesNewCareer, '合法跨生涯成就必须保留凭证');
     const mvpSplitProbe = await page.evaluate(() => {
       const user = getHupuDisplayName();
       STATE.career.honors = [];
       STATE.career.seasons = [];
       PP_FX.resetAchievements();
       // 模拟旧版本已经被 FMVP 误解锁的本地状态，确认同步时会修复。
-      PP_FX.getUnlocked().mvp = { at: 1 };
+      PP_FX.getUnlocked().mvp = { at: Date.now() };
       PP_FX.getUnlocked().mvp_x3 = { at: 1 };
       STATE.season.awards = [
         { act: 'fmvp', label: '👑 总决赛MVP', winner: user, isUser: true }

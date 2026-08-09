@@ -358,12 +358,24 @@
     unlocked[id] = { at: Date.now() };
     if (evidence) unlocked[id].singleCareer = evidence;
     saveUnlocked(unlocked);
-    showUnlockPopup(def);
+    if (!PP_FX._suppressAchievementPopups) showUnlockPopup(def);
     // 元成就：解锁数量里程碑（延迟以免与当前弹窗叠加）
     var n = unlockedCount();
-    if (n >= 10 && !unlocked['explorer']) setTimeout(function () { PP_FX.unlock('explorer'); }, 2600);
-    if (n >= 20 && !unlocked['collector']) setTimeout(function () { PP_FX.unlock('collector'); }, 2600);
+    if (!PP_FX._suppressAchievementPopups) {
+      if (n >= 10 && !unlocked['explorer']) setTimeout(function () { PP_FX.unlock('explorer'); }, 2600);
+      if (n >= 20 && !unlocked['collector']) setTimeout(function () { PP_FX.unlock('collector'); }, 2600);
+    }
     return true;
+  };
+
+  // Deterministic reconciliation used after migrations/tests; normal gameplay
+  // keeps the delayed popup cadence above.
+  PP_FX.syncMetaAchievements = function () {
+    var n = unlockedCount();
+    if (n >= 10 && !unlocked.explorer) PP_FX.unlock('explorer');
+    n = unlockedCount();
+    if (n >= 20 && !unlocked.collector) PP_FX.unlock('collector');
+    return unlockedCount();
   };
 
   // 解锁弹窗（右上滑入的徽章卡片 + 粒子）
@@ -637,6 +649,49 @@
   }
   function displayName() { try { return window.getHupuDisplayName ? getHupuDisplayName() : ''; } catch (e) { return ''; } }
 
+  function repairMetaAchievementsAfterRemoval() {
+    var changed = false;
+    var realCount = unlockedCount();
+    if (unlocked.collector && realCount - 1 < 20) {
+      delete unlocked.collector;
+      changed = true;
+    }
+    realCount = unlockedCount();
+    if (unlocked.explorer && realCount - 1 < 10) {
+      delete unlocked.explorer;
+      changed = true;
+    }
+    return changed;
+  }
+
+  function currentCareerStartedAt(s) {
+    var token = String((s && s.gameId) || '').split('-')[0];
+    if (!/^[0-9a-z]+$/i.test(token)) return 0;
+    var startedAt = parseInt(token, 36);
+    // generateGameId() starts with Date.now(). Ignore test/legacy IDs that do
+    // not decode to a plausible millisecond timestamp.
+    if (!isFinite(startedAt) || startedAt < 1500000000000 || startedAt > Date.now() + 86400000) return 0;
+    return startedAt;
+  }
+
+  function unlockedInCurrentCareer(record, s) {
+    var startedAt = currentCareerStartedAt(s);
+    return !!(startedAt && record && Number(record.at) >= startedAt);
+  }
+
+  function unlockWithFactEvidence(id, s, fact, count) {
+    PP_FX.unlock(id);
+    var record = unlocked[id];
+    if (!record || record.factEvidence) return;
+    record.factEvidence = {
+      version: 1,
+      gameId: String((s && s.gameId) || 'current-career'),
+      fact: fact || id,
+      count: count == null ? 1 : count
+    };
+    saveUnlocked(unlocked);
+  }
+
   // 只有这两项是“同一生涯内多次达成”的累计成就。成就解锁后仍永久保留，
   // 但首次解锁必须附带当前 gameId 和当前生涯计数，杜绝跨存档拼次数。
   var SINGLE_CAREER_CUMULATIVE = {
@@ -675,10 +730,7 @@
     // 清掉旧版跨生涯计数，避免以后任何逻辑再次把不同生涯相加。
     if (unlocked.__counters) { delete unlocked.__counters; changed = true; }
     if (changed) {
-      var realCount = unlockedCount();
-      if (unlocked.collector && realCount - 1 < 20) delete unlocked.collector;
-      realCount = unlockedCount();
-      if (unlocked.explorer && realCount - 1 < 10) delete unlocked.explorer;
+      repairMetaAchievementsAfterRemoval();
       saveUnlocked(unlocked);
     }
   }
@@ -730,8 +782,8 @@
     var s = G(); if (!s || !s.career || !s.career.draft) return;
     var d = s.career.draft;
     if (d.type === 'undrafted') PP_FX.unlock('undrafted');
-    if (d.round === 1 && d.pick >= 1 && d.pick <= 14) PP_FX.unlock('lottery_pick');
-    if (d.round === 1 && d.pick === 1) PP_FX.unlock('first_pick');
+    if (Number(d.round) === 1 && Number(d.pick) >= 1 && Number(d.pick) <= 14) PP_FX.unlock('lottery_pick');
+    if (Number(d.round) === 1 && Number(d.pick) === 1) PP_FX.unlock('first_pick');
     syncAchievementState();
   }
 
@@ -739,10 +791,151 @@
   // 奖项在不同阶段会经历“当前赛季 awards → career.honors → seasons.awards”
   // 三种形态，且最佳阵容/新秀阵容是列表奖项。统一收集后再判断，避免
   // 只看 winner 字符串导致全明星和最佳新秀明明显示了却没有成就。
+  function compactAwardLabel(label) {
+    return String(label || '')
+      .replace(/\s+/g, '')
+      .replace(/[🏆👑⭐🌟🌱🔒🔥🎊🥇🥈🥉·\uFE0F]/g, '')
+      .toUpperCase();
+  }
+
+  function classifyAward(a, label) {
+    var act = String(a && a.act || '').replace(/[^a-z]/gi, '').toLowerCase();
+    var actKinds = {
+      mvp: 'mvp', fmvp: 'fmvp', allstarmvp: 'allStarMvp',
+      dpoy: 'dpoy', roty: 'roty', roy: 'roty', sixthman: 'sixthman',
+      allstar: 'allStar', allnba: 'allNBA', allrookie: 'allRookie',
+      alldefensive: 'allDefense', champion: 'champion'
+    };
+    if (actKinds[act]) return actKinds[act];
+
+    // Legacy saves may only contain a display label. Match complete canonical
+    // labels instead of substrings: “最佳新秀阵容” is not “最佳新秀”, and
+    // “MVP 候选” is not an MVP award.
+    var clean = compactAwardLabel(label);
+    if (clean === 'MVP' || clean === '常规赛MVP' || clean === '最有价值球员' || clean === '常规赛最有价值球员') return 'mvp';
+    if (clean === 'FMVP' || clean === '总决赛MVP' || clean === '总决赛最有价值球员') return 'fmvp';
+    if (clean === '全明星MVP' || clean === 'ALL-STARMVP') return 'allStarMvp';
+    if (clean === 'DPOY' || clean === '最佳防守球员') return 'dpoy';
+    if (clean === 'ROTY' || clean === 'ROY' || clean === '年度最佳新秀' || clean === '最佳新秀') return 'roty';
+    if (clean === '最佳第六人' || clean === '第六人') return 'sixthman';
+    if (clean === '全明星' || clean === '全明星入选') return 'allStar';
+    if (clean === '最佳阵容' || clean === 'NBA最佳阵容' || clean === '一阵' || clean === '二阵' || clean === '三阵' || clean === 'ALL-NBA') return 'allNBA';
+    if (clean === '最佳新秀阵容' || clean === '新秀一阵' || clean === '新秀二阵' || clean === 'ALL-ROOKIE') return 'allRookie';
+    if (clean === '最佳防守阵容' || clean === '一防' || clean === '二防' || clean === 'ALL-DEFENSIVE') return 'allDefense';
+    if (clean === '总冠军' || clean === 'NBA总冠军') return 'champion';
+    return '';
+  }
+  PP_FX.classifyAchievementAward = classifyAward;
+
+  function collectLegacyFalsePositiveTargets(kind, label, targets) {
+    var clean = compactAwardLabel(label);
+    if (kind === 'fmvp') targets.mvp = true; // old “contains MVP” bug
+    if (kind === 'allRookie') targets.roty = true;
+    if (kind === 'allDefense') targets.dpoy = true;
+    if ((clean.indexOf('候选') >= 0 || clean.indexOf('评选') >= 0) && clean.indexOf('MVP') >= 0) targets.mvp = true;
+    if (clean.indexOf('最佳新秀候选') >= 0) targets.roty = true;
+    if (clean.indexOf('全明星级别') >= 0 || clean.indexOf('全明星候选') >= 0) targets.all_star = true;
+    if (clean.indexOf('最佳阵容候选') >= 0) targets.all_nba = true;
+    if (clean.indexOf('最佳第六人候选') >= 0) targets.sixth_man = true;
+    if (clean.indexOf('总冠军候选') >= 0) targets.champion = true;
+  }
+
+  function repairAmbiguousAwardAchievements(s, facts) {
+    var satisfied = {
+      mvp: facts.mvp > 0,
+      roty: !!facts.roty,
+      dpoy: !!facts.dpoy,
+      all_star: !!facts.allStar,
+      all_nba: !!facts.allNBA,
+      sixth_man: !!facts.sixthman,
+      champion: facts.champion > 0
+    };
+    var changed = false;
+    Object.keys(facts.falsePositiveTargets || {}).forEach(function(id) {
+      var record = unlocked[id];
+      if (!record || record.factEvidence || satisfied[id] || !unlockedInCurrentCareer(record, s)) return;
+      delete unlocked[id];
+      changed = true;
+    });
+    if (changed) {
+      repairMetaAchievementsAfterRemoval();
+      saveUnlocked(unlocked);
+    }
+  }
+
+  function isPlayoffResult(result) {
+    var text = String(result || '').trim();
+    return !!(text && text.indexOf('未晋级') < 0 && text.indexOf('无缘') < 0);
+  }
+
+  function unlockSeasonStatMilestones(stats) {
+    var games = Number(stats && stats.games) || 0;
+    if (games < 40) return;
+    var ppg = (Number(stats.pts) || 0) / games;
+    var rpg = (Number(stats.reb) || 0) / games;
+    if (ppg >= 30) PP_FX.unlock('avg_30');
+    if (ppg >= 25 && rpg >= 10) PP_FX.unlock('season_25_10');
+  }
+
+  function unlockGameStatMilestones(stats) {
+    if (!stats) return;
+    var points = Number(stats.pts) || 0;
+    // 50+ also satisfies the stated 40+ condition.
+    if (points >= 40) PP_FX.unlock('game_40');
+    if (points >= 50) PP_FX.unlock('game_50');
+    var doubleDigits = 0;
+    ['pts', 'reb', 'ast', 'stl', 'blk'].forEach(function(k) {
+      if ((Number(stats[k]) || 0) >= 10) doubleDigits++;
+    });
+    if (doubleDigits >= 3) PP_FX.unlock('triple_double');
+  }
+
+  function syncStateMilestones(s) {
+    var career = s.career || {};
+    var currentSeason = s.season || {};
+    var finalOvr = Number(s.finalOVR) || 0;
+    if (finalOvr > 0) {
+      PP_FX.unlock('create_player');
+      if (finalOvr >= 80) PP_FX.unlock('ovr_80');
+      if (finalOvr >= 90) PP_FX.unlock('ovr_90');
+      if (finalOvr >= 95) PP_FX.unlock('ovr_95');
+    }
+
+    var draft = career.draft;
+    if (draft) {
+      var draftType = String(draft.type || '').toLowerCase();
+      var round = Number(draft.round);
+      var pick = Number(draft.pick);
+      if (draftType === 'undrafted') PP_FX.unlock('undrafted');
+      if (round === 1 && pick >= 1 && pick <= 14) PP_FX.unlock('lottery_pick');
+      if (round === 1 && pick === 1) PP_FX.unlock('first_pick');
+    }
+
+    var archivedSeasons = Array.isArray(career.seasons) ? career.seasons : [];
+    var played = Math.max(Number(career.seasonCount) || 0, archivedSeasons.length);
+    if (played >= 5) PP_FX.unlock('season_5');
+    if (played >= 10) PP_FX.unlock('season_10');
+    if (career.retired) PP_FX.unlock('retire');
+
+    archivedSeasons.forEach(function(season) {
+      if ((Number(season && season.wins) || 0) >= 60) PP_FX.unlock('win_60');
+      if (isPlayoffResult(season && season.playoffResult)) PP_FX.unlock('playoffs');
+      unlockSeasonStatMilestones(season && season.playerStats);
+    });
+    if ((Number(currentSeason.wins) || 0) >= 60) PP_FX.unlock('win_60');
+    if (currentSeason.isPlayoffs || currentSeason.playoffBracket || isPlayoffResult(currentSeason.playoffResult)) PP_FX.unlock('playoffs');
+    unlockSeasonStatMilestones(currentSeason.playerStats);
+    (currentSeason.games || []).forEach(function(game) { unlockGameStatMilestones(game && game.stats); });
+  }
+
   function syncAchievementState() {
     var s = G(); if (!s) return {};
     var me = displayName();
-    var facts = { mvp:0, fmvp:0, dpoy:false, roty:false, sixthman:false, allStar:false, allNBA:false, champion:0 };
+    var facts = {
+      mvp:0, fmvp:0, dpoy:false, roty:false, sixthman:false,
+      allStar:false, allNBA:false, allRookie:false, allDefense:false,
+      champion:0, falsePositiveTargets:{}
+    };
     var seen = {};
     function keyFor(a, scope) {
       var act = a && a.act ? a.act : '';
@@ -756,27 +949,26 @@
       if (!a) return;
       var label = typeof a === 'string' ? a : String(a.label || '');
       if (!label && !(a && a.act)) return;
-      var mine = !!trustedUser || !!(a && a.isUser) || !!(me && a && (a.winner === me || String(a.winner || '').split('、').indexOf(me) >= 0));
+      if (typeof a === 'object' && a.isUser === false) return;
+      var mine = !!trustedUser || !!(a && a.isUser === true) ||
+        !!(typeof a === 'string' && scope === 'current') ||
+        !!(me && a && (a.winner === me || String(a.winner || '').split('、').indexOf(me) >= 0));
       if (!mine) return;
       var key = keyFor(a, scope);
       if (seen[key]) return;
       seen[key] = true;
-      var act = a && a.act ? a.act : '';
-      // FMVP、全明星 MVP 与常规赛 MVP 必须拆开：之前只判断字符串
-      // 是否包含“MVP”，导致“总决赛MVP”直接完成了联盟 MVP 成就。
-      var labelUpper = label.toUpperCase();
-      var compactLabel = label.replace(/\s+/g, '');
-      var isFmvp = act === 'fmvp' || compactLabel.indexOf('总决赛MVP') >= 0 || labelUpper.indexOf('FMVP') >= 0;
-      var isAllStarMvp = act === 'allStarMvp' || compactLabel.indexOf('全明星MVP') >= 0 || labelUpper.indexOf('ALL-STAR MVP') >= 0;
-      var isRegularMvp = !isFmvp && !isAllStarMvp && (act === 'mvp' || label.indexOf('MVP') >= 0);
-      if (isFmvp) facts.fmvp++;
-      else if (isRegularMvp) facts.mvp++;
-      if (act === 'dpoy' || label.indexOf('DPOY') >= 0 || label.indexOf('最佳防守') >= 0) facts.dpoy = true;
-      if (act === 'roty' || label.indexOf('最佳新秀') >= 0) facts.roty = true;
-      if (act === 'sixthman' || label.indexOf('第六人') >= 0) facts.sixthman = true;
-      if (act === 'allStar' || label.indexOf('全明星') >= 0) facts.allStar = true;
-      if (act === 'allNBA' || label.indexOf('最佳阵容') >= 0) facts.allNBA = true;
-      if (act === 'champion' || label.indexOf('总冠军') >= 0) facts.champion++;
+      var kind = classifyAward(a, label);
+      collectLegacyFalsePositiveTargets(kind, label, facts.falsePositiveTargets);
+      if (kind === 'fmvp') facts.fmvp++;
+      else if (kind === 'mvp') facts.mvp++;
+      if (kind === 'dpoy') facts.dpoy = true;
+      if (kind === 'roty') facts.roty = true;
+      if (kind === 'sixthman') facts.sixthman = true;
+      if (kind === 'allStar' || kind === 'allStarMvp') facts.allStar = true;
+      if (kind === 'allNBA') facts.allNBA = true;
+      if (kind === 'allRookie') facts.allRookie = true;
+      if (kind === 'allDefense') facts.allDefense = true;
+      if (kind === 'champion') facts.champion++;
     }
     // saveCurrentSeasonToCareer() 归档后不会立刻清空 season.awards；此时同一座
     // 冠军已存在于 career.honors / career.seasons，继续扫描 current 会重复计数。
@@ -785,42 +977,35 @@
     }
     (s.career && s.career.honors || []).forEach(function(a, i) { take(a, 'career', i, true); });
     (s.career && s.career.seasons || []).forEach(function(season) {
-      (season && season.awards || []).forEach(function(a, i) { take(a, 'season' + (season.seasonNum || ''), i, false); });
+      // Archived season awards are already filtered to the user's honors.
+      (season && season.awards || []).forEach(function(a, i) { take(a, 'season' + (season.seasonNum || ''), i, true); });
     });
     var draft = s.career && s.career.draft;
     if (draft) {
+      var draftRound = Number(draft.round);
+      var draftPick = Number(draft.pick);
       if (draft.type === 'undrafted') PP_FX.unlock('undrafted');
-      if (draft.round === 1 && draft.pick >= 1 && draft.pick <= 14) PP_FX.unlock('lottery_pick');
-      if (draft.round === 1 && draft.pick === 1) PP_FX.unlock('first_pick');
+      if (draftRound === 1 && draftPick >= 1 && draftPick <= 14) PP_FX.unlock('lottery_pick');
+      if (draftRound === 1 && draftPick === 1) PP_FX.unlock('first_pick');
     }
-    // 先修复旧版跨生涯累计的误解锁，再按本次生涯事实判定累计成就。
+    syncStateMilestones(s);
+    // 先修复旧版模糊文字匹配与跨生涯累计造成的误解锁，再按本次
+    // 生涯的精确事实判定成就。
+    repairAmbiguousAwardAchievements(s, facts);
     repairCumulativeAchievements(s, facts);
-    // 旧版本把 FMVP 的“MVP”子串当成常规赛 MVP，已经存进本地成就的
-    // 误判在当前生涯只有 FMVP 时一并撤回；有真实常规赛 MVP 则保留。
-    if (facts.fmvp > 0 && facts.mvp === 0) {
-      var repaired = false;
-      if (unlocked.mvp) { delete unlocked.mvp; repaired = true; }
-      if (unlocked.mvp_x3) { delete unlocked.mvp_x3; repaired = true; }
-      if (repaired) saveUnlocked(unlocked);
-    }
-    if (facts.mvp > 0) PP_FX.unlock('mvp');
-    if (facts.fmvp > 0) PP_FX.unlock('fmvp');
+    if (facts.mvp > 0) unlockWithFactEvidence('mvp', s, 'mvp', facts.mvp);
+    if (facts.fmvp > 0) unlockWithFactEvidence('fmvp', s, 'fmvp', facts.fmvp);
     if (facts.mvp >= 3) PP_FX.unlock('mvp_x3', singleCareerEvidence(s, facts.mvp));
-    if (facts.dpoy) PP_FX.unlock('dpoy');
-    if (facts.roty) PP_FX.unlock('roty');
-    if (facts.sixthman) PP_FX.unlock('sixth_man');
-    if (facts.allStar) PP_FX.unlock('all_star');
-    if (facts.allNBA) PP_FX.unlock('all_nba');
-    if (facts.champion > 0) PP_FX.unlock('champion');
-    if (facts.champion >= 3) PP_FX.unlock('champion_x3', singleCareerEvidence(s, facts.champion, 2));
-    // 赛季场均里程碑
-    var ps = s.season && s.season.playerStats;
-    if (ps && ps.games >= 40) {
-      var g = ps.games;
-      var ppg = ps.pts / g, rpg = ps.reb / g;
-      if (ppg >= 30) PP_FX.unlock('avg_30');
-      if (ppg >= 25 && rpg >= 10) PP_FX.unlock('season_25_10');
+    if (facts.dpoy) unlockWithFactEvidence('dpoy', s, 'dpoy');
+    if (facts.roty) unlockWithFactEvidence('roty', s, 'roty');
+    if (facts.sixthman) unlockWithFactEvidence('sixth_man', s, 'sixthman');
+    if (facts.allStar) unlockWithFactEvidence('all_star', s, 'allStar');
+    if (facts.allNBA) unlockWithFactEvidence('all_nba', s, 'allNBA');
+    if (facts.champion > 0) {
+      unlockWithFactEvidence('champion', s, 'champion', facts.champion);
+      PP_FX.unlock('playoffs');
     }
+    if (facts.champion >= 3) PP_FX.unlock('champion_x3', singleCareerEvidence(s, facts.champion, 2));
     PP_FX._achievementFacts = facts;
     return facts;
   }
@@ -852,27 +1037,28 @@
   }
 
   // 6) 退役
-  function afterRetire() { PP_FX.unlock('retire'); syncAchievementState(); }
+  function afterRetire() {
+    var s = G();
+    if (s && s.career && s.career.retired) syncAchievementState();
+  }
 
   // 7) 单场比赛数据里程碑
   // 关键修复：主引擎的 renderGameCastNew 只定义未调用（快速模拟用点阵图），
   // 所以旧的 game_40/game_50/triple_double 永远无法触发。改为在每场比赛推入
   // STATE.season.games 后（simDayLeagueGames 在所有路径都会被调用）检查最新一场的 stats。
-  var _lastCheckedGameIdx = -1;
+  var _lastCheckedGameKey = '';
   function checkLatestGameMilestones() {
     var s = G(); if (!s || !s.season || !s.season.games) return;
     var games = s.season.games;
     var idx = games.length - 1;
-    if (idx < 0 || idx === _lastCheckedGameIdx) return; // 防重复
-    _lastCheckedGameIdx = idx;
-    var stats = games[idx] && games[idx].stats;
-    if (!stats) return; // 禁赛场次 stats 为 null
-    if ((stats.pts || 0) >= 50) PP_FX.unlock('game_50');
-    else if ((stats.pts || 0) >= 40) PP_FX.unlock('game_40');
-    var dd = 0;
-    ['pts', 'reb', 'ast', 'stl', 'blk'].forEach(function (k) { if ((stats[k] || 0) >= 10) dd++; });
-    if (dd >= 3) PP_FX.unlock('triple_double');
+    if (idx < 0) return;
+    var game = games[idx] || {};
+    var gameKey = [s.gameId || '', (s.career && s.career.seasonCount) || 0, s.season.isPlayoffs ? 1 : 0, idx, (game.game && game.game.day) || ''].join('|');
+    if (gameKey === _lastCheckedGameKey) return;
+    _lastCheckedGameKey = gameKey;
+    unlockGameStatMilestones(game.stats); // 禁赛场次 stats 为 null
   }
+  PP_FX.checkLatestGameMilestones = checkLatestGameMilestones;
 
   /* ---------- 安装 hooks（DOM 就绪后，确保主引擎已定义这些函数） ---------- */
   function install() {
@@ -886,7 +1072,7 @@
     wrap('renderAfterSaveLoad', null, function () { syncAchievementState(); });
     // 退役实际走 announcePlayerRetirement()，showRetirementModal 定义了却从未被调用，
     // 旧 hook 挂在后者上导致 retire 成就永远无法解锁。
-    wrap('announcePlayerRetirement', afterRetire, null);
+    wrap('announcePlayerRetirement', null, afterRetire);
 
     // 单场里程碑：simDayLeagueGames 在每场比赛推入 games 后都会被调用（含季后赛）
     wrap('simDayLeagueGames', null, function () { checkLatestGameMilestones(); });
