@@ -232,32 +232,71 @@
     var career = typeof STATE !== 'undefined' && STATE.career ? STATE.career : {};
     var profile = career.profile || {};
     var mods = typeof getNextSeasonMods === 'function' ? getNextSeasonMods() : {};
+    var effects = typeof getCareerProfileEffects === 'function' ? getCareerProfileEffects() : { teamStanding:0, publicStanding:0, legacyScoreContribution:0 };
     var values = [
-      { key:'pressure', label:'压力', value:typeof getMentalPressure === 'function' ? Math.round(getMentalPressure()) : 0, badHigh:true, raw:true },
-      { key:'staminaLoad', label:'体能负荷', value:mods.staminaLoad, badHigh:true },
-      { key:'moraleBonus', label:'士气', value:mods.moraleBonus, goodHigh:true },
-      { key:'formVariance', label:'状态波动', value:mods.formVariance, badHigh:true },
-      { key:'injuryRiskBonus', label:'伤病风险', value:mods.injuryRiskBonus, badHigh:true },
-      { key:'teamChemistry', label:'球队默契', value:mods.teamChemistry, goodHigh:true },
-      { key:'mediaPressure', label:'媒体压力', value:mods.mediaPressure, badHigh:true },
-      { key:'fame', label:'人气', value:profile.fame, goodHigh:true },
-      { key:'businessValue', label:'商业价值', value:profile.businessValue, goodHigh:true },
-      { key:'mediaTrust', label:'媒体信任', value:profile.mediaTrust, goodHigh:true },
-      { key:'controversy', label:'争议', value:profile.controversy, badHigh:true },
-      { key:'chinaPopularity', label:'中国人气', value:profile.chinaPopularity, goodHigh:true },
-      { key:'loyalty', label:'忠诚', value:profile.loyalty, goodHigh:true },
-      { key:'leadership', label:'领导力', value:profile.leadership, goodHigh:true },
-      { key:'coachTrust', label:'教练信任', value:profile.coachTrust, goodHigh:true },
-      { key:'lockerRoomTrust', label:'更衣室信任', value:profile.lockerRoomTrust, goodHigh:true },
-      { key:'fanSupport', label:'球迷支持', value:profile.fanSupport, goodHigh:true },
-      { key:'legacyBonus', label:'传奇加成', value:profile.legacyBonus, goodHigh:true }
+      { group:'竞技状态', key:'pressure', label:'压力', value:typeof getMentalPressure === 'function' ? Math.round(getMentalPressure()) : 0, badHigh:true, raw:true, impact:'提高事件风险与负面状态触发' },
+      { group:'竞技状态', key:'staminaLoad', label:'体能负荷', value:mods.staminaLoad, badHigh:true, impact:'直接降低攻防；低负荷可减免老将衰退' },
+      { group:'竞技状态', key:'moraleBonus', label:'士气', value:mods.moraleBonus, goodHigh:true, impact:'直接提升球队进攻与防守效率' },
+      { group:'竞技状态', key:'formVariance', label:'状态波动', value:mods.formVariance, badHigh:true, impact:'改变每场比赛结果的波动幅度' },
+      { group:'竞技状态', key:'injuryRiskBonus', label:'伤病风险', value:mods.injuryRiskBonus, badHigh:true, impact:'影响伤病概率；低风险可减免老将衰退' },
+      { group:'球队关系', key:'teamChemistry', label:'球队默契', value:mods.teamChemistry, goodHigh:true, impact:'直接提升球队进攻与防守效率' },
+      { group:'球队关系', key:'coachTrust', label:'教练信任', value:profile.coachTrust, goodHigh:true, impact:'影响首发、时间、交易、裁员与续约' },
+      { group:'球队关系', key:'lockerRoomTrust', label:'更衣室信任', value:profile.lockerRoomTrust, goodHigh:true, impact:'提升进攻，降低交易与裁员风险' },
+      { group:'球队关系', key:'leadership', label:'领导力', value:profile.leadership, goodHigh:true, impact:'提升球队攻防并帮助竞争首发' },
+      { group:'球队关系', key:'loyalty', label:'忠诚', value:profile.loyalty, goodHigh:true, impact:'降低主动交易风险，提高母队续约率' },
+      { group:'舆论环境', key:'mediaPressure', label:'媒体压力', value:mods.mediaPressure, badHigh:true, impact:'降低进攻效率并增加心理压力' },
+      { group:'舆论环境', key:'mediaTrust', label:'媒体信任', value:profile.mediaTrust, goodHigh:true, impact:'降低比赛波动并增加自由市场报价' },
+      { group:'舆论环境', key:'controversy', label:'争议', value:profile.controversy, badHigh:true, impact:'增加波动、交易与裁员风险，降低续约' },
+      { group:'舆论环境', key:'fanSupport', label:'球迷支持', value:profile.fanSupport, goodHigh:true, impact:'降低裁员风险，提高续约和市场热度' },
+      { group:'舆论环境', key:'fame', label:'人气', value:profile.fame, goodHigh:true, impact:'提高自由市场热度与报价数量' },
+      { group:'生涯影响', key:'businessValue', label:'商业价值', value:profile.businessValue, goodHigh:true, impact:'提高续约率与自由市场报价数量' },
+      { group:'生涯影响', key:'chinaPopularity', label:'中国人气', value:profile.chinaPopularity, goodHigh:true, impact:'提高公众影响力与自由市场热度' },
+      { group:'生涯影响', key:'legacyBonus', label:'传奇声望', value:profile.legacyBonus, goodHigh:true, impact:'直接计入最终历史分，范围 -15~+20' }
     ];
-    return '<div class="player-state-strip" id="player-state-strip" aria-label="球员完整状态">' + values.map(function (item) {
+
+    function stateClass(item, value) {
+      if (item.badHigh && value > 0) return ' alert';
+      if (item.badHigh && value < 0) return ' good';
+      if (item.goodHigh && value > 0) return ' good';
+      if (item.goodHigh && value < 0) return ' alert';
+      return '';
+    }
+    function band(score) {
+      if (score >= 6) return '出色';
+      if (score >= 2) return '良好';
+      if (score <= -6) return '警戒';
+      if (score <= -2) return '承压';
+      return '平稳';
+    }
+    function summaryItem(key, label, score, impact) {
+      var cls = score >= 2 ? ' good' : (score <= -2 ? ' alert' : '');
+      return '<div class="player-state-item' + cls + '" data-status-key="' + key + '" title="' + impact + '">' +
+        '<span class="player-state-value">' + band(score) + '</span><span class="player-state-label">' + label + '</span></div>';
+    }
+    function detailItem(item) {
       var value = Math.round(Number(item.value) || 0);
-      var stateClass = item.badHigh && value > 0 ? ' alert' : (item.goodHigh && value > 0 ? ' good' : (item.goodHigh && value < 0 ? ' alert' : ''));
-      return '<div class="player-state-item' + stateClass + '" data-status-key="' + item.key + '" title="' + item.label + '">' +
-        '<span class="player-state-value">' + (item.raw ? value : signed(value)) + '</span><span class="player-state-label">' + item.label + '</span></div>';
-    }).join('') + '</div>';
+      return '<div class="player-state-detail' + stateClass(item, value) + '" data-status-key="' + item.key + '">' +
+        '<span class="player-state-value">' + (item.raw ? value : signed(value)) + '</span><span class="player-state-label">' + item.label + '</span><span class="player-state-impact">' + item.impact + '</span></div>';
+    }
+
+    var pressure = typeof getMentalPressure === 'function' ? Math.round(getMentalPressure()) : 0;
+    var competitiveScore = (Number(mods.moraleBonus) || 0) - (Number(mods.staminaLoad) || 0) - Math.max(0, Number(mods.formVariance) || 0) - Math.max(0, Number(mods.injuryRiskBonus) || 0) - pressure / 4;
+    var teamScore = (Number(mods.teamChemistry) || 0) + (Number(effects.teamStanding) || 0) / 4;
+    var publicScore = (Number(effects.publicStanding) || 0) / 4 - (Number(mods.mediaPressure) || 0) - pressure / 6;
+    var legacyScore = (Number(effects.legacyScoreContribution) || 0) + (Number(profile.loyalty) || 0) * 0.2;
+    var summaryHtml = summaryItem('competitiveSummary', '竞技状态', competitiveScore, '士气、疲劳、伤病与状态波动的综合结果')
+      + summaryItem('teamSummary', '球队关系', teamScore, '影响球队攻防、首发、上场时间、交易与续约')
+      + summaryItem('publicSummary', '舆论环境', publicScore, '影响比赛波动、续约与自由市场报价')
+      + summaryItem('legacySummary', '生涯影响', legacyScore, '影响最终历史分与生涯评价');
+    var groupOrder = ['竞技状态','球队关系','舆论环境','生涯影响'];
+    var groupsHtml = groupOrder.map(function (group) {
+      return '<div class="player-state-group"><div class="player-state-group-title">' + group + '</div>' + values.filter(function (item) {
+        return item.group === group;
+      }).map(detailItem).join('') + '</div>';
+    }).join('');
+    return '<div class="player-state-strip" id="player-state-strip" aria-label="球员状态摘要与完整作用">' +
+      '<div class="player-state-summary">' + summaryHtml + '</div>' +
+      '<details class="player-state-details"><summary>查看 18 项详细状态与作用</summary><div class="player-state-groups">' + groupsHtml + '</div></details></div>';
   };
 
   function draftPending() {
@@ -560,7 +599,7 @@
       character: window.PERFECT_PLAYER_PROFILE || null,
       build: { team:state.currentTeam || null, locked:state.lockedCount || 0, candidates:document.querySelectorAll('.br-player').length, historicalCandidates:document.querySelectorAll('.br-player.historical-effect-card').length, hallOfFameCandidates:document.querySelectorAll('.br-player.hall-of-fame-card').length, peakAllStarCandidates:document.querySelectorAll('.br-player.peak-all-star-card').length, candidatesUnique: (function () { var names = []; document.querySelectorAll('.br-player .bp-name').forEach(function (el) { names.push(el.textContent.trim()); }); return new Set(names).size === names.length; })(), mockAdRerollsLeft: state._mockAdRerollsLeft == null ? 3 : state._mockAdRerollsLeft, pool:window.PERFECT_PLAYER_POOL_REPORT || null },
       competition: { team:state.careerTeam || null, rosterSize:state.careerTeam && typeof NBA2K_DATA !== 'undefined' && NBA2K_DATA[state.careerTeam] ? NBA2K_DATA[state.careerTeam].length : 0, historical:state.careerTeam && typeof NBA2K_DATA !== 'undefined' && NBA2K_DATA[state.careerTeam] ? NBA2K_DATA[state.careerTeam].filter(function (p) { return p && p._sourceKind === 'historical'; }).length : 0, source:'NBA2K_DATA (current-only)' },
-      career: { team:state.careerTeam || null, season:career.seasonCount || 0, record:[season.wins || 0, season.losses || 0], profile:career.profile || {}, modifiers:career.nextSeasonMods || {} },
+      career: { team:state.careerTeam || null, season:career.seasonCount || 0, record:[season.wins || 0, season.losses || 0], profile:career.profile || {}, modifiers:career.nextSeasonMods || {}, profileEffects:typeof getCareerProfileEffects === 'function' ? getCareerProfileEffects() : {} },
       draftProjection: state._draftPending ? window.getPerfectPlayerDraftProjection() : null,
       draftEvents: window.PERFECT_PLAYER_DRAFT_EVENT_REPORT || null,
       seasonEvents: window.PERFECT_PLAYER_SEASON_EVENT_REPORT || null,
