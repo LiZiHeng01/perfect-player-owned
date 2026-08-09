@@ -141,7 +141,7 @@
     { year: 1984, label: '1983-84', sub: '黑白双雄' }
   ];
   const SINGLE_SEASON = { year: 2025, label: '虎扑单赛季 · 2025-26' };
-  const ATTRIBUTE_POOL_URL = 'assets/data/perfect-player-pool.json?v=20260808-peak';
+  const ATTRIBUTE_POOL_URL = 'assets/data/perfect-player-pool.json?v=20260809-static-peak-table';
 
   // 18 张透明真人风格主角头像：亚洲、白人、黑人各 6 张。
   const AI_AVATAR_META = Array.from({ length: 18 }, (_, index) => ({
@@ -422,7 +422,7 @@
       const currentRoster = (pool[id].players || []).slice(0, 12);
       const historicalRoster = (pool[id].historicalPlayers || []).slice(0, 5);
       const roster = currentRoster.slice();
-      if (historicalRoster.length && Math.random() < 0.10) roster.push(pick(historicalRoster));
+      if (historicalRoster.length && Math.random() < 0.20) roster.push(pick(historicalRoster));
       const fresh = roster.filter(p => !PP.build.usedPlayers.has(sourcePlayerKey(p)));
       const matching = (fresh.length ? fresh : roster).filter(p => parseNum(p.source && p.source.year, 0) === requested.year);
       const candidates = matching.length ? matching : (fresh.length ? fresh : roster);

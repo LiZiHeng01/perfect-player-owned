@@ -3087,7 +3087,7 @@ function getBuildHistoricalSurprisePool(team) {
 }
 
 // 历史球员是低概率惊喜卡，不再像普通候选一样每轮固定出现。
-const HISTORICAL_SURPRISE_DRAW_CHANCE = 0.10;
+const HISTORICAL_SURPRISE_DRAW_CHANCE = 0.20;
 
 /** 从12名现役池抽一轮固定5人；最多插入1张历史惊喜卡，同轮不重复。 */
 function drawBuildPlayers(pool, count, team) {
@@ -23991,5 +23991,4 @@ if (window._sdkReady && document.getElementById('career-area')) {
 <script src="assets/js/perfect-player-enhancements.js"></script>
 </body>
 </html>
-
 

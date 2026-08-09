@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-08-08T12:22:01.974480+00:00",
+  "generatedAt": "2026-08-09T02:56:15.890441+00:00",
   "rules": {
     "targetRosterSize": 12,
     "currentTarget": 12,
@@ -14,16 +14,13 @@
     ],
     "currentAndPeakVersionsIndependent": true,
     "historicalMode": "low-probability surprise card",
-    "historicalDrawChance": 0.14,
-    "historicalEligibility": "Naismith Hall of Fame player; modern All-Star fallback when a franchise has fewer than five",
-    "historicalModernStartYear": 1984,
+    "historicalDrawChance": 0.2,
+    "historicalEligibility": "fixed 150-card peak table",
     "historicalPeakOnly": true,
-    "historicalPeakSource": "rosters19.csv prime template when available, otherwise highest sampled season rating",
-    "historicalExcluded": [
-      "Norm Nixon",
-      "Norman Ellard Nixon",
-      "Terry Cummings"
-    ]
+    "historicalPeakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
+    "historicalPeakTable": "assets/data/perfect-player-historical-peak-table.json",
+    "historicalPeakTableVersion": 1,
+    "historicalPeakTableRows": 150
   },
   "seasons": [
     {
@@ -983,10 +980,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -994,7 +990,7 @@
           ],
           "starScore": 8.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 95
         },
@@ -1044,10 +1040,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -1055,7 +1050,7 @@
           ],
           "starScore": 8.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 95
         },
@@ -1105,10 +1100,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -1116,7 +1110,7 @@
           ],
           "starScore": 9.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 98
         },
@@ -1166,10 +1160,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -1177,7 +1170,7 @@
           ],
           "starScore": 8.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 95
         },
@@ -1227,10 +1220,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -1238,7 +1230,7 @@
           ],
           "starScore": 9.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 98
         }
@@ -2066,10 +2058,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -2078,13 +2069,13 @@
           ],
           "starScore": 7.6,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 94
         },
         {
           "id": 62,
-          "uid": "pp_19_5_local:vincecarter_62_position_2_surprise_2",
+          "uid": "pp_19_5_local:vincecarter_62_franchise_2",
           "identity": "local:vincecarter",
           "name": "文斯-卡特",
           "nameCn": "文斯-卡特",
@@ -2128,12 +2119,11 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
-            "positionCurated": true,
-            "franchiseFallback": true
+            "franchiseCard": true,
+            "positionCurated": true
           },
           "historicalTeams": [
             2,
@@ -2141,7 +2131,7 @@
           ],
           "starScore": 6.4,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 91
         },
@@ -2191,10 +2181,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -2204,13 +2193,13 @@
           ],
           "starScore": 8.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 95
         },
         {
           "id": 25,
-          "uid": "pp_19_2_local:buckwilliams_25_franchise_23_position_4_surprise_2",
+          "uid": "pp_19_2_local:buckwilliams_25",
           "identity": "local:buckwilliams",
           "name": "巴克-威廉姆斯",
           "nameCn": "巴克-威廉姆斯",
@@ -2254,13 +2243,10 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
-            "franchiseCard": true,
-            "positionCurated": true,
-            "franchiseFallback": true
+            "positionCurated": true
           },
           "historicalTeams": [
             2,
@@ -2268,13 +2254,13 @@
           ],
           "starScore": 4.8,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 87
         },
         {
-          "id": 27,
-          "uid": "pp_19_2_local:brooklopez_27_franchise_10_position_5_surprise_2",
+          "id": 158,
+          "uid": "pp_4_10_local:brooklopez_158_franchise_22_position_5_surprise_2",
           "identity": "local:brooklopez",
           "name": "布鲁克-洛佩斯",
           "nameCn": "布鲁克-洛佩斯",
@@ -2282,10 +2268,10 @@
           "altName": "Brook Lopez",
           "teamId": 2,
           "pos": 5,
-          "pos2": 0,
+          "pos2": 4,
           "rating": 85,
-          "age": 25,
-          "yearsLeague": 2,
+          "age": 34,
+          "yearsLeague": 14,
           "draftYear": 2008,
           "image": 265,
           "photoLocal": "assets/images/Player/historical-nba/brook-lopez.png",
@@ -2294,45 +2280,54 @@
           "photoSource": "nba-cdn",
           "nbaId": 201572,
           "attrs": {
-            "pass": 56,
-            "shotInt": 93,
-            "shotExt": 80,
-            "shotFree": 90,
-            "physique": 89,
-            "blk": 81,
-            "reb": 84,
-            "stl": 59,
-            "speed": 81,
-            "strength": 97
+            "pass": 57,
+            "shotInt": 81,
+            "shotExt": 90,
+            "shotFree": 72,
+            "physique": 83,
+            "blk": 94,
+            "reb": 85,
+            "stl": 75,
+            "speed": 75,
+            "strength": 91
           },
           "honors": {
-            "allStar": 0,
-            "allNba1": 0,
-            "allNba2": 0,
-            "allNba3": 0,
+            "rings": 0,
             "mvp": 0,
             "fmvp": 0,
             "dpoy": 0,
-            "rings": 0
+            "roy": 0,
+            "allStar": 0,
+            "allStarMvp": 0,
+            "allNba1": 0,
+            "allNba2": 0,
+            "allNba3": 0,
+            "allDefensive": 0,
+            "scoring": 0,
+            "rebound": 0,
+            "assist": 0,
+            "block": 0,
+            "steal": 0,
+            "sixthMan": 0
           },
           "source": {
             "kind": "historical",
-            "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
-            "file": "rosters19.csv",
-            "peakTemplate": true,
+            "code": 4,
+            "year": 2022,
+            "label": "2022-23",
+            "file": "rosters04.csv",
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
           },
           "historicalTeams": [
             2,
+            10,
             27
           ],
           "starScore": 4.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 85
         }
@@ -3160,10 +3155,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -3171,7 +3165,7 @@
           ],
           "starScore": 7.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 93
         },
@@ -3221,10 +3215,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -3233,13 +3226,13 @@
           ],
           "starScore": 4.8,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 87
         },
         {
           "id": 302,
-          "uid": "pp_19_16_local:carmeloanthony_302_franchise_23_position_3_surprise_3",
+          "uid": "pp_19_16_local:carmeloanthony_302_franchise_3",
           "identity": "local:carmeloanthony",
           "name": "卡梅隆-安东尼",
           "nameCn": "卡梅隆-安东尼",
@@ -3283,20 +3276,18 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
-            "positionCurated": true,
-            "franchiseFallback": true
+            "positionCurated": true
           },
           "historicalTeams": [
             21
           ],
           "starScore": 6.8,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 92
         },
@@ -3346,10 +3337,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -3357,7 +3347,7 @@
           ],
           "starScore": 8.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 95
         },
@@ -3407,10 +3397,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -3418,7 +3407,7 @@
           ],
           "starScore": 7.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 93
         }
@@ -4247,10 +4236,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -4259,7 +4247,7 @@
           ],
           "starScore": 8.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 95
         },
@@ -4309,10 +4297,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -4320,7 +4307,7 @@
           ],
           "starScore": 4.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 85
         },
@@ -4370,10 +4357,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true
           },
@@ -4382,7 +4368,7 @@
           ],
           "starScore": 8.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 95
         },
@@ -4454,9 +4440,9 @@
           ],
           "starScore": 185.2,
           "historicalTier": "hall-of-fame",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
-          "peakRating": 88,
-          "peakSource": "best sampled season"
+          "peakRating": 88
         },
         {
           "id": 377,
@@ -4504,10 +4490,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true
           },
@@ -4516,7 +4501,7 @@
           ],
           "starScore": 9.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 98
         }
@@ -5344,10 +5329,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -5358,13 +5342,13 @@
           ],
           "starScore": 4.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 85
         },
         {
           "id": 64,
-          "uid": "pp_19_5_local:demarderozan_64",
+          "uid": "pp_19_5_local:demarderozan_64_franchise_6_position_2_surprise_5",
           "identity": "local:demarderozan",
           "name": "德马尔-德罗赞",
           "nameCn": "德马尔-德罗赞",
@@ -5408,18 +5392,19 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
-            "positionCurated": true
+            "franchiseCard": true,
+            "positionCurated": true,
+            "franchiseFallback": true
           },
           "historicalTeams": [
             30
           ],
           "starScore": 5.6,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 89
         },
@@ -5469,10 +5454,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -5482,7 +5466,7 @@
           ],
           "starScore": 7.6,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 94
         },
@@ -5532,10 +5516,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -5543,13 +5526,13 @@
           ],
           "starScore": 6.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
         {
           "id": 269,
-          "uid": "pp_10_28_local:marcgasol_269_franchise_23_position_5_surprise_5",
+          "uid": "pp_10_28_local:marcgasol_269_franchise_18_position_5_surprise_5",
           "identity": "local:marcgasol",
           "name": "马克-加索尔",
           "nameCn": "马克-加索尔",
@@ -5615,9 +5598,9 @@
           ],
           "starScore": 4.4,
           "historicalTier": "modern-all-star",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
-          "peakRating": 86,
-          "peakSource": "best sampled season"
+          "peakRating": 86
         }
       ]
     },
@@ -6443,10 +6426,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -6456,7 +6438,7 @@
           ],
           "starScore": 8.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 95
         },
@@ -6506,10 +6488,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -6517,7 +6498,7 @@
           ],
           "starScore": 9.6,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 99
         },
@@ -6567,10 +6548,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -6578,7 +6558,7 @@
           ],
           "starScore": 8.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 95
         },
@@ -6628,10 +6608,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -6639,7 +6618,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
@@ -6689,10 +6668,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -6702,7 +6680,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         }
@@ -7530,10 +7508,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -7543,7 +7520,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
@@ -7593,10 +7570,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -7606,13 +7582,13 @@
           ],
           "starScore": 6.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
         {
           "id": 91,
-          "uid": "pp_19_7_nba:lebron-james_91_franchise_23_position_3_surprise_7",
+          "uid": "pp_19_7_nba:lebron-james_91",
           "identity": "nba:lebron-james",
           "name": "勒布朗-詹姆斯",
           "nameCn": "勒布朗-詹姆斯",
@@ -7656,13 +7632,10 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
-            "franchiseCard": true,
-            "positionCurated": true,
-            "franchiseFallback": true
+            "positionCurated": true
           },
           "historicalTeams": [
             7,
@@ -7670,7 +7643,7 @@
           ],
           "starScore": 9.2,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 98
         },
@@ -7720,10 +7693,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true,
             "franchiseFallback": true
           },
@@ -7733,7 +7705,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
@@ -7783,10 +7755,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -7794,7 +7765,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         }
@@ -8622,10 +8593,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -8633,7 +8603,7 @@
           ],
           "starScore": 7.6,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 94
         },
@@ -8683,10 +8653,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -8694,13 +8663,13 @@
           ],
           "starScore": 6.8,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 92
         },
         {
           "id": 110,
-          "uid": "pp_19_8_local:granthill_110_franchise_29_position_3_surprise_8",
+          "uid": "pp_19_8_local:granthill_110",
           "identity": "local:granthill",
           "name": "格兰特-希尔",
           "nameCn": "格兰特-希尔",
@@ -8744,13 +8713,10 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
-            "franchiseCard": true,
-            "positionCurated": true,
-            "franchiseFallback": true
+            "positionCurated": true
           },
           "historicalTeams": [
             8,
@@ -8759,7 +8725,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
@@ -8809,10 +8775,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true,
             "franchiseFallback": true
           },
@@ -8821,7 +8786,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
@@ -8871,10 +8836,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -8885,7 +8849,7 @@
           ],
           "starScore": 4.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 85
         }
@@ -9669,7 +9633,7 @@
       "historicalPlayers": [
         {
           "id": 136,
-          "uid": "pp_19_9_local:markjackson_136_franchise_4_position_1_surprise_9",
+          "uid": "pp_19_9_local:markjackson_136_franchise_17_position_1_surprise_9",
           "identity": "local:markjackson",
           "name": "马克-杰克逊",
           "nameCn": "马克-杰克逊",
@@ -9713,10 +9677,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -9728,7 +9691,7 @@
           ],
           "starScore": 3.2,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 83
         },
@@ -9797,9 +9760,9 @@
           ],
           "starScore": 13.4,
           "historicalTier": "hall-of-fame",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
-          "peakRating": 86,
-          "peakSource": "best sampled season"
+          "peakRating": 86
         },
         {
           "id": 121,
@@ -9847,10 +9810,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -9860,7 +9822,7 @@
           ],
           "starScore": 6.4,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 91
         },
@@ -9910,10 +9872,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -9924,7 +9885,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
@@ -9974,10 +9935,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -9985,7 +9945,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         }
@@ -10813,10 +10773,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -10824,7 +10783,7 @@
           ],
           "starScore": 8.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 95
         },
@@ -10874,10 +10833,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -10885,7 +10843,7 @@
           ],
           "starScore": 6.4,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 91
         },
@@ -10935,10 +10893,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -10946,7 +10903,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
@@ -10996,10 +10953,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -11007,13 +10963,13 @@
           ],
           "starScore": 8.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 95
         },
         {
           "id": 139,
-          "uid": "pp_19_10_local:kareemabduljabbar_139",
+          "uid": "pp_19_10_local:kareemabduljabbar_139_franchise_28_position_5_surprise_10",
           "identity": "local:kareemabduljabbar",
           "name": "卡里姆-阿布杜尔-贾巴尔",
           "nameCn": "卡里姆-阿布杜尔-贾巴尔",
@@ -11057,18 +11013,19 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
-            "positionCurated": true
+            "franchiseCard": true,
+            "positionCurated": true,
+            "franchiseFallback": true
           },
           "historicalTeams": [
             28
           ],
           "starScore": 9.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 98
         }
@@ -11907,9 +11864,9 @@
           ],
           "starScore": 4.4,
           "historicalTier": "hall-of-fame",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
-          "peakRating": 86,
-          "peakSource": "best sampled season"
+          "peakRating": 86
         },
         {
           "id": 364,
@@ -11957,10 +11914,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true,
             "franchiseFallback": true
           },
@@ -11969,7 +11925,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
@@ -12019,10 +11975,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -12030,7 +11985,7 @@
           ],
           "starScore": 6.8,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 92
         },
@@ -12080,10 +12035,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -12091,7 +12045,7 @@
           ],
           "starScore": 6.8,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 92
         },
@@ -12141,10 +12095,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -12156,7 +12109,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         }
@@ -12984,10 +12937,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -12997,13 +12949,13 @@
           ],
           "starScore": 4.4,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 86
         },
         {
           "id": 174,
-          "uid": "pp_19_12_local:eddiejones_174_franchise_23_position_2_surprise_12",
+          "uid": "pp_19_12_local:eddiejones_174_franchise_18_position_2_surprise_12",
           "identity": "local:eddiejones",
           "name": "埃迪-琼斯",
           "nameCn": "埃迪-琼斯",
@@ -13047,10 +12999,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -13062,7 +13013,7 @@
           ],
           "starScore": 4.4,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 86
         },
@@ -13112,10 +13063,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -13125,7 +13075,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
@@ -13175,10 +13125,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -13188,13 +13137,13 @@
           ],
           "starScore": 4.4,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 86
         },
         {
           "id": 186,
-          "uid": "pp_19_13_local:alonzomourning_186_position_5_surprise_12",
+          "uid": "pp_19_13_local:alonzomourning_186_franchise_2_position_5_surprise_12",
           "identity": "local:alonzomourning",
           "name": "阿朗佐-莫宁",
           "nameCn": "阿朗佐-莫宁",
@@ -13238,10 +13187,10 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
+            "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
           },
@@ -13251,7 +13200,7 @@
           ],
           "starScore": 6.8,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 92
         }
@@ -14079,10 +14028,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -14092,7 +14040,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
@@ -14142,10 +14090,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -14153,13 +14100,13 @@
           ],
           "starScore": 8.4,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 96
         },
         {
           "id": 91,
-          "uid": "pp_19_7_nba:lebron-james_91_franchise_23_position_3_surprise_13",
+          "uid": "pp_19_7_nba:lebron-james_91_position_3_surprise_13",
           "identity": "nba:lebron-james",
           "name": "勒布朗-詹姆斯",
           "nameCn": "勒布朗-詹姆斯",
@@ -14203,11 +14150,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
-            "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
           },
@@ -14217,7 +14162,7 @@
           ],
           "starScore": 9.2,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 98
         },
@@ -14267,10 +14212,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true,
             "franchiseFallback": true
           },
@@ -14279,13 +14223,13 @@
           ],
           "starScore": 6.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
         {
           "id": 408,
-          "uid": "pp_19_23_nba:shaq-oneal_408_position_5_surprise_13",
+          "uid": "pp_19_23_nba:shaq-oneal_408_franchise_13",
           "identity": "nba:shaq-oneal",
           "name": "沙奎尔-奥尼尔",
           "nameCn": "沙奎尔-奥尼尔",
@@ -14329,12 +14273,11 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
-            "positionCurated": true,
-            "franchiseFallback": true
+            "franchiseCard": true,
+            "positionCurated": true
           },
           "historicalTeams": [
             13,
@@ -14344,7 +14287,7 @@
           ],
           "starScore": 9.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 98
         }
@@ -15172,10 +15115,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -15186,7 +15128,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
@@ -15236,10 +15178,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -15247,7 +15188,7 @@
           ],
           "starScore": 3.6,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 84
         },
@@ -15297,10 +15238,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -15311,7 +15251,7 @@
           ],
           "starScore": 7.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 93
         },
@@ -15361,10 +15301,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true,
             "franchiseFallback": true
           },
@@ -15374,7 +15313,7 @@
           ],
           "starScore": 5.2,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 88
         },
@@ -15424,10 +15363,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -15437,7 +15375,7 @@
           ],
           "starScore": 6.4,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 91
         }
@@ -16265,10 +16203,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -16278,7 +16215,7 @@
           ],
           "starScore": 6.4,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 91
         },
@@ -16328,10 +16265,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -16341,7 +16277,7 @@
           ],
           "starScore": 5.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 88
         },
@@ -16391,10 +16327,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true,
             "franchiseFallback": true
           },
@@ -16403,7 +16338,7 @@
           ],
           "starScore": 5.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 88
         },
@@ -16453,10 +16388,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -16466,7 +16400,7 @@
           ],
           "starScore": 7.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 93
         },
@@ -16516,10 +16450,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -16527,7 +16460,7 @@
           ],
           "starScore": 7.6,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 94
         }
@@ -17367,10 +17300,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -17380,7 +17312,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
@@ -17430,10 +17362,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -17443,7 +17374,7 @@
           ],
           "starScore": 6.8,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 92
         },
@@ -17493,10 +17424,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -17504,7 +17434,7 @@
           ],
           "starScore": 6.4,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 91
         },
@@ -17554,10 +17484,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -17565,13 +17494,13 @@
           ],
           "starScore": 6.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
         {
-          "id": 359,
-          "uid": "pp_2_16_local:nikolajokic_359",
+          "id": 351,
+          "uid": "pp_1_16_local:nikolajokic_351",
           "identity": "local:nikolajokic",
           "name": "尼古拉-约基奇",
           "nameCn": "尼古拉-约基奇",
@@ -17580,55 +17509,65 @@
           "teamId": 16,
           "pos": 5,
           "pos2": 0,
-          "rating": 94,
-          "age": 29,
-          "yearsLeague": 9,
+          "rating": 95,
+          "age": 30,
+          "yearsLeague": 10,
           "draftYear": 2014,
           "image": 82,
-          "photoLocal": "assets/images/Player/historical-nba/nikola-jokic.png",
+          "photoLocal": "assets/data/historical/headshots/local-nikolajokic.png",
           "fallbackPhotoLocal": "assets/data/historical/headshots/local-nikolajokic.png",
           "photoUrl": "https://cdn.nba.com/headshots/nba/latest/1040x760/203999.png",
           "photoSource": "nba-cdn",
           "nbaId": 203999,
           "attrs": {
-            "pass": 91,
+            "pass": 94,
             "shotInt": 94,
             "shotExt": 87,
-            "shotFree": 84,
+            "shotFree": 88,
             "physique": 91,
-            "blk": 75,
-            "reb": 91,
-            "stl": 72,
+            "blk": 78,
+            "reb": 92,
+            "stl": 78,
             "speed": 83,
             "strength": 99
           },
           "honors": {
-            "allStar": 0,
-            "allNba1": 4,
-            "allNba2": 2,
-            "allNba3": 0,
+            "rings": 1,
             "mvp": 3,
             "fmvp": 1,
             "dpoy": 0,
-            "rings": 1
+            "roy": 0,
+            "allStar": 7,
+            "allStarMvp": 0,
+            "allNba1": 5,
+            "allNba2": 2,
+            "allNba3": 0,
+            "allDefensive": 0,
+            "scoring": 0,
+            "rebound": 0,
+            "assist": 0,
+            "block": 0,
+            "steal": 0,
+            "sixthMan": 0
           },
           "source": {
             "kind": "historical",
-            "code": 2,
-            "year": 2024,
-            "label": "2024-25",
-            "file": "rosters02.csv",
+            "code": 1,
+            "year": 2025,
+            "label": "2025-26",
+            "file": "rosters01.csv",
+            "peakFromCurrentRoster": true,
             "positionCurated": true
           },
           "historicalTeams": [
             16,
             21
           ],
-          "starScore": 248.6,
+          "starScore": 335.0,
           "historicalTier": "modern-all-star",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
-          "peakRating": 94,
-          "peakSource": "best sampled season"
+          "peakRating": 95
         }
       ]
     },
@@ -18467,10 +18406,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -18483,13 +18421,13 @@
           ],
           "starScore": 4.4,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 86
         },
         {
-          "id": 373,
-          "uid": "pp_3_17_local:anthonyedwards_373",
+          "id": 368,
+          "uid": "pp_1_17_local:anthonyedwards_368",
           "identity": "local:anthonyedwards",
           "name": "安东尼-爱德华兹",
           "nameCn": "安东尼-爱德华兹",
@@ -18498,55 +18436,65 @@
           "teamId": 17,
           "pos": 2,
           "pos2": 3,
-          "rating": 88,
-          "age": 22,
-          "yearsLeague": 3,
+          "rating": 90,
+          "age": 24,
+          "yearsLeague": 5,
           "draftYear": 2020,
           "image": 85,
-          "photoLocal": "assets/images/Player/historical-nba/anthony-edwards.png",
+          "photoLocal": "assets/data/historical/headshots/local-anthonyedwards.png",
           "fallbackPhotoLocal": "assets/data/historical/headshots/local-anthonyedwards.png",
           "photoUrl": "https://cdn.nba.com/headshots/nba/latest/1040x760/1630162.png",
           "photoSource": "nba-cdn",
           "nbaId": 1630162,
           "attrs": {
-            "pass": 76,
-            "shotInt": 92,
-            "shotExt": 86,
-            "shotFree": 89,
+            "pass": 77,
+            "shotInt": 88,
+            "shotExt": 90,
+            "shotFree": 86,
             "physique": 94,
-            "blk": 68,
-            "reb": 72,
-            "stl": 86,
+            "blk": 73,
+            "reb": 76,
+            "stl": 84,
             "speed": 97,
             "strength": 91
           },
           "honors": {
-            "allStar": 0,
-            "allNba1": 0,
-            "allNba2": 0,
-            "allNba3": 0,
+            "rings": 0,
             "mvp": 0,
             "fmvp": 0,
             "dpoy": 0,
-            "rings": 0
+            "roy": 0,
+            "allStar": 3,
+            "allStarMvp": 0,
+            "allNba1": 0,
+            "allNba2": 2,
+            "allNba3": 0,
+            "allDefensive": 0,
+            "scoring": 0,
+            "rebound": 0,
+            "assist": 0,
+            "block": 0,
+            "steal": 0,
+            "sixthMan": 0
           },
           "source": {
             "kind": "historical",
-            "code": 3,
-            "year": 2023,
-            "label": "2023-24",
-            "file": "rosters03.csv",
+            "code": 1,
+            "year": 2025,
+            "label": "2025-26",
+            "file": "rosters01.csv",
+            "peakFromCurrentRoster": true,
             "positionCurated": true
           },
           "historicalTeams": [
             17,
             22
           ],
-          "starScore": 5.2,
+          "starScore": 60.0,
           "historicalTier": "modern-all-star",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
-          "peakRating": 88,
-          "peakSource": "best sampled season"
+          "peakRating": 90
         },
         {
           "id": 201,
@@ -18606,9 +18554,9 @@
           ],
           "starScore": 42.8,
           "historicalTier": "modern-all-star",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
-          "peakRating": 92,
-          "peakSource": "best sampled season"
+          "peakRating": 92
         },
         {
           "id": 317,
@@ -18656,10 +18604,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -18670,13 +18617,13 @@
           ],
           "starScore": 8.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 95
         },
         {
-          "id": 319,
-          "uid": "pp_19_17_local:karlanthonytowns_319_franchise_3_position_5_surprise_17",
+          "id": 36,
+          "uid": "pp_2_3_local:karlanthonytowns_36_position_5_surprise_17",
           "identity": "local:karlanthonytowns",
           "name": "卡尔-安东尼-唐斯",
           "nameCn": "卡尔-安东尼-唐斯",
@@ -18686,8 +18633,8 @@
           "pos": 5,
           "pos2": 4,
           "rating": 89,
-          "age": 25,
-          "yearsLeague": 2,
+          "age": 29,
+          "yearsLeague": 9,
           "draftYear": 2015,
           "image": 86,
           "photoLocal": "assets/images/Player/historical-nba/karl-anthony-towns.png",
@@ -18696,22 +18643,22 @@
           "photoSource": "nba-cdn",
           "nbaId": 1626157,
           "attrs": {
-            "pass": 66,
-            "shotInt": 88,
-            "shotExt": 86,
-            "shotFree": 84,
-            "physique": 95,
-            "blk": 81,
-            "reb": 87,
-            "stl": 71,
-            "speed": 87,
-            "strength": 99
+            "pass": 65,
+            "shotInt": 92,
+            "shotExt": 87,
+            "shotFree": 85,
+            "physique": 85,
+            "blk": 78,
+            "reb": 92,
+            "stl": 66,
+            "speed": 77,
+            "strength": 93
           },
           "honors": {
             "allStar": 0,
             "allNba1": 0,
             "allNba2": 0,
-            "allNba3": 0,
+            "allNba3": 2,
             "mvp": 0,
             "fmvp": 0,
             "dpoy": 0,
@@ -18719,21 +18666,19 @@
           },
           "source": {
             "kind": "historical",
-            "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
-            "file": "rosters19.csv",
-            "peakTemplate": true,
-            "franchiseCard": true,
+            "code": 2,
+            "year": 2024,
+            "label": "2024-25",
+            "file": "rosters02.csv",
             "positionCurated": true,
             "franchiseFallback": true
           },
           "historicalTeams": [
             3
           ],
-          "starScore": 5.6,
+          "starScore": 23.6,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 89
         }
@@ -19528,8 +19473,8 @@
       ],
       "historicalPlayers": [
         {
-          "id": 413,
-          "uid": "pp_2_18_local:shaigilgeousalexander_413",
+          "id": 403,
+          "uid": "pp_1_18_local:shaigilgeousalexander_403",
           "identity": "local:shaigilgeousalexander",
           "name": "谢伊-吉尔杰斯-亚历山大",
           "nameCn": "谢伊-吉尔杰斯-亚历山大",
@@ -19537,56 +19482,66 @@
           "altName": "Shai Gilgeous-Alexander",
           "teamId": 18,
           "pos": 1,
-          "pos2": 0,
-          "rating": 92,
-          "age": 26,
-          "yearsLeague": 6,
+          "pos2": 2,
+          "rating": 93,
+          "age": 27,
+          "yearsLeague": 7,
           "draftYear": 2018,
           "image": 112,
-          "photoLocal": "assets/images/Player/historical-nba/shai-gilgeous-alexander.png",
+          "photoLocal": "assets/data/historical/headshots/local-shaigilgeousalexander.png",
           "fallbackPhotoLocal": "assets/data/historical/headshots/local-shaigilgeousalexander.png",
           "photoUrl": "https://cdn.nba.com/headshots/nba/latest/1040x760/1628983.png",
           "photoSource": "nba-cdn",
           "nbaId": 1628983,
           "attrs": {
-            "pass": 84,
-            "shotInt": 95,
-            "shotExt": 82,
-            "shotFree": 94,
-            "physique": 92,
+            "pass": 86,
+            "shotInt": 92,
+            "shotExt": 86,
+            "shotFree": 95,
+            "physique": 93,
             "blk": 75,
             "reb": 75,
             "stl": 85,
-            "speed": 98,
-            "strength": 86
+            "speed": 99,
+            "strength": 87
           },
           "honors": {
-            "allStar": 0,
-            "allNba1": 2,
+            "rings": 1,
+            "mvp": 1,
+            "fmvp": 1,
+            "dpoy": 0,
+            "roy": 0,
+            "allStar": 3,
+            "allStarMvp": 0,
+            "allNba1": 3,
             "allNba2": 0,
             "allNba3": 0,
-            "mvp": 0,
-            "fmvp": 0,
-            "dpoy": 0,
-            "rings": 0
+            "allDefensive": 0,
+            "scoring": 1,
+            "rebound": 0,
+            "assist": 0,
+            "block": 0,
+            "steal": 0,
+            "sixthMan": 0
           },
           "source": {
             "kind": "historical",
-            "code": 2,
-            "year": 2024,
-            "label": "2024-25",
-            "file": "rosters02.csv",
+            "code": 1,
+            "year": 2025,
+            "label": "2025-26",
+            "file": "rosters01.csv",
+            "peakFromCurrentRoster": true,
             "positionCurated": true
           },
           "historicalTeams": [
             18,
             24
           ],
-          "starScore": 38.8,
+          "starScore": 158.2,
           "historicalTier": "modern-all-star",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
-          "peakRating": 92,
-          "peakSource": "best sampled season"
+          "peakRating": 93
         },
         {
           "id": 350,
@@ -19634,10 +19589,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -19648,7 +19602,7 @@
           ],
           "starScore": 6.8,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 92
         },
@@ -19698,10 +19652,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -19712,7 +19665,7 @@
           ],
           "starScore": 8.8,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 97
         },
@@ -19762,10 +19715,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -19773,7 +19725,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
@@ -19823,10 +19775,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -19834,7 +19785,7 @@
           ],
           "starScore": 4.8,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 87
         }
@@ -20630,7 +20581,7 @@
       "historicalPlayers": [
         {
           "id": 334,
-          "uid": "pp_19_19_local:damianlillard_334_franchise_10_position_1_surprise_19",
+          "uid": "pp_19_19_local:damianlillard_334_franchise_23_position_1_surprise_19",
           "identity": "local:damianlillard",
           "name": "达米安-利拉德",
           "nameCn": "达米安-利拉德",
@@ -20674,10 +20625,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -20687,13 +20637,13 @@
           ],
           "starScore": 6.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
         {
           "id": 332,
-          "uid": "pp_19_19_local:clydedrexler_332_franchise_23_position_2_surprise_19",
+          "uid": "pp_19_19_local:clydedrexler_332_franchise_17_position_2_surprise_19",
           "identity": "local:clydedrexler",
           "name": "克莱德-德雷克斯勒",
           "nameCn": "克莱德-德雷克斯勒",
@@ -20737,10 +20687,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -20751,7 +20700,7 @@
           ],
           "starScore": 7.6,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 94
         },
@@ -20801,10 +20750,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -20814,13 +20762,13 @@
           ],
           "starScore": 4.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 85
         },
         {
           "id": 315,
-          "uid": "pp_8_30_local:lamarcusaldridge_315_franchise_23_position_4_surprise_19",
+          "uid": "pp_8_30_local:lamarcusaldridge_315_franchise_2_position_4_surprise_19",
           "identity": "local:lamarcusaldridge",
           "name": "拉马库斯-阿尔德里奇",
           "nameCn": "拉马库斯-阿尔德里奇",
@@ -20886,9 +20834,9 @@
           ],
           "starScore": 4.0,
           "historicalTier": "modern-all-star",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
-          "peakRating": 85,
-          "peakSource": "best sampled season"
+          "peakRating": 85
         },
         {
           "id": 333,
@@ -20936,10 +20884,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -20949,7 +20896,7 @@
           ],
           "starScore": 6.8,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 92
         }
@@ -21791,10 +21738,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -21802,7 +21748,7 @@
           ],
           "starScore": 7.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 93
         },
@@ -21863,9 +21809,9 @@
           ],
           "starScore": 17.2,
           "historicalTier": "modern-all-star",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
-          "peakRating": 88,
-          "peakSource": "best sampled season"
+          "peakRating": 88
         },
         {
           "id": 367,
@@ -21913,10 +21859,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -21924,13 +21869,13 @@
           ],
           "starScore": 5.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 88
         },
         {
           "id": 362,
-          "uid": "pp_19_20_local:karlmalone_362_franchise_23_position_4_surprise_20",
+          "uid": "pp_19_20_local:karlmalone_362_franchise_28_position_4_surprise_20",
           "identity": "local:karlmalone",
           "name": "卡尔-马龙",
           "nameCn": "卡尔-马龙",
@@ -21974,10 +21919,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -21988,7 +21932,7 @@
           ],
           "starScore": 8.4,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 96
         },
@@ -22051,9 +21995,9 @@
           ],
           "starScore": 25.0,
           "historicalTier": "modern-all-star",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
-          "peakRating": 85,
-          "peakSource": "best sampled season"
+          "peakRating": 85
         }
       ]
     },
@@ -22892,10 +22836,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -22905,7 +22848,7 @@
           ],
           "starScore": 9.2,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 98
         },
@@ -22955,10 +22898,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -22968,7 +22910,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
@@ -23018,10 +22960,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -23032,13 +22973,13 @@
           ],
           "starScore": 8.8,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 97
         },
         {
-          "id": 387,
-          "uid": "pp_19_21_local:draymondgreen_387_franchise_26_position_4_surprise_21",
+          "id": 403,
+          "uid": "pp_10_21_local:draymondgreen_403_franchise_26_position_4_surprise_21",
           "identity": "local:draymondgreen",
           "name": "德雷蒙德-格林",
           "nameCn": "德雷蒙德-格林",
@@ -23049,7 +22990,7 @@
           "pos2": 5,
           "rating": 88,
           "age": 25,
-          "yearsLeague": 2,
+          "yearsLeague": 3,
           "draftYear": 2012,
           "image": 104,
           "photoLocal": "assets/images/Player/historical-nba/draymond-green.png",
@@ -23058,16 +22999,16 @@
           "photoSource": "nba-cdn",
           "nbaId": 203110,
           "attrs": {
-            "pass": 81,
-            "shotInt": 79,
-            "shotExt": 85,
-            "shotFree": 68,
-            "physique": 97,
-            "blk": 80,
-            "reb": 88,
-            "stl": 85,
-            "speed": 93,
-            "strength": 99
+            "pass": 85,
+            "shotInt": 84,
+            "shotExt": 80,
+            "shotFree": 72,
+            "physique": 90,
+            "blk": 84,
+            "reb": 84,
+            "stl": 82,
+            "speed": 86,
+            "strength": 94
           },
           "honors": {
             "allStar": 0,
@@ -23077,25 +23018,25 @@
             "mvp": 0,
             "fmvp": 0,
             "dpoy": 0,
-            "rings": 0
+            "rings": 1
           },
           "source": {
             "kind": "historical",
-            "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
-            "file": "rosters19.csv",
-            "peakTemplate": true,
+            "code": 10,
+            "year": 2016,
+            "label": "2016-17",
+            "file": "rosters10.csv",
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
           },
           "historicalTeams": [
+            21,
             26
           ],
-          "starScore": 5.2,
+          "starScore": 8.2,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 88
         },
@@ -23145,10 +23086,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -23158,7 +23098,7 @@
           ],
           "starScore": 9.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 98
         }
@@ -24000,10 +23940,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -24013,7 +23952,7 @@
           ],
           "starScore": 8.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 95
         },
@@ -24063,10 +24002,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -24076,7 +24014,7 @@
           ],
           "starScore": 6.4,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 91
         },
@@ -24126,10 +24064,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true
           },
@@ -24138,7 +24075,7 @@
           ],
           "starScore": 7.6,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 94
         },
@@ -24188,10 +24125,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -24201,13 +24137,13 @@
           ],
           "starScore": 6.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
         {
           "id": 393,
-          "uid": "pp_19_22_local:bobmcadoo_393_franchise_23_position_5_surprise_22",
+          "uid": "pp_19_22_local:bobmcadoo_393_franchise_28_position_5_surprise_22",
           "identity": "local:bobmcadoo",
           "name": "鲍勃-麦卡杜",
           "nameCn": "鲍勃-麦卡杜",
@@ -24251,10 +24187,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -24264,7 +24199,7 @@
           ],
           "starScore": 7.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 93
         }
@@ -25061,7 +24996,7 @@
       "historicalPlayers": [
         {
           "id": 407,
-          "uid": "pp_19_23_local:earvinjohnson_407",
+          "uid": "pp_19_23_local:earvinjohnson_407_franchise_17_position_1_surprise_23",
           "identity": "local:earvinjohnson",
           "name": "埃尔文-约翰逊",
           "nameCn": "埃尔文-约翰逊",
@@ -25105,11 +25040,12 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
-            "positionCurated": true
+            "franchiseCard": true,
+            "positionCurated": true,
+            "franchiseFallback": true
           },
           "historicalTeams": [
             22,
@@ -25117,13 +25053,13 @@
           ],
           "starScore": 9.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 98
         },
         {
           "id": 409,
-          "uid": "pp_19_23_local:kobebryant_409",
+          "uid": "pp_19_23_local:kobebryant_409_franchise_28_position_2_surprise_23",
           "identity": "local:kobebryant",
           "name": "科比-布莱恩特",
           "nameCn": "科比-布莱恩特",
@@ -25167,24 +25103,25 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
-            "positionCurated": true
+            "franchiseCard": true,
+            "positionCurated": true,
+            "franchiseFallback": true
           },
           "historicalTeams": [
             28
           ],
           "starScore": 9.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 98
         },
         {
           "id": 91,
-          "uid": "pp_19_7_nba:lebron-james_91_franchise_23",
+          "uid": "pp_19_7_nba:lebron-james_91_position_3_surprise_23",
           "identity": "nba:lebron-james",
           "name": "勒布朗-詹姆斯",
           "nameCn": "勒布朗-詹姆斯",
@@ -25228,12 +25165,11 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
-            "franchiseCard": true,
-            "positionCurated": true
+            "positionCurated": true,
+            "franchiseFallback": true
           },
           "historicalTeams": [
             7,
@@ -25241,7 +25177,7 @@
           ],
           "starScore": 9.2,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 98
         },
@@ -25291,10 +25227,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true
           },
@@ -25303,13 +25238,13 @@
           ],
           "starScore": 6.4,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 91
         },
         {
           "id": 139,
-          "uid": "pp_19_10_local:kareemabduljabbar_139_position_5_surprise_23",
+          "uid": "pp_19_10_local:kareemabduljabbar_139_franchise_28_position_5_surprise_23",
           "identity": "local:kareemabduljabbar",
           "name": "卡里姆-阿布杜尔-贾巴尔",
           "nameCn": "卡里姆-阿布杜尔-贾巴尔",
@@ -25353,10 +25288,10 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
+            "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
           },
@@ -25365,7 +25300,7 @@
           ],
           "starScore": 9.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 98
         }
@@ -26205,10 +26140,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -26219,7 +26153,7 @@
           ],
           "starScore": 8.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 95
         },
@@ -26269,10 +26203,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -26282,13 +26215,13 @@
           ],
           "starScore": 5.2,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 88
         },
         {
           "id": 427,
-          "uid": "pp_19_24_local:shawnmarion_427_franchise_29_position_3_surprise_24",
+          "uid": "pp_19_24_local:shawnmarion_427_franchise_13_position_3_surprise_24",
           "identity": "local:shawnmarion",
           "name": "肖恩-马里昂",
           "nameCn": "肖恩-马里昂",
@@ -26332,10 +26265,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -26346,7 +26278,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
@@ -26418,13 +26350,13 @@
           ],
           "starScore": 185.2,
           "historicalTier": "hall-of-fame",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
-          "peakRating": 88,
-          "peakSource": "best sampled season"
+          "peakRating": 88
         },
         {
           "id": 424,
-          "uid": "pp_19_24_local:amarestoudemire_424_franchise_29_position_5_surprise_24",
+          "uid": "pp_19_24_local:amarestoudemire_424_franchise_3_position_5_surprise_24",
           "identity": "local:amarestoudemire",
           "name": "阿玛雷-斯塔德迈尔",
           "nameCn": "阿玛雷-斯塔德迈尔",
@@ -26468,10 +26400,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -26481,7 +26412,7 @@
           ],
           "starScore": 6.8,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 92
         }
@@ -27322,10 +27253,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true,
             "franchiseFallback": true
           },
@@ -27334,7 +27264,7 @@
           ],
           "starScore": 8.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 95
         },
@@ -27384,10 +27314,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -27395,7 +27324,7 @@
           ],
           "starScore": 6.4,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 91
         },
@@ -27468,9 +27397,9 @@
           ],
           "starScore": 14.0,
           "historicalTier": "modern-all-star",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
-          "peakRating": 80,
-          "peakSource": "best sampled season"
+          "peakRating": 80
         },
         {
           "id": 394,
@@ -27542,13 +27471,13 @@
           ],
           "starScore": 63.8,
           "historicalTier": "hall-of-fame",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
-          "peakRating": 82,
-          "peakSource": "best sampled season"
+          "peakRating": 82
         },
         {
           "id": 443,
-          "uid": "pp_19_25_demarcuscousins_443_franchise_29_position_5_surprise_25",
+          "uid": "pp_19_25_demarcuscousins_443_franchise_27_position_5_surprise_25",
           "identity": "demarcuscousins",
           "name": "德马库斯-考辛斯",
           "nameCn": "德马库斯-考辛斯",
@@ -27592,10 +27521,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -27605,7 +27533,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         }
@@ -28401,7 +28329,7 @@
       "historicalPlayers": [
         {
           "id": 251,
-          "uid": "pp_4_26_local:lukadoncic_251_franchise_23_position_1_surprise_26",
+          "uid": "pp_4_26_local:lukadoncic_251_franchise_28_position_1_surprise_26",
           "identity": "local:lukadoncic",
           "name": "卢卡-东契奇",
           "nameCn": "卢卡-东契奇",
@@ -28458,9 +28386,9 @@
           ],
           "starScore": 54.8,
           "historicalTier": "modern-all-star",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
-          "peakRating": 92,
-          "peakSource": "best sampled season"
+          "peakRating": 92
         },
         {
           "id": 236,
@@ -28508,10 +28436,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -28521,7 +28448,7 @@
           ],
           "starScore": 4.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 85
         },
@@ -28571,10 +28498,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -28584,7 +28510,7 @@
           ],
           "starScore": 4.4,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 86
         },
@@ -28634,10 +28560,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -28647,7 +28572,7 @@
           ],
           "starScore": 8.4,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 96
         },
@@ -28697,10 +28622,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -28711,7 +28635,7 @@
           ],
           "starScore": 3.2,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 83
         }
@@ -29554,10 +29478,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -29565,7 +29488,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
@@ -29615,10 +29538,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -29628,7 +29550,7 @@
           ],
           "starScore": 8.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 95
         },
@@ -29678,10 +29600,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -29692,7 +29613,7 @@
           ],
           "starScore": 7.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 93
         },
@@ -29742,10 +29663,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -29755,7 +29675,7 @@
           ],
           "starScore": 7.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 93
         },
@@ -29805,10 +29725,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -29818,7 +29737,7 @@
           ],
           "starScore": 9.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 98
         }
@@ -30658,10 +30577,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -30672,7 +30590,7 @@
           ],
           "starScore": 4.4,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 86
         },
@@ -30722,10 +30640,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -30735,7 +30652,7 @@
           ],
           "starScore": 2.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 80
         },
@@ -30785,10 +30702,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -30798,13 +30714,13 @@
           ],
           "starScore": 2.4,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 81
         },
         {
           "id": 258,
-          "uid": "pp_19_28_local:zachrandolph_258_franchise_23_position_4_surprise_28",
+          "uid": "pp_19_28_local:zachrandolph_258_franchise_3_position_4_surprise_28",
           "identity": "local:zachrandolph",
           "name": "扎克-兰多夫",
           "nameCn": "扎克-兰多夫",
@@ -30848,10 +30764,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -30862,13 +30777,13 @@
           ],
           "starScore": 5.2,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 88
         },
         {
           "id": 269,
-          "uid": "pp_10_28_local:marcgasol_269_franchise_23_position_5_surprise_28",
+          "uid": "pp_10_28_local:marcgasol_269_franchise_18_position_5_surprise_28",
           "identity": "local:marcgasol",
           "name": "马克-加索尔",
           "nameCn": "马克-加索尔",
@@ -30934,9 +30849,9 @@
           ],
           "starScore": 4.4,
           "historicalTier": "modern-all-star",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
-          "peakRating": 86,
-          "peakSource": "best sampled season"
+          "peakRating": 86
         }
       ]
     },
@@ -31774,10 +31689,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -31787,7 +31701,7 @@
           ],
           "starScore": 8.0,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 95
         },
@@ -31850,13 +31764,13 @@
           ],
           "starScore": 7.8,
           "historicalTier": "modern-all-star",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
-          "peakRating": 87,
-          "peakSource": "best sampled season"
+          "peakRating": 87
         },
         {
-          "id": 280,
-          "uid": "pp_19_29_local:brandoningram_280_franchise_23_position_3_surprise_29",
+          "id": 330,
+          "uid": "pp_5_29_local:brandoningram_330_franchise_5_position_3_surprise_29",
           "identity": "local:brandoningram",
           "name": "布兰登-英格拉姆",
           "nameCn": "布兰登-英格拉姆",
@@ -31864,10 +31778,10 @@
           "altName": "Brandon Ingram",
           "teamId": 29,
           "pos": 3,
-          "pos2": 4,
+          "pos2": 2,
           "rating": 84,
-          "age": 25,
-          "yearsLeague": 2,
+          "age": 24,
+          "yearsLeague": 5,
           "draftYear": 2016,
           "image": 162,
           "photoLocal": "assets/images/Player/historical-nba/brandon-ingram.png",
@@ -31876,16 +31790,16 @@
           "photoSource": "nba-cdn",
           "nbaId": 1627742,
           "attrs": {
-            "pass": 77,
-            "shotInt": 85,
-            "shotExt": 84,
-            "shotFree": 85,
-            "physique": 88,
-            "blk": 74,
-            "reb": 76,
-            "stl": 68,
-            "speed": 88,
-            "strength": 88
+            "pass": 83,
+            "shotInt": 87,
+            "shotExt": 86,
+            "shotFree": 90,
+            "physique": 89,
+            "blk": 70,
+            "reb": 78,
+            "stl": 62,
+            "speed": 89,
+            "strength": 89
           },
           "honors": {
             "allStar": 0,
@@ -31899,21 +31813,21 @@
           },
           "source": {
             "kind": "historical",
-            "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
-            "file": "rosters19.csv",
-            "peakTemplate": true,
+            "code": 5,
+            "year": 2021,
+            "label": "2021-22",
+            "file": "rosters05.csv",
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
           },
           "historicalTeams": [
-            5
+            5,
+            29
           ],
           "starScore": 3.6,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 84
         },
@@ -31963,10 +31877,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "positionCurated": true
           },
           "historicalTeams": [
@@ -31974,7 +31887,7 @@
           ],
           "starScore": 4.4,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 86
         },
@@ -32024,10 +31937,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -32037,7 +31949,7 @@
           ],
           "starScore": 6.4,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 91
         }
@@ -32877,10 +32789,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -32890,7 +32801,7 @@
           ],
           "starScore": 6.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 90
         },
@@ -32940,10 +32851,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -32953,7 +32863,7 @@
           ],
           "starScore": 7.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 93
         },
@@ -33003,10 +32913,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -33016,7 +32925,7 @@
           ],
           "starScore": 7.6,
           "historicalTier": "modern-all-star",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 94
         },
@@ -33066,10 +32975,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -33079,7 +32987,7 @@
           ],
           "starScore": 9.2,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 98
         },
@@ -33129,10 +33037,9 @@
           "source": {
             "kind": "historical",
             "code": 19,
-            "year": 0,
-            "label": "生涯巅峰",
+            "year": 1957,
+            "label": "1957-58",
             "file": "rosters19.csv",
-            "peakTemplate": true,
             "franchiseCard": true,
             "positionCurated": true,
             "franchiseFallback": true
@@ -33142,7 +33049,7 @@
           ],
           "starScore": 8.0,
           "historicalTier": "hall-of-fame",
-          "peakSource": "all-time peak template",
+          "peakSource": "highest rating for each player across rosters01.csv through rosters19.csv",
           "historicalPeak": true,
           "peakRating": 95
         }
@@ -33152,7 +33059,7 @@
   "warnings": [],
   "photoPolicy": {
     "current": "Hupu BuildPlayer NBA_PLAYER_IMAGES -> NBA CDN 260x190 headshot",
-    "historical": "Naismith Hall of Fame / modern All-Star surprise cards with local 1040x760 headshots",
+    "historical": "static peak table with local 1040x760 headshots",
     "fallback": "assets/data/historical/headshots local cache or verified public portrait"
   }
 }

@@ -50,6 +50,7 @@ async function waitForHttp(url) {
 
 async function main() {
   const pool = JSON.parse(fs.readFileSync(path.join(root, 'assets', 'data', 'perfect-player-pool.json'), 'utf8'));
+  const peakTable = JSON.parse(fs.readFileSync(path.join(root, 'assets', 'data', 'perfect-player-historical-peak-table.json'), 'utf8'));
   const officialHeadshots = JSON.parse(fs.readFileSync(path.join(root, 'assets', 'data', 'official-headshot-manifest.json'), 'utf8'));
   const generatedHeadshots = JSON.parse(fs.readFileSync(path.join(root, 'assets', 'data', 'generated-rookie-headshots.json'), 'utf8'));
   const characterAvatars = JSON.parse(fs.readFileSync(path.join(root, 'assets', 'data', 'character-avatar-manifest.json'), 'utf8'));
@@ -106,7 +107,13 @@ async function main() {
     30:'Tony Parker|George Gervin|Kawhi Leonard|Tim Duncan|David Robinson'
   };
   assert.equal(teams.length, 30);
-  assert.equal(pool.rules.historicalDrawChance, 0.14, '历史惊喜卡概率应由 10% 小幅提高到 14%');
+  assert.equal(peakTable.rowCount, 150, 'Static peak table must declare 150 rows');
+  assert.equal(peakTable.rows.length, 150, 'Static peak table must contain 150 rows');
+  assert.equal(pool.rules.historicalPeakSource, peakTable.selection, 'Pool must use the static peak-table selection');
+  assert.equal(pool.rules.historicalPeakTable, 'assets/data/perfect-player-historical-peak-table.json', 'Pool must declare its static peak table');
+  assert.equal(pool.rules.historicalPeakTableRows, 150, 'Pool must declare all 150 static peak rows');
+  assert.equal(pool.rules.historicalDrawChance, 0.20, '历史惊喜卡概率应提高到 20%');
+  assert.equal(pool.rules.historicalPeakSource, 'highest rating for each player across rosters01.csv through rosters19.csv', '历史巅峰必须在 1-19 号名单中取最高属性评分');
   const historicalCacheDir = path.join(root, 'assets', 'images', 'Player', 'historical-nba');
   const historicalCachePlaceholders = fs.readdirSync(historicalCacheDir)
     .filter(file => file.endsWith('.png'))
@@ -132,6 +139,12 @@ async function main() {
       assert.equal(player.peakRating, player.rating, player.nameEn + ' 巅峰评分标记不一致');
     });
   });
+  const historicalCards = teams.flatMap(team => team.historicalPlayers);
+  assert.deepEqual(historicalCards, peakTable.rows, 'Historical pool must be copied directly from the static peak table');
+  assert.ok(historicalCards.every(player => player.source && player.source.kind === 'historical'), '历史巅峰卡必须保持历史卡语义');
+  assert.ok(historicalCards.every(player => player.source && player.source.code >= 1 && player.source.code <= 19), '150 张历史卡的巅峰来源必须全部来自 1-19 号名单');
+  assert.ok(historicalCards.every(player => player.peakSource === 'highest rating for each player across rosters01.csv through rosters19.csv'), '150 张历史卡必须记录跨 1-19 号名单取最高属性评分');
+  assert.ok(historicalCards.every(player => !player.source.peakTemplate), '历史卡不应把名单 19 当作固定巅峰模板');
   const correctedHallOfFamers = ['Kevin McHale','Dave Debusschere','Hal Greer','Artis Gilmore','Dennis Rodman','Joe Dumars','Dominique Wilkins','Bernard King','Wes Unseld','David Thompson','Dan Issel','Bill Walton','Bob McAdoo','Mitch Richmond','Tony Parker'];
   const historicalByName = new Map(teams.flatMap(team => team.historicalPlayers).map(player => [player.nameEn, player]));
   assert.deepEqual(correctedHallOfFamers.filter(name => historicalByName.get(name)?.historicalTier !== 'hall-of-fame'), [], '已入选 Naismith 名人堂的球员必须正确标记');
@@ -144,7 +157,9 @@ async function main() {
   const derrickRose = teams.find(team => team.id === 6).historicalPlayers.find(player => player.nameEn === 'Derrick Rose');
   assert.ok(derrickRose, '公牛历史惊喜池应包含 Derrick Rose');
   assert.ok(derrickRose.rating >= 95, 'Derrick Rose 应使用巅峰评分，不能再是 86：' + derrickRose.rating);
-  assert.equal(derrickRose.source.label, '生涯巅峰', 'Derrick Rose 应标记为生涯巅峰模板');
+  assert.equal(derrickRose.peakSource, 'highest rating for each player across rosters01.csv through rosters19.csv', 'Derrick Rose 应使用 1-19 号名单中的最高属性评分');
+  assert.ok(derrickRose.source.code >= 1 && derrickRose.source.code <= 19, '历史巅峰来源必须落在 1-19 号名单');
+  assert.equal(derrickRose.source.peakTemplate, undefined, '历史巅峰不应再标记为名单 19 模板');
 
   const port = 8042;
   const server = spawn('python', ['-m', 'http.server', String(port), '--bind', '127.0.0.1'], {
@@ -707,7 +722,7 @@ async function main() {
       };
     });
     assert.equal(surpriseRolls.surprise.filter(kind => kind === 'historical').length, 1, '低概率命中时最多只插入一张历史惊喜卡');
-    assert.equal(surpriseRolls.raisedChance.filter(kind => kind === 'historical').length, 1, '12% 随机值应在提高后的 14% 概率内命中历史卡');
+    assert.equal(surpriseRolls.raisedChance.filter(kind => kind === 'historical').length, 1, '12% 随机值应在提高后的 20% 概率内命中历史卡');
     assert.equal(surpriseRolls.normal.filter(kind => kind === 'historical').length, 0, '未命中时不应固定出现历史球员');
     assert.equal(surpriseRolls.surpriseUnique, 5, '历史惊喜轮次仍需五张独立版本卡');
 

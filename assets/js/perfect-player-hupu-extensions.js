@@ -181,7 +181,7 @@
   window.PERFECT_PLAYER_DISPLAY_BY_NAME = window.PERFECT_PLAYER_DISPLAY_BY_NAME || {};
   window.PERFECT_PLAYER_BUILD_DATA = window.PERFECT_PLAYER_BUILD_DATA || {};
   window.PERFECT_PLAYER_HISTORICAL_SURPRISE_DATA = window.PERFECT_PLAYER_HISTORICAL_SURPRISE_DATA || {};
-  window.PERFECT_PLAYER_DATA_READY = fetch('assets/data/perfect-player-pool.json?v=20260808-tiered-effects')
+  window.PERFECT_PLAYER_DATA_READY = fetch('assets/data/perfect-player-pool.json?v=20260809-static-peak-table')
     .then(function (response) {
       if (!response.ok) throw new Error('球员库加载失败：' + response.status);
       return response.json();

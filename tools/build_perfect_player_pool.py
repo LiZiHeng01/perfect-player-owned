@@ -2,13 +2,13 @@
 """Build the curated player source pool used by Perfect Player.
 
 Each NBA team receives a compact 12-player current attribute pool plus five
-historical surprise cards. Historical cards prefer Naismith Hall of Fame players
-and fall back to modern All-Stars when a franchise cannot supply five Hall of
-Famers. Historical source rows keep their era metadata for the browser.
+historical surprise cards. The 150 historical cards come from a fixed peak
+table; this normal build never rescans rosters01-rosters19 to recalculate them.
 """
 
 from __future__ import annotations
 
+import copy
 import csv
 import json
 import re
@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "assets" / "data"
 HIST_DIR = DATA_DIR / "historical"
 OUT_FILE = DATA_DIR / "perfect-player-pool.json"
+PEAK_TABLE_FILE = DATA_DIR / "perfect-player-historical-peak-table.json"
 
 TEAM_NAMES = {
     1: "凯尔特人", 2: "篮网", 3: "尼克斯", 4: "76人", 5: "猛龙",
@@ -66,10 +67,10 @@ NBA_NAME_ALIASES = {
 # old "best by rating" rule.  This keeps the surprise pool recognizable:
 # first use actual Naismith Basketball Hall of Fame players, then use a small
 # modern All-Star fallback when a franchise cannot supply five Hall of Famers.
-# Every retained card is a peak card.  The all-time roster (rosters19.csv)
-# contains the game's prime-version attribute template; use that template
-# whenever it is stronger than a sampled season so a player such as Derrick
-# Rose cannot appear as an 86-rated post-injury version.
+# Every retained card is a peak card.  For each identity eligible for the
+# 150-card historical pool, choose the highest per-season attribute rating
+# found across the complete rosters01.csv-rosters19.csv source range.  No
+# single roster is treated as an automatic prime-version template.
 # The set is matched against the English identity after normalization below.
 HALL_OF_FAME_NAMES = {
     "Adrian Dantley", "Alex English", "Allen Iverson", "Alonzo Mourning",
@@ -135,6 +136,7 @@ HISTORICAL_LEGACY_NAME_FIXES = {
 }
 
 HISTORICAL_MODERN_START_YEAR = 1984
+HISTORICAL_PEAK_SOURCE = "highest rating for each player across rosters01.csv through rosters19.csv"
 
 # One real franchise representative for each basketball position.  Names are
 # resolved to the player's best peak card below; the slot position is explicit
@@ -366,7 +368,7 @@ def player_record(row: dict[str, str], source: dict, history: dict | None, nba_i
     strength_bias = {1: -6, 2: -3, 3: 0, 4: 4, 5: 8}.get(pos, 0)
     rating = number(row.get("ATT"), -1)
     defense = number(row.get("DEF"), -1)
-    # The all-time template has an explicit Ranks/OVR value. Use it instead
+    # The all-time compilation row has an explicit Ranks/OVR value. Use it instead
     # of averaging inflated ATT/DEF columns (Derrick Rose is 95 here, not 94).
     rank_value = number(row.get("Ranks"), -1)
     if source["code"] == 19 and rank_value > 0:
@@ -468,19 +470,13 @@ def player_record(row: dict[str, str], source: dict, history: dict | None, nba_i
     }
 
 
-def main() -> None:
+def _legacy_dynamic_main() -> None:
+    raise RuntimeError("Dynamic roster scanning is disabled; use the frozen 150-row peak table")
     history_index = load_history_index()
     nba_ids = load_nba_ids()
     rows_by_source: dict[int, list[dict]] = {}
     for source in SEASONS:
         rows_by_source[source["code"]] = load_csv(DATA_DIR / source["file"])
-
-    # rosters19.csv (labeled 1957-58) is NOT a real season roster — it is an
-    # all-time compilation that mixes every era's legends at prime ratings
-    # (Jordan 101, Duncan DEF 104, LeBron 100) under a bogus 1957-58 label.
-    # It is safe for the historical surprise pool only when treated as a
-    # career-peak template, never as a literal 1957-58 season.
-    ALLTIME_CODE = 19
 
     current_by_team: dict[int, list[dict]] = defaultdict(list)
     # Keep one peak card per player identity, then project that card to every
@@ -488,24 +484,38 @@ def main() -> None:
     # Vince Carter appear in both Toronto and New Jersey without inventing a
     # random cross-franchise Hall of Famer for teams that need a fifth card.
     historical_peak: dict[str, dict] = {}
-    # rosters19.csv is an all-time compilation, not a real season. It is kept
-    # separately while the real sampled seasons are scanned, then compared
-    # against each player's best sampled row below.
-    alltime_peak: dict[str, dict] = {}
     historical_team_ids: dict[str, set[int]] = defaultdict(set)
 
     def consider_peak(store: dict, record: dict) -> None:
         # Peak = highest per-season RATING (2K ATT/DEF avg, a genuine per-year
-        # ability snapshot), tie -> EARLIER year (the prime, not a late-career
-        # defensive echo), tie -> honors. Why not cumulative starScore: it always
+        # ability snapshot), ties prefer a real sampled season over the
+        # synthetic all-time compilation, then the EARLIER year (the prime,
+        # not a late-career defensive echo), then honors. Why not cumulative
+        # starScore: it always
         # favored late seasons, so legends showed up in end-of-career form
         # (e.g. 加内特/皮尔斯 as 2009-10 Celtics instead of their real primes).
         key = record["identity"]
         old = store.get(key)
-        cand = (record["rating"], -record["source"]["year"], record["starScore"])
-        if old is None or cand > (old["rating"], -old["source"]["year"], old["starScore"]):
+        cand = (
+            record["rating"],
+            1 if record["source"].get("code") != 19 else 0,
+            -record["source"]["year"],
+            record["starScore"],
+        )
+        old_key = (
+            old["rating"],
+            1 if old["source"].get("code") != 19 else 0,
+            -old["source"]["year"],
+            old["starScore"],
+        ) if old else None
+        if old is None or cand > old_key:
             store[key] = record
 
+    # Build every source row first.  Current rows still populate the separate
+    # 12-player current pool, but an eligible current row can also win a
+    # historical player's peak comparison when it is one of the identities
+    # represented by the historical source range.
+    source_records: list[tuple[dict, int, dict]] = []
     for source in SEASONS:
         for index, row in enumerate(rows_by_source[source["code"]], start=1):
             tid = team_id(row)
@@ -521,34 +531,51 @@ def main() -> None:
             record = player_record(row, source, history, nba_ids, index)
             if source["kind"] == "current":
                 current_by_team[tid].append(record)
-                continue
-            tier = historical_tier(record)
-            if not tier:
-                continue
-            record["historicalTier"] = tier
-            historical_team_ids[record["identity"]].update(record.get("historicalTeams") or [tid])
-            target = alltime_peak if source["code"] == ALLTIME_CODE else historical_peak
-            consider_peak(target, record)
+            source_records.append((source, tid, record))
 
-    # Prefer the all-time/prime template whenever it is stronger than the
-    # sampled-season card. This fixes post-injury versions such as Derrick Rose
-    # (86 in a late sampled roster) and keeps every retained historical card in
-    # peak form. The source is relabeled so users never see the fake 1957-58
-    # season attached to an all-time compilation row.
-    for key, record in alltime_peak.items():
-        historical_team_ids[key].update(record.get("historicalTeams") or [record["teamId"]])
-        record["source"] = dict(record["source"])
-        record["source"]["label"] = "生涯巅峰"
-        record["source"]["year"] = 0
-        record["source"]["peakTemplate"] = True
-        record["peakSource"] = "all-time peak template"
-        # A few all-time rows exceed the browser's 99-point attribute scale.
-        # Preserve the prime shape while keeping the playable values bounded.
-        record["attrs"] = {
-            attr_key: max(25, min(99, number(value, 55)))
-            for attr_key, value in (record.get("attrs") or {}).items()
-        }
-        consider_peak(historical_peak, record)
+    historical_candidate_keys = {
+        record["identity"]
+        for source, _tid, record in source_records
+        if source["kind"] == "historical" and historical_tier(record)
+    }
+
+    def peak_copy(record: dict, source: dict) -> dict:
+        """Copy a current row into the historical pool without sharing state."""
+        peak = dict(record)
+        peak["source"] = dict(record["source"])
+        peak["attrs"] = dict(record.get("attrs") or {})
+        peak["honors"] = dict(record.get("honors") or {})
+        peak["historicalTeams"] = list(record.get("historicalTeams") or [])
+        if source["kind"] == "current":
+            # The same row is still a historical surprise card once it wins
+            # the all-season peak comparison.  Keep it out of the regular
+            # current pool's semantics and use the historical image fallback.
+            peak["source"]["kind"] = "historical"
+            peak["source"]["peakFromCurrentRoster"] = True
+            fallback_photo = peak.get("fallbackPhotoLocal")
+            if fallback_photo and (ROOT / fallback_photo).exists():
+                peak["photoLocal"] = fallback_photo
+            nba_id = number(peak.get("nbaId"))
+            if nba_id:
+                peak["photoUrl"] = f"https://cdn.nba.com/headshots/nba/latest/1040x760/{nba_id}.png"
+                peak["photoSource"] = "nba-cdn"
+        return peak
+
+    for source, tid, source_record in source_records:
+        record = source_record
+        tier = historical_tier(record)
+        if not tier:
+            continue
+        # The current roster is part of the 1-19 comparison only for players
+        # already represented by an eligible historical source row. This
+        # prevents every active All-Star from becoming a new historical card.
+        if source["kind"] == "current" and record["identity"] not in historical_candidate_keys:
+            continue
+        peak = peak_copy(record, source)
+        peak["historicalTier"] = tier
+        peak["peakSource"] = HISTORICAL_PEAK_SOURCE
+        historical_team_ids[peak["identity"]].update(peak.get("historicalTeams") or [tid])
+        consider_peak(historical_peak, peak)
 
     # Current and peak cards are intentionally separate versions. A player may
     # therefore exist in both the 2025-26 current pool and a team's five-card
@@ -566,7 +593,7 @@ def main() -> None:
     for record in historical_peak.values():
         record["historicalPeak"] = True
         record["peakRating"] = record["rating"]
-        record.setdefault("peakSource", "best sampled season")
+        record.setdefault("peakSource", HISTORICAL_PEAK_SOURCE)
 
     historical_by_team: dict[int, dict[str, dict]] = defaultdict(dict)
     for identity, record in historical_peak.items():
@@ -594,7 +621,7 @@ def main() -> None:
         source = player.get("source") or {}
         modern_score = 1 if (
             number(source.get("year")) >= HISTORICAL_MODERN_START_YEAR
-            or (source.get("peakTemplate") and number(player.get("draftYear")) >= HISTORICAL_MODERN_START_YEAR)
+            or (source.get("code") == 19 and number(player.get("draftYear")) >= HISTORICAL_MODERN_START_YEAR)
         ) else 0
         return (-tier_score, -modern_score, -player["rating"], -player["starScore"], player["nameEn"])
 
@@ -700,11 +727,11 @@ def main() -> None:
             "historicalPositions": ["PG", "SG", "SF", "PF", "C"],
             "currentAndPeakVersionsIndependent": True,
             "historicalMode": "low-probability surprise card",
-            "historicalDrawChance": 0.14,
+            "historicalDrawChance": 0.20,
             "historicalEligibility": "Naismith Hall of Fame player; modern All-Star fallback when a franchise has fewer than five",
             "historicalModernStartYear": HISTORICAL_MODERN_START_YEAR,
             "historicalPeakOnly": True,
-            "historicalPeakSource": "rosters19.csv prime template when available, otherwise highest sampled season rating",
+            "historicalPeakSource": HISTORICAL_PEAK_SOURCE,
             "historicalExcluded": sorted(HISTORICAL_EXCLUDED_NAMES),
         },
         "seasons": SEASONS,
@@ -716,9 +743,164 @@ def main() -> None:
             "fallback": "assets/data/historical/headshots local cache or verified public portrait",
         },
     }
-    OUT_FILE.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT_FILE.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(f"wrote {OUT_FILE}")
     print(f"teams={len(teams)} current={sum(len(t['players']) for t in teams.values())} historical={sum(len(t['historicalPlayers']) for t in teams.values())}")
+    if warnings:
+        print("warnings:")
+        for warning in warnings:
+            print(f"- {warning}")
+
+
+def load_static_peak_table() -> tuple[dict, dict[int, list[dict]]]:
+    """Load and strictly validate the frozen 30-team, 150-card peak table."""
+    if not PEAK_TABLE_FILE.exists():
+        raise FileNotFoundError(
+            f"Missing static historical peak table: {PEAK_TABLE_FILE}. "
+            "The normal pool build does not scan roster history to recreate it."
+        )
+
+    table = json.loads(PEAK_TABLE_FILE.read_text(encoding="utf-8"))
+    rows = table.get("rows")
+    if not isinstance(rows, list):
+        raise ValueError("Static historical peak table must contain a rows array")
+    if number(table.get("version")) != 1:
+        raise ValueError("Unsupported static historical peak table version")
+    if number(table.get("rowCount")) != 150 or len(rows) != 150:
+        raise ValueError(
+            f"Static historical peak table must contain exactly 150 rows; got {len(rows)}"
+        )
+    if table.get("selection") != HISTORICAL_PEAK_SOURCE:
+        raise ValueError("Static historical peak table selection metadata is out of date")
+
+    by_team: dict[int, list[dict]] = defaultdict(list)
+    occupied_slots: set[tuple[int, int]] = set()
+    for row_number, frozen_row in enumerate(rows, start=1):
+        if not isinstance(frozen_row, dict):
+            raise ValueError(f"Static historical peak row {row_number} must be an object")
+        record = copy.deepcopy(frozen_row)
+        tid = number(record.get("teamId"))
+        pos = number(record.get("pos"))
+        slot = (tid, pos)
+        source = record.get("source")
+
+        if tid not in TEAM_NAMES:
+            raise ValueError(f"Static historical peak row {row_number} has invalid teamId={tid}")
+        if pos not in range(1, 6):
+            raise ValueError(f"Static historical peak row {row_number} has invalid pos={pos}")
+        if slot in occupied_slots:
+            raise ValueError(f"Static historical peak table duplicates team/position slot {slot}")
+        if not isinstance(source, dict) or source.get("kind") != "historical":
+            raise ValueError(f"Static historical peak row {row_number} is not a historical card")
+        if number(source.get("code")) not in range(1, 20):
+            raise ValueError(f"Static historical peak row {row_number} has invalid source code")
+        if record.get("historicalPeak") is not True:
+            raise ValueError(f"Static historical peak row {row_number} is not marked as a peak card")
+        if number(record.get("peakRating"), -1) != number(record.get("rating"), -2):
+            raise ValueError(f"Static historical peak row {row_number} has inconsistent peakRating")
+        if record.get("peakSource") != HISTORICAL_PEAK_SOURCE:
+            raise ValueError(f"Static historical peak row {row_number} has inconsistent peakSource")
+        if "peakTemplate" in source:
+            raise ValueError(f"Static historical peak row {row_number} still contains peakTemplate")
+        if not record.get("identity") or not isinstance(record.get("attrs"), dict):
+            raise ValueError(f"Static historical peak row {row_number} is incomplete")
+
+        occupied_slots.add(slot)
+        by_team[tid].append(record)
+
+    for tid in TEAM_NAMES:
+        team_rows = sorted(by_team[tid], key=lambda record: record["pos"])
+        if len(team_rows) != 5 or [record["pos"] for record in team_rows] != [1, 2, 3, 4, 5]:
+            raise ValueError(f"Static historical peak table team {tid} must have PG/SG/SF/PF/C")
+        by_team[tid] = team_rows
+
+    return table, by_team
+
+
+def main() -> None:
+    """Build current rosters and attach the frozen peak table without rescanning history."""
+    history_index = load_history_index()
+    nba_ids = load_nba_ids()
+    current_source = SEASONS[0]
+    current_by_team: dict[int, list[dict]] = defaultdict(list)
+
+    for index, row in enumerate(load_csv(DATA_DIR / current_source["file"]), start=1):
+        tid = team_id(row)
+        if tid not in TEAM_NAMES or not str(row.get("name", "")).strip():
+            continue
+        history = history_index.get(norm(row.get("nameBirth"))) or history_index.get(norm(row.get("name")))
+        if history is None:
+            alias_key = HISTORICAL_NAME_ALIASES.get(norm(row.get("nameBirth"))) or HISTORICAL_NAME_ALIASES.get(norm(row.get("name")))
+            if alias_key:
+                history = history_index.get(alias_key)
+        current_by_team[tid].append(player_record(row, current_source, history, nba_ids, index))
+
+    peak_table, historical_by_team = load_static_peak_table()
+    warnings: list[str] = []
+    teams: dict[str, dict] = {}
+
+    current_identities = {
+        record["identity"]
+        for team_records in current_by_team.values()
+        for record in team_records
+    }
+    peak_identities = {
+        record["identity"]
+        for team_records in historical_by_team.values()
+        for record in team_records
+    }
+    dual_version_count = len(current_identities & peak_identities)
+
+    for tid, label in TEAM_NAMES.items():
+        current = sorted(current_by_team[tid], key=lambda player: (-player["rating"], player["nameEn"]))
+        current_take = current[:12]
+        history_take = historical_by_team[tid]
+        if len(current_take) < 12:
+            warnings.append(f"{label}: current={len(current_take)}")
+        teams[str(tid)] = {
+            "id": tid,
+            "name": label,
+            "currentCount": len(current_take),
+            "historicalCount": len(history_take),
+            "players": current_take,
+            "historicalPlayers": history_take,
+        }
+
+    payload = {
+        "version": 1,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "rules": {
+            "targetRosterSize": 12,
+            "currentTarget": 12,
+            "historicalTarget": 5,
+            "historicalPositions": ["PG", "SG", "SF", "PF", "C"],
+            "currentAndPeakVersionsIndependent": True,
+            "historicalMode": "low-probability surprise card",
+            "historicalDrawChance": 0.20,
+            "historicalEligibility": "fixed 150-card peak table",
+            "historicalPeakOnly": True,
+            "historicalPeakSource": HISTORICAL_PEAK_SOURCE,
+            "historicalPeakTable": PEAK_TABLE_FILE.relative_to(ROOT).as_posix(),
+            "historicalPeakTableVersion": number(peak_table.get("version")),
+            "historicalPeakTableRows": len(peak_table["rows"]),
+        },
+        "seasons": SEASONS,
+        "teams": teams,
+        "warnings": warnings,
+        "photoPolicy": {
+            "current": "Hupu BuildPlayer NBA_PLAYER_IMAGES -> NBA CDN 260x190 headshot",
+            "historical": "static peak table with local 1040x760 headshots",
+            "fallback": "assets/data/historical/headshots local cache or verified public portrait",
+        },
+    }
+    OUT_FILE.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+    print(f"wrote {OUT_FILE}")
+    print(
+        f"teams={len(teams)} "
+        f"current={sum(len(team['players']) for team in teams.values())} "
+        f"historical={sum(len(team['historicalPlayers']) for team in teams.values())}"
+    )
+    print(f"static_peak_rows={len(peak_table['rows'])} dual_current_peak={dual_version_count}")
     if warnings:
         print("warnings:")
         for warning in warnings:
