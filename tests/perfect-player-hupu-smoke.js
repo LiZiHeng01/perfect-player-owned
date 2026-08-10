@@ -265,6 +265,8 @@ async function main() {
         uniqueIds: new Set(pool.map(event => event.id)).size,
         uniqueTitles: new Set(pool.map(event => event.title)).size,
         uniqueScenes: new Set(pool.map(event => (event.scenes || []).join('|'))).size,
+        uniqueTopics: new Set(pool.map(event => event.topicId)).size,
+        uniqueDecisionPairs: new Set(pool.map(event => event.choices.map(choice => choice.label).join('|'))).size,
         uniqueDraws: [...new Set(ids)],
         hasRequires: pool.some(event => typeof event.requires === 'function'),
         choiceCounts: pool.map(event => event.choices.length)
@@ -274,6 +276,8 @@ async function main() {
     assert.equal(seasonPoolProbe.uniqueIds, 200, '200 条赛季事件 ID 必须全部唯一');
     assert.equal(seasonPoolProbe.uniqueTitles, 200, '200 条赛季事件标题必须全部唯一');
     assert.equal(seasonPoolProbe.uniqueScenes, 200, '200 条赛季事件场景必须全部唯一');
+    assert.equal(seasonPoolProbe.uniqueTopics, 200, '200 条赛季事件必须拥有 200 个独立主题，不能再用场景前缀包装同一主题');
+    assert.equal(seasonPoolProbe.uniqueDecisionPairs, 200, '200 条赛季事件的两项决策组合必须全部不同');
     assert.ok(seasonPoolProbe.uniqueDraws.length >= 100, '赛季日常事件抽取应有足够多样性：' + seasonPoolProbe.uniqueDraws.length);
     assert.equal(seasonPoolProbe.hasRequires, false, '新增开局事件必须全部可直接抽取');
     assert.ok(seasonPoolProbe.choiceCounts.every(count => count >= 2), '每条新增赛季事件都应至少有两个选择');
@@ -337,7 +341,7 @@ async function main() {
       }
       try {
         return {
-          generatedTagged: pool.filter(event => event.id.includes('_library_')).every(event => !!event.contextId && !!event.topicId),
+          generatedTagged: pool.filter(event => event.id.includes('_unique_')).every(event => !!event.topicId),
           winStreak: runScenario({ streak:'W', streakLen:4, home:true, won:true, day:60 }),
           losingStreak: runScenario({ streak:'L', streakLen:3, home:false, won:false, day:60, poor:true }),
           deadline: runScenario({ streak:'W', streakLen:1, home:true, won:true, day:105 }),
@@ -368,7 +372,7 @@ async function main() {
     assert.ok(stateAwareEventProbe.roadWin.eligibleIds.includes('pp_season_team_dinner'), '客场赢球后才允许出现客场赢球聚餐事件');
     assert.ok(stateAwareEventProbe.fatigue.fatigueWeight > stateAwareEventProbe.fatigue.neutralWeight, '疲劳和伤病风险升高时恢复类事件权重应提高');
     assert.deepEqual(await page.evaluate(() => window.PERFECT_PLAYER_EVENT_LIBRARY_REPORT), {
-      generated: 179, topics: 30, contexts: 6
+      generated: 179, uniqueStories: 179, uniqueDecisionPairs: 179, templateMatrix: false
     });
     const openingEventProbe = await page.evaluate(() => {
       const savedCareer = STATE.career;
@@ -596,7 +600,7 @@ async function main() {
     await page.screenshot({ path: path.join(outputDir, '01-character.png'), fullPage: false });
 
     await page.evaluate(() => {
-      const event = STAGED_BRANCH_EVENTS.find(item => item.id === 'pp_season_library_privacy_leak_streak');
+      const event = STAGED_BRANCH_EVENTS.find(item => item.id === 'pp_season_unique_fan_video');
       showSeasonBranchEvent(event, () => {});
     });
     await page.waitForSelector('#season-branch-modal');
