@@ -232,6 +232,42 @@
     ]
   };
 
+  var effectLabels = {
+    leadership:'领导力', mediaTrust:'媒体信任', mediaPressure:'媒体压力',
+    coachTrust:'教练信任', staminaLoad:'体能负荷', formVariance:'状态波动',
+    lockerRoomTrust:'更衣室信任', teamChemistry:'球队默契',
+    injuryRiskBonus:'伤病风险', fame:'人气', businessValue:'商业价值',
+    controversy:'争议', loyalty:'忠诚', fanSupport:'球迷支持'
+  };
+  var badWhenRaised = {
+    mediaPressure:true, staminaLoad:true, formVariance:true,
+    injuryRiskBonus:true, controversy:true
+  };
+
+  function naturalEffect(key, value) {
+    var amount = Number(value) || 0;
+    var strong = Math.abs(amount) >= 2 ? '明显' : '';
+    if (key === 'formVariance') return amount < 0 ? '状态' + strong + '更稳定' : '状态波动' + strong + '增加';
+    var label = effectLabels[key] || key;
+    if (badWhenRaised[key]) return label + strong + (amount > 0 ? '增加' : '下降');
+    return label + strong + (amount > 0 ? '提升' : '下降');
+  }
+
+  function choiceForecast(effect) {
+    var gains = [];
+    var costs = [];
+    ['profile', 'mods'].forEach(function (group) {
+      Object.keys(effect[group] || {}).forEach(function (key) {
+        var value = Number(effect[group][key]) || 0;
+        if (!value) return;
+        var beneficial = badWhenRaised[key] ? value < 0 : value > 0;
+        (beneficial ? gains : costs).push(naturalEffect(key, value));
+      });
+    });
+    if (gains.length && costs.length) return gains.join('、') + '，但' + costs.join('、');
+    return (gains.length ? gains : costs).join('、') || '后续剧情与人物评价将发生变化';
+  }
+
   function decisionResult(label, family, side) {
     var endings = {
       lead:['你把决定说清楚，混乱很快有了执行标准。','你压住情绪，让比赛和团队重新回到正轨。'],
@@ -258,8 +294,8 @@
       scene: row[2],
       body: '“' + row[1] + '”没有标准答案，两种处理都会留下不同影响。',
       choices: [
-        { label:row[3], hint:'采取这一路线并承担相应影响', profile:pair[0].profile, mods:pair[0].mods, result:decisionResult(row[3], family, 0) },
-        { label:row[4], hint:'选择另一种处理方式', profile:pair[1].profile, mods:pair[1].mods, result:decisionResult(row[4], family, 1) }
+        { label:row[3], hint:choiceForecast(pair[0]), profile:pair[0].profile, mods:pair[0].mods, result:decisionResult(row[3], family, 0) },
+        { label:row[4], hint:choiceForecast(pair[1]), profile:pair[1].profile, mods:pair[1].mods, result:decisionResult(row[4], family, 1) }
       ]
     };
   });
@@ -273,6 +309,7 @@
     generated: definitions.length,
     uniqueStories: new Set(definitions.map(function (event) { return event.scene; })).size,
     uniqueDecisionPairs: new Set(definitions.map(function (event) { return event.choices.map(function (choice) { return choice.label; }).join('|'); })).size,
+    uniqueChoiceHints: new Set(definitions.reduce(function (all, event) { return all.concat(event.choices.map(function (choice) { return choice.hint; })); }, [])).size,
     templateMatrix: false
   };
 })();

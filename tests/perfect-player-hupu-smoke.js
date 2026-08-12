@@ -201,6 +201,163 @@ async function main() {
       teams: 30, teamsWithTarget12: 30, teamsWithHistorical5: 30, current: 360, historical: 150, total: 510,
       historicalBuildOnly: true, competitionRosterSource: 'NBA2K_DATA (current-only)'
     });
+    const awardEngineProbe = await page.evaluate(() => {
+      const engine = window.PERFECT_PLAYER_AWARD_ENGINE;
+      function candidate(overrides) {
+        return Object.assign({
+          key:'candidate', name:'测试球员', team:'LAL', isUser:false, isRookie:false,
+          games:82, eligibleGames:82, seasonEndingException:false, minutes:35, starts:82, benchGames:0,
+          pts:25, reb:7, ast:6, stl:1.2, blk:0.8, tov:2.5, ts:0.59,
+          pdef:80, idef:78, blockAttr:70, reboundAttr:75, clutch:85,
+          wins:50, losses:32, winPct:50 / 82, leagueRank:8, teamDefense:0.65,
+          ovr:90, age:27,
+          prior:{ pts:20, reb:6, ast:5, stl:1, blk:0.6, tov:2.4, ts:0.56, minutes:30, games:75, ovr:85 }
+        }, overrides || {});
+      }
+      const lowAttendance = candidate({ key:'low-attendance', games:64, eligibleGames:64 });
+      const seasonEndingException = candidate({ key:'exception', games:62, eligibleGames:62, seasonEndingException:true });
+      const starterSixth = candidate({ key:'starter-sixth', starts:50, benchGames:32 });
+      const reserveSixth = candidate({ key:'reserve-sixth', starts:8, benchGames:74 });
+      const rookieMip = candidate({ key:'rookie-mip', isRookie:true });
+      const stagnantMip = candidate({
+        key:'stagnant-mip',
+        prior:{ pts:24.8, reb:6.9, ast:5.9, stl:1.2, blk:0.8, tov:2.5, ts:0.589, minutes:35, games:80, ovr:90 }
+      });
+      const teamMvp = candidate({ key:'team-mvp', pts:29, reb:9, ast:8, wins:62, losses:20, winPct:62/82, teamDefense:0.78, ts:0.62 });
+      const emptyStatsMvp = candidate({ key:'empty-stats', pts:34, reb:5, ast:4, wins:24, losses:58, winPct:24/82, teamDefense:0.20, ts:0.55 });
+      const completeDefender = candidate({ key:'complete-defender', pts:18, reb:9, ast:4, stl:1.7, blk:2.2, pdef:91, idef:96, blockAttr:94, reboundAttr:90, wins:59, losses:23, winPct:59/82, teamDefense:0.94 });
+      const blockChaser = candidate({ key:'block-chaser', pts:19, reb:6, ast:2, stl:0.6, blk:3.2, pdef:55, idef:65, blockAttr:99, reboundAttr:62, wins:27, losses:55, winPct:27/82, teamDefense:0.15 });
+      const mvpRanks = engine.scoreCandidates([teamMvp, emptyStatsMvp], 'mvp');
+      const dpoyRanks = engine.scoreCandidates([completeDefender, blockChaser], 'dpoy');
+      const ballotPool = engine.scoreCandidates([
+        teamMvp, emptyStatsMvp,
+        candidate({ key:'ballot-three', pts:27, wins:52, losses:30, winPct:52/82 }),
+        candidate({ key:'ballot-four', pts:26, wins:48, losses:34, winPct:48/82 }),
+        candidate({ key:'ballot-five', pts:24, wins:55, losses:27, winPct:55/82 })
+      ], 'mvp');
+      const ballot = engine.runMediaBallot(ballotPool, 'mvp', 100);
+      const allNbaPool = engine.scoreCandidates(Array.from({ length:20 }, (_, index) => candidate({
+        key:'all-nba-' + index,
+        pts:30 - index * 0.35,
+        wins:62 - index,
+        losses:20 + index,
+        winPct:(62 - index) / 82
+      })), 'allNBA');
+      const allNbaBallot = engine.runTeamBallot(allNbaPool, 'allNBA', [5,5,5], [5,3,1], 100);
+      const allDefensePool = engine.scoreCandidates(Array.from({ length:15 }, (_, index) => candidate({
+        key:'all-defense-' + index,
+        stl:2.2 - index * 0.04,
+        blk:2.5 - index * 0.06,
+        pdef:96 - index,
+        idef:96 - index,
+        teamDefense:0.95 - index * 0.025
+      })), 'allDefense');
+      const allDefenseBallot = engine.runTeamBallot(allDefensePool, 'allDefense', [5,5], [2,1], 100);
+      return {
+        version:engine.version,
+        major65GameAwards:engine.major65GameAwards,
+        ballotPoints:engine.ballotPoints,
+        lowAttendance:engine.eligibility(lowAttendance, 'mvp'),
+        seasonEndingException:engine.eligibility(seasonEndingException, 'mvp'),
+        starterSixth:engine.eligibility(starterSixth, 'sixthman'),
+        reserveSixth:engine.eligibility(reserveSixth, 'sixthman'),
+        rookieMip:engine.eligibility(rookieMip, 'mip'),
+        stagnantMip:engine.eligibility(stagnantMip, 'mip'),
+        mvpOrder:mvpRanks.map(item => item.key),
+        dpoyOrder:dpoyRanks.map(item => item.key),
+        ballotWinner:ballot[0] && ballot[0].candidate.key,
+        ballotPointsTotal:ballot.reduce((sum, item) => sum + item.points, 0),
+        allNbaPointsTotal:allNbaBallot.reduce((sum, item) => sum + item.points, 0),
+        allDefensePointsTotal:allDefenseBallot.reduce((sum, item) => sum + item.points, 0)
+      };
+    });
+    assert.equal(awardEngineProbe.version, '2026.08.13-real-ballot-v1', '应加载新版真实评奖引擎');
+    assert.deepEqual(awardEngineProbe.major65GameAwards.sort(), ['allDefense','allNBA','dpoy','mip','mvp'].sort(), '65场门槛必须覆盖五类CBA奖项/阵容');
+    assert.deepEqual(awardEngineProbe.ballotPoints, { mvp:[10,7,5,3,1], other:[5,3,1] }, '媒体选票计分必须符合NBA规则');
+    assert.equal(awardEngineProbe.lowAttendance.eligible, false, '64场球员不得参与MVP');
+    assert.equal(awardEngineProbe.seasonEndingException.eligible, true, '62场且赛季报销时应适用CBA例外');
+    assert.equal(awardEngineProbe.starterSixth.eligible, false, '首发多于替补的球员不得参与最佳第六人');
+    assert.equal(awardEngineProbe.reserveSixth.eligible, true, '替补出场多于首发且样本充足时应具备第六人资格');
+    assert.equal(awardEngineProbe.rookieMip.eligible, false, '新秀不得进入进步最快主评选');
+    assert.equal(awardEngineProbe.stagnantMip.eligible, false, '没有真实同比进步的球员不得靠当季原始数据拿MIP');
+    assert.deepEqual(awardEngineProbe.mvpOrder, ['team-mvp','empty-stats'], '强队全面核心应压过弱队刷分候选');
+    assert.deepEqual(awardEngineProbe.dpoyOrder, ['complete-defender','block-chaser'], 'DPOY必须综合防守影响与球队防守，不能只看盖帽');
+    assert.equal(awardEngineProbe.ballotWinner, 'team-mvp', '100人媒体选票应选出履历领先的MVP');
+    assert.equal(awardEngineProbe.ballotPointsTotal, 2600, '100张MVP五人选票应按10/7/5/3/1累计2600分');
+    assert.equal(awardEngineProbe.allNbaPointsTotal, 4500, '100张最佳阵容选票应按一二三阵5/3/1分累计4500分');
+    assert.equal(awardEngineProbe.allDefensePointsTotal, 1500, '100张最佳防守阵容选票应按一防/二防2/1分累计1500分');
+    const awardCalculationProbe = await page.evaluate(() => {
+      const saved = {
+        career:STATE.career, season:STATE.season, careerTeam:STATE.careerTeam,
+        finalOVR:STATE.finalOVR, position:STATE.position, attrs:STATE.attrs
+      };
+      try {
+        const standings = {};
+        NBA2K_TEAMS.forEach((team, index) => {
+          const wins = Math.max(18, 60 - index);
+          standings[team] = { wins, losses:82 - wins };
+        });
+        standings.LAL = { wins:61, losses:21 };
+        const games = 70;
+        STATE.career = Object.assign({}, saved.career, {
+          seasonCount:0,
+          currentAge:22,
+          seasons:[],
+          flags:{},
+          leagueAwardHistory:{}
+        });
+        STATE.careerTeam = 'LAL';
+        STATE.finalOVR = 96;
+        STATE.position = 'SF';
+        STATE.attrs = { threePT:91, MID:92, FIN:94, DNK:88, HAN:93, PAS:94, PDEF:91, IDEF:88, BLK:82, REB:90, ATH:91, STR:84, CLU:96 };
+        STATE.season = {
+          wins:61, losses:21, standings,
+          playerStats:{
+            games, pts:29 * games, reb:8 * games, ast:8 * games, stl:1.8 * games, blk:1.4 * games,
+            tov:2.6 * games, fgm:11 * games, fga:20 * games, ftm:5 * games, fta:6 * games,
+            threeM:2.5 * games, threeA:6.5 * games, mins:35 * games
+          },
+          games:Array.from({ length:games }, () => ({ stats:{ mins:35 } })),
+          events:{ majorInjuryThisSeason:false },
+          awards:[]
+        };
+        calcSeasonAwards();
+        const first = JSON.stringify(STATE.season.awards);
+        const acts = STATE.season.awards.map(award => award.act);
+        const compactVoting = JSON.stringify(STATE.season.awardVoting);
+        calcSeasonAwards();
+        return {
+          version:STATE.season.awardVoting.version,
+          acts,
+          uniqueActs:new Set(acts).size,
+          stable:first === JSON.stringify(STATE.season.awards),
+          hasUndefinedWinner:STATE.season.awards.some(award => !award.winner || award.winner.includes('undefined')),
+          compactVotingBytes:compactVoting.length,
+          mvpBallot:STATE.season.awardVoting.results.mvp,
+          allNbaBallot:STATE.season.awardVoting.results.allNBA
+        };
+      } finally {
+        STATE.career = saved.career;
+        STATE.season = saved.season;
+        STATE.careerTeam = saved.careerTeam;
+        STATE.finalOVR = saved.finalOVR;
+        STATE.position = saved.position;
+        STATE.attrs = saved.attrs;
+        clearLineupCache();
+      }
+    });
+    assert.equal(awardCalculationProbe.version, '2026.08.13-real-ballot-v1', '完整赛季应使用新版评奖引擎');
+    assert.deepEqual(['mvp','dpoy','mip','allStar','roty','sixthman','allNBA','allDefense','allRookie'].filter(act => !awardCalculationProbe.acts.includes(act)), [], '新秀赛季应生成全部九类主要荣誉');
+    assert.equal(awardCalculationProbe.uniqueActs, awardCalculationProbe.acts.length, '同一奖项不得重复生成');
+    assert.equal(awardCalculationProbe.stable, true, '同一赛季重复打开评奖页时结果必须保持不变');
+    assert.equal(awardCalculationProbe.hasUndefinedWinner, false, '完整评奖不得出现空获奖者');
+    assert.ok(awardCalculationProbe.compactVotingBytes < 30000, '保存的投票摘要必须保持轻量，不能写入整套球员对象');
+    assert.ok(awardCalculationProbe.mvpBallot.length >= 5 && awardCalculationProbe.allNbaBallot.length >= 15, '应保存可核对的MVP与最佳阵容投票榜');
+    assert.deepEqual(await page.evaluate(() => [
+      PP_FX.classifyAchievementAward(null, '最佳阵容一阵'),
+      PP_FX.classifyAchievementAward(null, '最佳防守二阵'),
+      PP_FX.classifyAchievementAward(null, '最佳新秀一阵')
+    ]), ['allNBA','allDefense','allRookie'], '归档后的一二三阵精确名称必须保持正确奖项分类');
     const poolSeparation = await page.evaluate(() => ({
       buildSize: PERFECT_PLAYER_BUILD_DATA.LAL.length,
       buildHistorical: PERFECT_PLAYER_HISTORICAL_SURPRISE_DATA.LAL.length,
@@ -260,6 +417,7 @@ async function main() {
       const pool = STAGED_BRANCH_EVENTS.filter(event => event.id && event.id.startsWith('pp_season_'));
       const ids = [];
       for (let index = 0; index < 200; index++) ids.push(pickBranchEvent(pool, false).id);
+      const choicePredictions = pool.flatMap(event => event.choices.map((choice, index) => getEventChoicePrediction(choice, event, index)));
       return {
         count: pool.length,
         uniqueIds: new Set(pool.map(event => event.id)).size,
@@ -269,7 +427,21 @@ async function main() {
         uniqueDecisionPairs: new Set(pool.map(event => event.choices.map(choice => choice.label).join('|'))).size,
         uniqueDraws: [...new Set(ids)],
         hasRequires: pool.some(event => typeof event.requires === 'function'),
-        choiceCounts: pool.map(event => event.choices.length)
+        choiceCounts: pool.map(event => event.choices.length),
+        choicePredictionCount: choicePredictions.length,
+        missingChoicePredictions: choicePredictions.filter(text => !text || !text.trim()).length,
+        genericChoicePredictions: choicePredictions.filter(text => text.includes('采取这一路线并承担相应影响') || text.includes('选择另一种处理方式')).length,
+        duplicatePredictionPairs: pool.filter(event => {
+          const predictions = event.choices.map((choice, index) => getEventChoicePrediction(choice, event, index));
+          return new Set(predictions).size !== predictions.length;
+        }).length,
+        uniqueChoicePredictions: new Set(choicePredictions).size,
+        fallbackPrediction: getEventChoicePrediction({ label:'测试选项' }, { title:'测试事件' }, 0),
+        derivedPrediction: getEventChoicePrediction({
+          label:'优先恢复',
+          hint:'先照顾身体',
+          apply:function() { addSeasonMod('staminaLoad', -2, -10, 10); }
+        }, { title:'恢复测试' }, 0)
       };
     });
     assert.equal(seasonPoolProbe.count, 200, '赛季日常事件池应有 200 条独立事件');
@@ -281,6 +453,35 @@ async function main() {
     assert.ok(seasonPoolProbe.uniqueDraws.length >= 100, '赛季日常事件抽取应有足够多样性：' + seasonPoolProbe.uniqueDraws.length);
     assert.equal(seasonPoolProbe.hasRequires, false, '新增开局事件必须全部可直接抽取');
     assert.ok(seasonPoolProbe.choiceCounts.every(count => count >= 2), '每条新增赛季事件都应至少有两个选择');
+    assert.equal(seasonPoolProbe.choicePredictionCount, 400, '200 条赛季事件的 400 个选项都必须显示结果预告');
+    assert.equal(seasonPoolProbe.missingChoicePredictions, 0, '所有赛季事件选项都必须显示自然的结果提示');
+    assert.equal(seasonPoolProbe.genericChoicePredictions, 0, '事件选项不能继续使用两句统一的空泛模板');
+    assert.equal(seasonPoolProbe.duplicatePredictionPairs, 0, '同一事件内的不同选择必须给出不同结果预告');
+    assert.ok(seasonPoolProbe.uniqueChoicePredictions >= 30, '结果提示必须保持足够差异，不能换回统一模板：' + seasonPoolProbe.uniqueChoicePredictions);
+    assert.ok(seasonPoolProbe.fallbackPrediction.includes('测试选项') && seasonPoolProbe.fallbackPrediction.includes('测试事件'), '缺失 hint 的未来事件也必须获得与选项和事件相关的兜底预告');
+    assert.ok(seasonPoolProbe.derivedPrediction.includes('体能负荷明显下降'), '可确定的实际变化应按原有自然模板进入提示：' + seasonPoolProbe.derivedPrediction);
+    const eventChoiceModalProbe = await page.evaluate(() => {
+      const previousEvent = STATE._seasonBranchEvent;
+      const previousPage = STATE._seasonBranchScenePage;
+      try {
+        const event = STAGED_BRANCH_EVENTS.find(item => item.id === 'pp_season_unique_broken_clock');
+        STATE._seasonBranchEvent = event;
+        STATE._seasonBranchScenePage = (event.scenes || []).length;
+        showSeasonBranchEventModal();
+        const modal = document.getElementById('season-branch-modal');
+        const subtitles = [...modal.querySelectorAll('button span')].map(item => item.textContent.trim());
+        return { subtitles, text:modal.textContent };
+      } finally {
+        document.getElementById('season-branch-modal')?.remove();
+        STATE._seasonBranchEvent = previousEvent;
+        STATE._seasonBranchScenePage = previousPage;
+      }
+    });
+    assert.deepEqual(eventChoiceModalProbe.subtitles, [
+      '领导力明显提升、媒体信任提升，但媒体压力增加',
+      '教练信任提升、状态更稳定'
+    ], '事件选项应沿用原有自然结果模板，并让两个选择显示不同影响');
+    assert.ok(!eventChoiceModalProbe.text.includes('结果预告'), '事件界面不应额外显示“结果预告”标签');
     const stateAwareEventProbe = await page.evaluate(() => {
       const savedCareer = STATE.career;
       const savedSeason = STATE.season;
@@ -372,7 +573,7 @@ async function main() {
     assert.ok(stateAwareEventProbe.roadWin.eligibleIds.includes('pp_season_team_dinner'), '客场赢球后才允许出现客场赢球聚餐事件');
     assert.ok(stateAwareEventProbe.fatigue.fatigueWeight > stateAwareEventProbe.fatigue.neutralWeight, '疲劳和伤病风险升高时恢复类事件权重应提高');
     assert.deepEqual(await page.evaluate(() => window.PERFECT_PLAYER_EVENT_LIBRARY_REPORT), {
-      generated: 179, uniqueStories: 179, uniqueDecisionPairs: 179, templateMatrix: false
+      generated: 179, uniqueStories: 179, uniqueDecisionPairs: 179, uniqueChoiceHints: 18, templateMatrix: false
     });
     const openingEventProbe = await page.evaluate(() => {
       const savedCareer = STATE.career;
@@ -801,6 +1002,80 @@ async function main() {
       return document.getElementById('player-state-strip').textContent.replace(/\s+/g, ' ').trim();
     });
     assert.ok(liveStateText.includes('+5') && liveStateText.includes('+2'), '状态条应在事件数值变化后立即刷新：' + liveStateText);
+
+    const careerBalance = await page.evaluate(() => {
+      const savedAttrs = JSON.parse(JSON.stringify(STATE.attrs));
+      const savedPending = STATE._tpPending;
+      const savedAge = STATE.career.currentAge;
+      const savedFlags = JSON.parse(JSON.stringify(STATE.career.flags || {}));
+      const savedOvr = STATE.finalOVR;
+      const high = Object.fromEntries(ATTR_KEYS.map(key => [key, 95]));
+      const low = Object.fromEntries(ATTR_KEYS.map(key => [key, 60]));
+      STATE.career.flags = {};
+      STATE.attrs = Object.assign({}, high);
+      STATE.attrs.threePT = 96;
+      STATE._tpPending = { threePT:2 };
+      const pendingCost = getPendingTrainingCost();
+      STATE._tpPending = {};
+      const maxAddAt95 = getMaxAdd(0, 6, 95);
+      const age35High = rollAnnualAttributeDelta(35, 'ATH', 96, 0, () => 0);
+      const age35Low = rollAnnualAttributeDelta(35, 'ATH', 70, 0, () => 0);
+      const age38Maintained = rollAnnualAttributeDelta(38, 'ATH', 90, 2, () => 0);
+      const highRisk36 = getPlayerRetirementRisk(36, high, 95, {});
+      const lowRisk36 = getPlayerRetirementRisk(36, low, 65, {});
+      const highRisk40 = getPlayerRetirementRisk(40, high, 95, {});
+      STATE.career.currentAge = 42;
+      STATE.attrs = Object.assign({}, high);
+      STATE.finalOVR = 95;
+      const canReach42 = !shouldOfferPlayerRetirement(() => 0.999);
+      STATE.career.currentAge = 43;
+      const forcedAfter42 = shouldOfferPlayerRetirement(() => 0.999);
+      const result = {
+        report: PERFECT_PLAYER_CAREER_BALANCE,
+        pointCosts: [84, 85, 90, 95, 98].map(getPointCost),
+        pendingCost,
+        maxAddAt95,
+        legacyTreeCost: PP_FX.getLegacyTreeCost(),
+        legacyMaxLP: PP_FX.maxLegacyLP(),
+        legacyScorerCosts: [0, 1, 2, 3, 4].map(level => PP_FX.getPerkLevelCost('scorer', level)),
+        age35High,
+        age35Low,
+        age38Maintained,
+        highRisk36,
+        lowRisk36,
+        highRisk40,
+        canReach42,
+        forcedAfter42,
+        contractAt41: clampCareerContractYears(3, 41),
+        contractAt42: clampCareerContractYears(3, 42),
+        leagueHigh36: getLeagueRetirementChance(Object.assign({ ovr:95 }, high), 36),
+        leagueLow36: getLeagueRetirementChance(Object.assign({ ovr:65 }, low), 36),
+        leagueAt42: getLeagueRetirementChance(Object.assign({ ovr:95 }, high), 42),
+        lebronRule: Object.assign({}, LEBRON_JAMES_SPECIAL_RULE)
+      };
+      STATE.attrs = savedAttrs;
+      STATE._tpPending = savedPending;
+      STATE.career.currentAge = savedAge;
+      STATE.career.flags = savedFlags;
+      STATE.finalOVR = savedOvr;
+      return result;
+    });
+    assert.deepEqual(careerBalance.pointCosts, [1, 2, 3, 5, 7], '高属性训练成本应逐级上升');
+    assert.equal(careerBalance.pendingCost, 10, '96 属性连续加 2 点必须真实消耗 10 点，而不是 2 点');
+    assert.equal(careerBalance.maxAddAt95, 1, '6 点预算在 95 属性档只能提升 1 点');
+    assert.equal(careerBalance.legacyTreeCost, 184, '传承全树总成本应高于全部成就 LP，强制做专精取舍');
+    assert.equal(careerBalance.legacyMaxLP, 117, '全部成就可获得的传承点上限应保持 117');
+    assert.deepEqual(careerBalance.legacyScorerCosts, [3, 4, 5, 7, 9], '传承路线必须逐级涨价');
+    assert.ok(careerBalance.age35High < careerBalance.age35Low, '同年龄下高位属性应承受更大回落：' + JSON.stringify(careerBalance));
+    assert.ok(careerBalance.age38Maintained < 0, '最高保养也不能把 38 岁身体衰退完全清零');
+    assert.ok(careerBalance.lowRisk36 > careerBalance.highRisk36, '同年龄退役风险必须受当前能力影响');
+    assert.ok(careerBalance.highRisk40 > careerBalance.highRisk36, '同能力退役风险必须随年龄上升');
+    assert.equal(careerBalance.canReach42, true, '顶级球员应允许进入 42 岁赛季');
+    assert.equal(careerBalance.forcedAfter42, true, '完成 42 岁赛季后必须退役');
+    assert.deepEqual([careerBalance.contractAt41, careerBalance.contractAt42], [2, 1], '合同年限不得跨过 42 岁赛季');
+    assert.ok(careerBalance.leagueLow36 > careerBalance.leagueHigh36, '联盟球员退役也必须使用年龄×能力双判定');
+    assert.equal(careerBalance.leagueAt42, 100, '联盟球员打完 42 岁赛季后必须退役');
+    assert.deepEqual(careerBalance.lebronRule, { initialAge:41, maxRetirementAge:42 }, 'LeBron 参考规则应允许打到 42 岁，但不能无限保护');
 
     const simulation = await page.evaluate(() => {
       const previousTeam = STATE.careerTeam;
@@ -1336,10 +1611,26 @@ async function main() {
     await page.waitForTimeout(450);
     await page.screenshot({ path: path.join(outputDir, '03-visible-player-states.png'), fullPage: false });
 
+    await page.evaluate(() => {
+      localStorage.setItem('pp_legacy_v1', JSON.stringify({ levels:{ scorer:5, prodigy:3 }, spent:28 }));
+    });
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.waitForFunction(() => window.PP_FX && typeof PP_FX.getLegacy === 'function');
+    const legacyMigration = await page.evaluate(() => ({
+      legacy: PP_FX.getLegacy(),
+      total: PP_FX.totalLP(),
+      available: PP_FX.availableLP()
+    }));
+    assert.equal(legacyMigration.legacy.version, 2, '旧传承存档应迁移到新版成本结构');
+    assert.deepEqual(legacyMigration.legacy.levels, {}, '旧低价强化等级必须重置，不能绕过新版成本');
+    assert.equal(legacyMigration.legacy.spent, 0, '旧强化重置后已消费点数必须全部返还');
+    assert.equal(legacyMigration.available, legacyMigration.total, '迁移后所有已获得传承点必须可重新分配');
+    assert.equal(legacyMigration.legacy.rebalanceNoticePending, true, '旧存档应显示一次重新平衡提示');
+
     const localBadResponses = badResponses.filter(item => item.includes(`127.0.0.1:${port}`));
     assert.deepEqual(localBadResponses, [], '不应有本地 4xx 资源：' + localBadResponses.join(', '));
     assert.deepEqual(errors, [], '浏览器错误：' + errors.join('\n') + '\n4xx：' + badResponses.join('\n'));
-    console.log(JSON.stringify({ ok: true, pool: 510, current: 360, historical: 150, injuryEventsAdded: 12, seasonEventsAdded: 200, draftEvents: 35, simulation, screenshots: outputDir }, null, 2));
+    console.log(JSON.stringify({ ok: true, pool: 510, current: 360, historical: 150, injuryEventsAdded: 12, seasonEventsAdded: 200, draftEvents: 35, careerBalance, legacyMigration, simulation, screenshots: outputDir }, null, 2));
   } finally {
     if (browser) await browser.close();
     server.kill();

@@ -488,33 +488,65 @@
   // 每次开启新生涯(揭晓球员时)按已购强化，给初始属性/OVR 永久加成——即"重生奖励"。
   // 设计要点：LP 由成就稀有度决定，跨生涯保留；强化可叠加但有上限，避免破坏平衡。
   var LEGACY_KEY = 'pp_legacy_v1';
+  var LEGACY_SCHEMA_VERSION = 2;
   var LP_BY_RARITY = { common: 1, rare: 2, epic: 4, legend: 8 };
 
-  // 强化项：cost 为每级消耗，max 为最高等级，apply 描述对新生涯的加成。
+  // 强化项：costs 为购买 Lv.1 → 满级的逐级消耗。高阶成本明显增加，
+  // 全路线总成本高于全部成就可获得的 LP，玩家必须做专精取舍。
   // attrs 用主引擎 13 项属性键（threePT/MID/FIN/DNK/HAN/PAS/PDEF/IDEF/BLK/REB/ATH/STR/CLU）。
   var LEGACY_PERKS = [
-    { id: 'scorer',    icon: '🎯', name: '得分天赋', desc: '每级 三分/中投/终结 +1', max: 5, cost: 2, attrs: ['threePT', 'MID', 'FIN'] },
-    { id: 'playmaker', icon: '🎩', name: '组织视野', desc: '每级 传球/控球 +1', max: 5, cost: 2, attrs: ['PAS', 'HAN'] },
-    { id: 'defender',  icon: '🛡️', name: '防守本能', desc: '每级 外防/内防/盖帽 +1', max: 5, cost: 2, attrs: ['PDEF', 'IDEF', 'BLK'] },
-    { id: 'athlete',   icon: '💪', name: '身体天赋', desc: '每级 运动/力量/篮板 +1', max: 5, cost: 2, attrs: ['ATH', 'STR', 'REB'] },
-    { id: 'clutch',    icon: '❄️', name: '大心脏',   desc: '每级 关键 +2', max: 4, cost: 3, attrs: ['CLU'], step: 2 },
-    { id: 'prodigy',   icon: '🌟', name: '天选之才', desc: '每级 全属性 +1（最贵）', max: 3, cost: 6,
+    { id: 'scorer',    icon: '🎯', name: '得分天赋', desc: '每级 三分/中投/终结 +1', max: 5, costs: [3, 4, 5, 7, 9], attrs: ['threePT', 'MID', 'FIN'] },
+    { id: 'playmaker', icon: '🎩', name: '组织视野', desc: '每级 传球/控球 +1', max: 5, costs: [3, 4, 5, 7, 9], attrs: ['PAS', 'HAN'] },
+    { id: 'defender',  icon: '🛡️', name: '防守本能', desc: '每级 外防/内防/盖帽 +1', max: 5, costs: [3, 4, 5, 7, 9], attrs: ['PDEF', 'IDEF', 'BLK'] },
+    { id: 'athlete',   icon: '💪', name: '身体天赋', desc: '每级 运动/力量/篮板 +1', max: 5, costs: [3, 4, 5, 7, 9], attrs: ['ATH', 'STR', 'REB'] },
+    { id: 'clutch',    icon: '❄️', name: '大心脏',   desc: '每级 关键 +2', max: 4, costs: [4, 6, 8, 10], attrs: ['CLU'], step: 2 },
+    { id: 'prodigy',   icon: '🌟', name: '天选之才', desc: '每级 全属性 +1（最贵）', max: 3, costs: [10, 14, 20],
       attrs: ['threePT', 'MID', 'FIN', 'DNK', 'HAN', 'PAS', 'PDEF', 'IDEF', 'BLK', 'REB', 'ATH', 'STR', 'CLU'] }
   ];
   PP_FX.LEGACY_PERKS = LEGACY_PERKS;
   var PERK_MAP = {};
   LEGACY_PERKS.forEach(function (p) { PERK_MAP[p.id] = p; });
 
+  function saveLegacy(o) { try { localStorage.setItem(LEGACY_KEY, JSON.stringify(o)); } catch (e) {} }
+  function getPerkLevelCost(p, currentLevel) {
+    if (!p) return Infinity;
+    var costs = p.costs || [];
+    return Number(costs[Math.max(0, currentLevel || 0)]) || Infinity;
+  }
+  function legacySpentForLevels(levels) {
+    var spent = 0;
+    levels = levels || {};
+    LEGACY_PERKS.forEach(function(p) {
+      var level = Math.max(0, Math.min(p.max, Number(levels[p.id]) || 0));
+      for (var i = 0; i < level; i++) spent += getPerkLevelCost(p, i);
+    });
+    return spent;
+  }
+  function legacyTreeCost() {
+    return LEGACY_PERKS.reduce(function(sum, p) {
+      return sum + p.costs.reduce(function(costSum, cost) { return costSum + cost; }, 0);
+    }, 0);
+  }
+
   function loadLegacy() {
     try {
       var o = JSON.parse(localStorage.getItem(LEGACY_KEY) || '{}');
-      return (o && typeof o === 'object') ? o : {};
+      if (!o || typeof o !== 'object') o = {};
+      if (Number(o.version) !== LEGACY_SCHEMA_VERSION) {
+        var hadOldProgress = !!(o.levels && Object.keys(o.levels).some(function(k) { return Number(o.levels[k]) > 0; }));
+        // 旧版使用固定低价。直接保留等级会绕过新成本，因此一次性重置等级；
+        // LP 来自成就而非 spent，所有点数会自动完整返还，不损失任何已解锁成就。
+        o = { version: LEGACY_SCHEMA_VERSION, levels: {}, spent: 0, rebalanceNoticePending: hadOldProgress };
+        saveLegacy(o);
+      }
+      return o;
     } catch (e) { return {}; }
   }
-  function saveLegacy(o) { try { localStorage.setItem(LEGACY_KEY, JSON.stringify(o)); } catch (e) {} }
   var legacy = loadLegacy();          // { levels:{perkId:lvl}, spent:number }
+  legacy.version = LEGACY_SCHEMA_VERSION;
   legacy.levels = legacy.levels || {};
-  legacy.spent = legacy.spent || 0;
+  legacy.spent = legacySpentForLevels(legacy.levels);
+  saveLegacy(legacy);
 
   // 总 LP = 已解锁成就按稀有度求和
   function totalLP() {
@@ -526,10 +558,18 @@
     }
     return sum;
   }
+  function maxLegacyLP() {
+    return ACHIEVEMENTS.reduce(function(sum, achievement) {
+      return sum + (LP_BY_RARITY[achievement.rarity] || 0);
+    }, 0);
+  }
   function availableLP() { return Math.max(0, totalLP() - (legacy.spent || 0)); }
   PP_FX.totalLP = totalLP;
+  PP_FX.maxLegacyLP = maxLegacyLP;
   PP_FX.availableLP = availableLP;
   PP_FX.getLegacy = function () { return legacy; };
+  PP_FX.getLegacyTreeCost = legacyTreeCost;
+  PP_FX.getPerkLevelCost = function(id, level) { return getPerkLevelCost(PERK_MAP[id], level); };
 
   // 计算某强化当前等级带来的属性增量表 {attrKey: delta}
   function legacyAttrBonuses() {
@@ -550,9 +590,10 @@
     if (!p) return false;
     var lvl = legacy.levels[id] || 0;
     if (lvl >= p.max) return false;
-    if (availableLP() < p.cost) return false;
+    var cost = getPerkLevelCost(p, lvl);
+    if (availableLP() < cost) return false;
     legacy.levels[id] = lvl + 1;
-    legacy.spent = (legacy.spent || 0) + p.cost;
+    legacy.spent = (legacy.spent || 0) + cost;
     saveLegacy(legacy);
     return true;
   };
@@ -561,6 +602,7 @@
   PP_FX.respecLegacy = function () {
     legacy.levels = {};
     legacy.spent = 0;
+    legacy.version = LEGACY_SCHEMA_VERSION;
     saveLegacy(legacy);
   };
 
@@ -568,7 +610,8 @@
   function legacyPerkCardHtml(p) {
     var lvl = legacy.levels[p.id] || 0;
     var maxed = lvl >= p.max;
-    var canBuy = !maxed && availableLP() >= p.cost;
+    var nextCost = maxed ? 0 : getPerkLevelCost(p, lvl);
+    var canBuy = !maxed && availableLP() >= nextCost;
     var pips = '';
     for (var i = 0; i < p.max; i++) {
       pips += '<span class="pp-lg-pip' + (i < lvl ? ' on' : '') + '"></span>';
@@ -581,7 +624,7 @@
         '<div class="pp-lg-pips">' + pips + '</div>' +
       '</div>' +
       '<button class="pp-lg-buy" data-perk="' + p.id + '"' + (canBuy ? '' : ' disabled') + '>' +
-        (maxed ? '满级' : ('🧬 ' + p.cost)) + '</button>' +
+        (maxed ? '满级' : ('🧬 ' + nextCost)) + '</button>' +
     '</div>';
   }
 
@@ -611,7 +654,7 @@
           '<button class="pp-ach-close" id="pp-lg-close" aria-label="关闭">✕</button>' +
         '</div>' +
         '<div class="pp-lg-lp"></div>' +
-        '<div class="pp-lg-hint">解锁成就积累传承点，投入永久强化。下次开启新生涯时，初始属性获得对应加成（重生奖励）。</div>' +
+        '<div class="pp-lg-hint">解锁成就积累传承点，投入永久强化。每条路线越往后越贵；全部成就最多提供 ' + maxLegacyLP() + ' 点，而全路线共需 ' + legacyTreeCost() + ' 点，无法同时点满，请选择自己的长期专精。</div>' +
         '<div class="pp-ach-grid pp-lg-grid"></div>' +
         '<div class="pp-lg-foot"><button class="pp-lg-respec" id="pp-lg-respec">重置强化并返还全部传承点</button></div>' +
       '</div>';
@@ -624,6 +667,13 @@
       PP_FX.respecLegacy(); renderLegacyBody(overlay);
     };
     renderLegacyBody(overlay);
+    if (legacy.rebalanceNoticePending) {
+      delete legacy.rebalanceNoticePending;
+      saveLegacy(legacy);
+      setTimeout(function() {
+        PP_FX.toast('传承系统已重新平衡：旧强化已重置，全部传承点已返还', { gold: true, icon: '🧬', duration: 4200 });
+      }, 260);
+    }
   };
 
   /* ==================== 与主引擎的接线(hooks) ==================== */
@@ -794,7 +844,7 @@
   function compactAwardLabel(label) {
     return String(label || '')
       .replace(/\s+/g, '')
-      .replace(/[🏆👑⭐🌟🌱🔒🔥🎊🥇🥈🥉·\uFE0F]/g, '')
+      .replace(/[🏆👑⭐🌟🌱🔒🔥🎊📈🛡🥇🥈🥉·\uFE0F]/g, '')
       .toUpperCase();
   }
 
@@ -819,9 +869,9 @@
     if (clean === 'ROTY' || clean === 'ROY' || clean === '年度最佳新秀' || clean === '最佳新秀') return 'roty';
     if (clean === '最佳第六人' || clean === '第六人') return 'sixthman';
     if (clean === '全明星' || clean === '全明星入选') return 'allStar';
-    if (clean === '最佳阵容' || clean === 'NBA最佳阵容' || clean === '一阵' || clean === '二阵' || clean === '三阵' || clean === 'ALL-NBA') return 'allNBA';
-    if (clean === '最佳新秀阵容' || clean === '新秀一阵' || clean === '新秀二阵' || clean === 'ALL-ROOKIE') return 'allRookie';
-    if (clean === '最佳防守阵容' || clean === '一防' || clean === '二防' || clean === 'ALL-DEFENSIVE') return 'allDefense';
+    if (clean === '最佳阵容' || clean === 'NBA最佳阵容' || clean === '最佳阵容一阵' || clean === '最佳阵容二阵' || clean === '最佳阵容三阵' || clean === '一阵' || clean === '二阵' || clean === '三阵' || clean === 'ALL-NBA') return 'allNBA';
+    if (clean === '最佳新秀阵容' || clean === '最佳新秀一阵' || clean === '最佳新秀二阵' || clean === '新秀一阵' || clean === '新秀二阵' || clean === 'ALL-ROOKIE') return 'allRookie';
+    if (clean === '最佳防守阵容' || clean === '最佳防守一阵' || clean === '最佳防守二阵' || clean === '一防' || clean === '二防' || clean === 'ALL-DEFENSIVE') return 'allDefense';
     if (clean === '总冠军' || clean === 'NBA总冠军') return 'champion';
     return '';
   }
