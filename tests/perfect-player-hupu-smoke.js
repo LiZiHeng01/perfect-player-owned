@@ -791,8 +791,8 @@ async function main() {
         keys: [...document.querySelectorAll('#player-state-strip [data-status-key]')].map(element => element.dataset.statusKey)
       };
     });
-    assert.equal(states.keys.length, 18, '应完整展示 11 项生涯属性、6 项赛季修正和压力');
-    ['压力','体能负荷','士气','状态波动','伤病风险','球队默契','媒体压力','人气','商业价值','媒体信任','争议','中国人气','忠诚','领导力','教练信任','更衣室信任','球迷支持','传奇加成'].forEach(label => {
+    assert.equal(states.keys.length, 22, '状态栏应展示 4 项摘要和 18 项详细状态');
+    ['压力','体能负荷','士气','状态波动','伤病风险','球队默契','媒体压力','人气','商业价值','媒体信任','争议','中国人气','忠诚','领导力','教练信任','更衣室信任','球迷支持','传奇声望'].forEach(label => {
       assert.ok(states.text.includes(label), '状态面板缺少：' + label);
     });
     const liveStateText = await page.evaluate(() => {
@@ -816,7 +816,9 @@ async function main() {
       clearLineupCache();
       return { report: PERFECT_PLAYER_SIM_REPORT, ranked: [ranked[0], ranked[ranked.length - 1]], strongVsWeak, even };
     });
-    assert.equal(simulation.report.engine, '82-win-possession');
+    assert.equal(simulation.report.engine, '2025-26-possession-and-role');
+    assert.equal(simulation.report.attributeDrivenStats, true);
+    assert.deepEqual(simulation.report.leagueBaseline, { pointsPerGame:115.6, pace:99.4, offensiveRating:115.7 });
     assert.ok(simulation.strongVsWeak.winRate > 0.58 && simulation.strongVsWeak.winRate < 0.96, '强弱队胜率应合理拉开：' + JSON.stringify(simulation));
     assert.ok(simulation.even.winRate > 0.43 && simulation.even.winRate < 0.57, '同强度对局应接近五五开：' + JSON.stringify(simulation.even));
     assert.ok(simulation.strongVsWeak.avgA > 90 && simulation.strongVsWeak.avgA < 135 && simulation.strongVsWeak.avgB > 85 && simulation.strongVsWeak.avgB < 130, '比分均值应处于现代 NBA 区间：' + JSON.stringify(simulation.strongVsWeak));
