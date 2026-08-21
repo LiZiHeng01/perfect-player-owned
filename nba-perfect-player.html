@@ -2330,7 +2330,8 @@ const STATE = {
   currentRoster: [],    // 该队球员列表
   _shownThisTeam: [],   // 当前球队已展示过的球员名
   _rerollsLeft: 3,    // 全局还可换球员次数（整个建球员阶段共3次，不重置）
-  _mockAdRerollsLeft: 3, // 暂代广告奖励：最多看3次，每次直接换一批
+  _mockAdRerollsLeft: 3, // 看广告换球员免费3次
+  _adRerollUnlocked: false, // 输入秘钥后解锁无限换球员
   _teamsVisited: [],  // 抽到过的球队列表
   _drawPlayers: [],   // 当前这一轮展示的5名球员（同轮不重复）
   
@@ -2585,6 +2586,36 @@ function restoreBaseLeagueRoster() {
     NBA2K_DATA[t] = cloneLeagueData(_baseLeagueRosterSnapshot[t] || []);
   });
   delete NBA2K_DATA._draftClass2026Applied;
+  applyKobeAllRatingsTo99();
+}
+
+function isKobeBryantPlayer(player) {
+  var en = ((player && player.name) || '').trim().toLowerCase();
+  var cn = ((player && player.cname) || '').trim();
+  return en === 'kobe bryant' || cn === '科比-布莱恩特' || cn === '科比·布莱恩特' || cn === '科比布莱恩特';
+}
+
+function setKobeAllRatingsTo99InRosterMap(rosterMap) {
+  if (!rosterMap || typeof NBA2K_TEAMS === 'undefined') return;
+  var attrKeys = (typeof SIM_CONFIG !== 'undefined' && Array.isArray(SIM_CONFIG.ATTR_LIST) && SIM_CONFIG.ATTR_LIST.length)
+    ? SIM_CONFIG.ATTR_LIST
+    : ['threePT', 'MID', 'FIN', 'DNK', 'HAN', 'PAS', 'PDEF', 'IDEF', 'BLK', 'REB', 'ATH', 'STR', 'CLU'];
+  NBA2K_TEAMS.forEach(function(team) {
+    var roster = rosterMap[team];
+    if (!Array.isArray(roster)) return;
+    roster.forEach(function(player) {
+      if (!isKobeBryantPlayer(player)) return;
+      player.ovr = 99;
+      attrKeys.forEach(function(k) { player[k] = 99; });
+    });
+  });
+}
+
+function applyKobeAllRatingsTo99() {
+  setKobeAllRatingsTo99InRosterMap(NBA2K_DATA);
+  if (window.PERFECT_PLAYER_BUILD_DATA) {
+    setKobeAllRatingsTo99InRosterMap(window.PERFECT_PLAYER_BUILD_DATA);
+  }
 }
 
 function createFreshCareer() {
@@ -2623,7 +2654,7 @@ function initGame() {
     usedPlayers: [], _mustLockAfterSpin: false,
     buildStep: 'select', noPlayerSelected: true,
     currentTeam: null, currentRoster: [],
-    _shownThisTeam: [], _rerollsLeft: 3, _mockAdRerollsLeft: 3, _teamsVisited: [], _drawPlayers: [],
+    _shownThisTeam: [], _rerollsLeft: 3, _mockAdRerollsLeft: 3, _adRerollUnlocked: false, _teamsVisited: [], _drawPlayers: [],
     selectedPlayer: null, _locking: false,
     finalOVR: 0, finalPosition: null, finalArchetype: null,
     careerTeam: null,
@@ -2975,9 +3006,19 @@ function getRerollButtonHtml() {
   }
   var loading = !!window._adRerollLoading;
   var canClick = hasTeam && !loading;
+  var unlocked = !!STATE._adRerollUnlocked;
+  if (unlocked) {
+    return '<button class="btn btn-sm slot-btn" onclick="if(typeof watchAdToReroll===\'function\')watchAdToReroll()"' +
+      (canClick ? '' : ' disabled') +
+      ' style="' + (canClick ? 'background:linear-gradient(135deg,#2f5a2f,#1f3d1f);color:#d7ffd7;border-color:#65c466;' : 'opacity:0.3;') + '">' +
+      (loading ? '🔓 解锁中...' : '🔓 已解锁换球员（无限）') +
+      '</button>';
+  }
   var adLeft = Math.max(0, Number(STATE._mockAdRerollsLeft == null ? 3 : STATE._mockAdRerollsLeft));
   if (adLeft <= 0) {
-    return '<button class="btn btn-sm slot-btn" disabled style="opacity:0.3;background:#222;color:var(--text-dim);">📺 广告重选已用完</button>';
+    return '<button class="btn btn-sm slot-btn" onclick="if(typeof unlockRerollWithKey===\'function\')unlockRerollWithKey()"' +
+      (canClick ? '' : ' disabled') +
+      ' style="' + (canClick ? 'background:linear-gradient(135deg,#4f3422,#2f1f12);color:#ffe5b8;border-color:#d4af37;' : 'opacity:0.3;') + '">🔐 输入秘钥解锁换球员</button>';
   }
   return '<button class="btn btn-sm slot-btn" onclick="if(typeof watchAdToReroll===\'function\')watchAdToReroll()"' +
     (canClick ? '' : ' disabled') +
@@ -15448,6 +15489,7 @@ function manualLoadGame(slot) {
         Object.assign(STATE, snap.state);
         // 旧存档没有模拟广告计数和当前抽取快照时，按新规则补齐默认值。
         if (STATE._mockAdRerollsLeft == null) STATE._mockAdRerollsLeft = 3;
+        if (STATE._adRerollUnlocked == null) STATE._adRerollUnlocked = false;
         if (!Array.isArray(STATE._drawPlayers)) STATE._drawPlayers = [];
         if (STATE.season && STATE.season._processedDays && !(STATE.season._processedDays instanceof Set)) {
           STATE.season._processedDays = new Set((Array.isArray(STATE.season._processedDays) ? STATE.season._processedDays : []).map(Number));
@@ -15455,6 +15497,7 @@ function manualLoadGame(slot) {
         if (snap.league && typeof NBA2K_DATA !== 'undefined') {
           Object.keys(NBA2K_DATA).forEach(function(k) { delete NBA2K_DATA[k]; });
           Object.assign(NBA2K_DATA, snap.league);
+          applyKobeAllRatingsTo99();
         }
         _playerAges = snap.ages || {};
         _playerGenes = snap.genes || {};
@@ -25276,25 +25319,45 @@ function openAdTeamPicker() {
 
 var _adRerollLoading = false;      // 换人广告防连点
 
-/** 更换球员用完时：暂用模拟广告，最多3次，完成后立即换一批5人 */
+function unlockRerollWithKey() {
+  var input = window.prompt('免费次数已用完，请输入秘钥解锁（区分大小写）：');
+  if (input == null) return false;
+  if (input.trim() === 'lzh') {
+    STATE._adRerollUnlocked = true;
+    showAdToast('✅ 秘钥正确，已解锁无限换球员');
+    updateSlotButtons();
+    return true;
+  }
+  showAdToast('❌ 秘钥错误');
+  return false;
+}
+
+/** 更换球员用完时：免费3次，之后输入秘钥解锁无限次 */
 async function watchAdToReroll() {
   if (_adRerollLoading) return;
   if (!STATE.currentTeam) return;
+  var unlocked = !!STATE._adRerollUnlocked;
   var adLeft = Math.max(0, Number(STATE._mockAdRerollsLeft == null ? 3 : STATE._mockAdRerollsLeft));
-  if (adLeft <= 0) {
-    showAdToast('模拟广告次数已用完');
-    updateSlotButtons();
-    return;
+  if (!unlocked && adLeft <= 0) {
+    if (!unlockRerollWithKey()) {
+      updateSlotButtons();
+      return;
+    }
+    unlocked = true;
   }
   _adRerollLoading = true;
   updateSlotButtons();
   // 保留一点播放反馈，但不请求真实广告 SDK，方便静态 GitHub Pages 直接试玩。
   await new Promise(function(resolve) { setTimeout(resolve, 700); });
   _adRerollLoading = false;
-  STATE._mockAdRerollsLeft = adLeft - 1;
+  if (!unlocked) STATE._mockAdRerollsLeft = Math.max(0, adLeft - 1);
   STATE._rerollsLeft = (STATE._rerollsLeft || 0) + 1;
   rerollTeamPlayers();
-  showAdToast('✅ 模拟广告完成，已换一批球员（广告剩' + STATE._mockAdRerollsLeft + '次）');
+  if (unlocked) {
+    showAdToast('✅ 已解锁，已换一批球员');
+  } else {
+    showAdToast('✅ 免费次数消耗1次，已换一批球员（剩' + STATE._mockAdRerollsLeft + '次）');
+  }
   updateSlotButtons();
 }
 
