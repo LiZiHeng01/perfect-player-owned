@@ -2574,6 +2574,22 @@ function applyKobeAllRatingsTo99() {
 
 function setOfficialCurrentOvrRatingsInRosterMap(rosterMap) {
   if (!rosterMap || typeof NBA2K_TEAMS === 'undefined' || typeof NBA_CURRENT_RATINGS_2026 === 'undefined') return;
+  var normalize = function(value) {
+    return String(value || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '');
+  };
+  var ovrByName = {};
+  Object.keys(NBA_CURRENT_RATINGS_2026).forEach(function(key) {
+    var name = key.split('|')[1] || '';
+    var item = NBA_CURRENT_RATINGS_2026[key];
+    if (!item || item.ovr == null) return;
+    var nk = normalize(name);
+    if (!nk || ovrByName[nk] != null) return;
+    ovrByName[nk] = Number(item.ovr);
+  });
   NBA2K_TEAMS.forEach(function(team) {
     var roster = rosterMap[team];
     if (!Array.isArray(roster)) return;
@@ -2581,8 +2597,9 @@ function setOfficialCurrentOvrRatingsInRosterMap(rosterMap) {
       if (!player || !player.name) return;
       var key = team + '|' + player.name;
       var rating = NBA_CURRENT_RATINGS_2026[key];
-      if (!rating || rating.ovr == null) return;
-      player.ovr = Number(rating.ovr) || player.ovr;
+      var ovr = (rating && rating.ovr != null) ? Number(rating.ovr) : ovrByName[normalize(player.name)];
+      if (!Number.isFinite(ovr)) return;
+      player.ovr = ovr;
     });
   });
 }
