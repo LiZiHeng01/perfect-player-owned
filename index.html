@@ -3032,8 +3032,8 @@ function updateSlotButtons() {
   const slotArea = document.getElementById('br-slot-area');
   if (!slotArea) return;
   
-  const hasTeam = !!STATE.currentTeam;
-  const canSpin = !STATE._mustLockAfterSpin && !_slotSpinning;
+  const keyUnlocked = !!STATE._adRerollUnlocked;
+  const canSpin = !_slotSpinning && (keyUnlocked || !STATE._mustLockAfterSpin);
   
   // Rebuild only the actions area, keep reel intact
   const actionsEl = slotArea.querySelector('.br-slot-actions');
@@ -3049,13 +3049,16 @@ function updateSlotButtons() {
     `;
   }
   if (warnEl) {
-    warnEl.textContent = STATE._mustLockAfterSpin ? '⚠️ 先选择一名球员并锁定属性才能再次随机' : '';
+    if (keyUnlocked) {
+      warnEl.textContent = '🔓 秘钥外挂已启用：可连续随机球队，名人堂球员概率提升';
+    } else {
+      warnEl.textContent = STATE._mustLockAfterSpin ? '⚠️ 先选择一名球员并锁定属性才能再次随机' : '';
+    }
   }
 }
 
 function buildSlotHTML(itemsHtml) {
-  const hasTeam = !!STATE.currentTeam;
-  const canSpin = !STATE._mustLockAfterSpin && !_slotSpinning;
+  const canSpin = !_slotSpinning && (!!STATE._adRerollUnlocked || !STATE._mustLockAfterSpin);
   return `
     <div class="br-slot-area">
       <div class="br-slot-label">🎰 随机选队</div>
@@ -3083,7 +3086,7 @@ let _slotSpinning = false;
 
 function pullHandle() {
   trackEvent({act:"click",blk:"BMC098",pos:"TC3",label:"随机球队-建球员"});
-  if (_slotSpinning || STATE._mustLockAfterSpin) return;
+  if (_slotSpinning || (STATE._mustLockAfterSpin && !STATE._adRerollUnlocked)) return;
   
   // Visual: flash the reel to show it's spinning
   const reel = document.getElementById('slot-reel');
@@ -3161,7 +3164,7 @@ function spinSlotMachine() {
     }
     STATE.selectedPlayer = null;
     STATE._shownThisTeam = [];
-    STATE._mustLockAfterSpin = true;
+    STATE._mustLockAfterSpin = !STATE._adRerollUnlocked;
     _slotSpinning = false;
     
     renderLeftAttrs();
@@ -3181,6 +3184,7 @@ function getBuildHistoricalSurprisePool(team) {
 
 // 历史球员是低概率惊喜卡，不再像普通候选一样每轮固定出现。
 const HISTORICAL_SURPRISE_DRAW_CHANCE = 0.20;
+const HISTORICAL_SURPRISE_DRAW_CHANCE_UNLOCKED = 0.70;
 
 /** 从12名现役池抽一轮固定5人；最多插入1张历史惊喜卡，同轮不重复。 */
 function drawBuildPlayers(pool, count, team) {
@@ -3188,7 +3192,10 @@ function drawBuildPlayers(pool, count, team) {
   const targetCount = Math.min(count || 5, source.length);
   const shuffled = shuffleArr(source.slice());
   const historical = shuffleArr(getBuildHistoricalSurprisePool(team).filter(Boolean));
-  if (historical.length && targetCount >= 1 && Math.random() < HISTORICAL_SURPRISE_DRAW_CHANCE) {
+  const drawChance = STATE && STATE._adRerollUnlocked
+    ? HISTORICAL_SURPRISE_DRAW_CHANCE_UNLOCKED
+    : HISTORICAL_SURPRISE_DRAW_CHANCE;
+  if (historical.length && targetCount >= 1 && Math.random() < drawChance) {
     const currentCards = shuffled.slice(0, Math.max(0, targetCount - 1));
     const historicalCard = historical[0];
     return shuffleArr(currentCards.concat(historicalCard));
@@ -24038,7 +24045,7 @@ function unlockRerollWithKey() {
   if (input == null) return false;
   if (input.trim() === 'lzh') {
     STATE._adRerollUnlocked = true;
-    showAdToast('✅ 秘钥正确，已解锁无限换球员');
+    showAdToast('✅ 秘钥正确：已解锁无限换球员 + 可连续随机球队 + 名人堂概率提升');
     updateSlotButtons();
     return true;
   }
