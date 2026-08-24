@@ -2586,6 +2586,7 @@ function restoreBaseLeagueRoster() {
     NBA2K_DATA[t] = cloneLeagueData(_baseLeagueRosterSnapshot[t] || []);
   });
   delete NBA2K_DATA._draftClass2026Applied;
+  applyOfficialCurrentOvrRatings();
   applyKobeAllRatingsTo99();
 }
 
@@ -2615,6 +2616,28 @@ function applyKobeAllRatingsTo99() {
   setKobeAllRatingsTo99InRosterMap(NBA2K_DATA);
   if (window.PERFECT_PLAYER_BUILD_DATA) {
     setKobeAllRatingsTo99InRosterMap(window.PERFECT_PLAYER_BUILD_DATA);
+  }
+}
+
+function setOfficialCurrentOvrRatingsInRosterMap(rosterMap) {
+  if (!rosterMap || typeof NBA2K_TEAMS === 'undefined' || typeof NBA_CURRENT_RATINGS_2026 === 'undefined') return;
+  NBA2K_TEAMS.forEach(function(team) {
+    var roster = rosterMap[team];
+    if (!Array.isArray(roster)) return;
+    roster.forEach(function(player) {
+      if (!player || !player.name) return;
+      var key = team + '|' + player.name;
+      var rating = NBA_CURRENT_RATINGS_2026[key];
+      if (!rating || rating.ovr == null) return;
+      player.ovr = Number(rating.ovr) || player.ovr;
+    });
+  });
+}
+
+function applyOfficialCurrentOvrRatings() {
+  setOfficialCurrentOvrRatingsInRosterMap(NBA2K_DATA);
+  if (window.PERFECT_PLAYER_BUILD_DATA) {
+    setOfficialCurrentOvrRatingsInRosterMap(window.PERFECT_PLAYER_BUILD_DATA);
   }
 }
 
@@ -15497,6 +15520,7 @@ function manualLoadGame(slot) {
         if (snap.league && typeof NBA2K_DATA !== 'undefined') {
           Object.keys(NBA2K_DATA).forEach(function(k) { delete NBA2K_DATA[k]; });
           Object.assign(NBA2K_DATA, snap.league);
+          applyOfficialCurrentOvrRatings();
           applyKobeAllRatingsTo99();
         }
         _playerAges = snap.ages || {};
