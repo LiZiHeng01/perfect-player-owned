@@ -7,39 +7,7 @@ const TOOL_DIR = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.dirname(TOOL_DIR);
 const ROSTER_PATH = path.join(ROOT, 'assets/js/hupu/script-01-2678-5hu3djrc-upload-1783494754597-12.js');
 const OUTPUT_PATH = path.join(ROOT, 'assets/js/current-player-ratings-2026.js');
-const API_BASE_URL = 'https://api.nba2kapi.com/api/public/players?teamType=curr&limit=100';
-const TEAM_NAME_BY_ABBR = {
-  ATL: 'Atlanta Hawks',
-  BKN: 'Brooklyn Nets',
-  BOS: 'Boston Celtics',
-  CHA: 'Charlotte Hornets',
-  CHI: 'Chicago Bulls',
-  CLE: 'Cleveland Cavaliers',
-  DAL: 'Dallas Mavericks',
-  DEN: 'Denver Nuggets',
-  DET: 'Detroit Pistons',
-  GSW: 'Golden State Warriors',
-  HOU: 'Houston Rockets',
-  IND: 'Indiana Pacers',
-  LAC: 'Los Angeles Clippers',
-  LAL: 'Los Angeles Lakers',
-  MEM: 'Memphis Grizzlies',
-  MIA: 'Miami Heat',
-  MIL: 'Milwaukee Bucks',
-  MIN: 'Minnesota Timberwolves',
-  NOP: 'New Orleans Pelicans',
-  NYK: 'New York Knicks',
-  OKC: 'Oklahoma City Thunder',
-  ORL: 'Orlando Magic',
-  PHI: 'Philadelphia 76ers',
-  PHX: 'Phoenix Suns',
-  POR: 'Portland Trail Blazers',
-  SAC: 'Sacramento Kings',
-  SAS: 'San Antonio Spurs',
-  TOR: 'Toronto Raptors',
-  UTA: 'Utah Jazz',
-  WAS: 'Washington Wizards',
-};
+const OFFICIAL_TOP100_URL = 'https://nba.2k.com/zh-CN/2k27/top-100-ratings/';
 
 const ATTR_KEYS = ['threePT', 'MID', 'FIN', 'DNK', 'HAN', 'PAS', 'PDEF', 'IDEF', 'BLK', 'REB', 'ATH', 'STR', 'CLU'];
 
@@ -62,106 +30,98 @@ function loadRoster() {
   return sandbox.__NBA2K_DATA;
 }
 
-function map2k27Attributes(player) {
-  const attrs = player?.attributes || {};
-  const avg = values => Math.round(values.reduce((sum, v) => sum + number(v), 0) / values.length);
-  const data = {
-    ovr: clamp(Math.round(number(player?.overall, 70)), 25, 99),
-    threePT: clamp(Math.round(number(attrs.threePointShot)), 25, 99),
-    MID: clamp(Math.round(number(attrs.midRangeShot)), 25, 99),
-    FIN: clamp(avg([attrs.closeShot, attrs.drivingLayup]), 25, 99),
-    DNK: clamp(Math.round(number(attrs.drivingDunk)), 25, 99),
-    HAN: clamp(Math.round(number(attrs.ballHandle)), 25, 99),
-    PAS: clamp(avg([attrs.passAccuracy, attrs.passIQ, attrs.passVision]), 25, 99),
-    PDEF: clamp(Math.round(number(attrs.perimeterDefense)), 25, 99),
-    IDEF: clamp(Math.round(number(attrs.interiorDefense)), 25, 99),
-    BLK: clamp(Math.round(number(attrs.block)), 25, 99),
-    REB: clamp(avg([attrs.offensiveRebound, attrs.defensiveRebound]), 25, 99),
-    ATH: clamp(avg([attrs.speed, attrs.agility, attrs.vertical]), 25, 99),
-    STR: clamp(Math.round(number(attrs.strength)), 25, 99),
-    CLU: clamp(avg([attrs.offensiveConsistency, attrs.defensiveConsistency, attrs.shotIQ]), 25, 99),
-  };
-  return data;
+function decodeHtmlEntities(input) {
+  return input
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, '\'')
+    .replace(/&apos;/g, '\'')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+    .replace(/&#([0-9]+);/g, (_, dec) => String.fromCodePoint(parseInt(dec, 10)));
 }
 
-async function fetchCurrentPlayersFrom2k27() {
-  const all = [];
-  const seen = new Set();
-  for (const teamName of Object.values(TEAM_NAME_BY_ABBR)) {
-    const url = `${API_BASE_URL}&team=${encodeURIComponent(teamName)}`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`Failed to fetch 2K27 team ${teamName}: ${res.status}`);
-    const json = await res.json();
-    const players = Array.isArray(json?.data) ? json.data : [];
-    for (const p of players) {
-      const key = `${p.team}|${normalizeName(p.name)}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
-      all.push(p);
+async function fetchOfficialTop100Ratings() {
+  const res = await fetch(OFFICIAL_TOP100_URL);
+  if (!res.ok) throw new Error(`Failed to fetch official 2K page: ${res.status}`);
+  const html = decodeHtmlEntities(await res.text());
+
+  const pairRegex = /"text":\[0,"(\d+)"\][\s\S]{0,260}?"srcDesktop":\[0,"[^"]+\.(?:svg|png)"\][\s\S]{0,300}?"text":\[0,"([^"]+)"\][\s\S]{0,260}?"text":\[0,"(\d{2}) OVR"\]/g;
+  const found = [];
+  const byName = new Map();
+
+  let match;
+  while ((match = pairRegex.exec(html)) !== null) {
+    const name = String(match[2] || '').trim();
+    const ovr = clamp(number(match[3], 0), 25, 99);
+    if (!name || !/\s/.test(name) || name.length < 4) continue;
+    const key = normalizeName(name);
+    if (!key) continue;
+
+    if (!byName.has(key)) {
+      byName.set(key, { name, ovr });
+      found.push({ name, ovr });
     }
   }
-  return all;
+
+  if (found.length < 90) {
+    throw new Error(`Official Top100 parse failed: only extracted ${found.length} players.`);
+  }
+  return found;
 }
 
 async function main() {
   const roster = loadRoster();
-  const players = await fetchCurrentPlayersFrom2k27();
-  if (!players.length) throw new Error('2K27 source returned no players.');
-
-  const apiByName = new Map();
-  for (const player of players) {
-    const key = normalizeName(player.name);
-    if (!apiByName.has(key)) apiByName.set(key, []);
-    apiByName.get(key).push(player);
+  const officialTop100 = await fetchOfficialTop100Ratings();
+  const officialByName = new Map();
+  for (const p of officialTop100) {
+    const base = normalizeName(p.name);
+    if (base) officialByName.set(base, p.ovr);
+    const fixedLeadingC = p.name.replace(/^c([A-Z])/, '$1');
+    const alt = normalizeName(fixedLeadingC);
+    if (alt) officialByName.set(alt, p.ovr);
   }
 
   const ratings = {};
   const samples = {};
-  let directTeamMatches = 0;
-  let uniqueNameMatches = 0;
-  const unresolved = [];
+  let top100MatchedCount = 0;
+  const top100Unmatched = [];
 
   for (const [abbr, teamPlayers] of Object.entries(roster)) {
-    const expectedTeamName = TEAM_NAME_BY_ABBR[abbr];
     for (const p of teamPlayers || []) {
       const key = `${abbr}|${p.name}`;
-      const candidates = apiByName.get(normalizeName(p.name)) || [];
-
-      let matched = null;
-      if (expectedTeamName) {
-        matched = candidates.find(c => c.team === expectedTeamName) || null;
+      const current = { ovr: number(p.ovr, 70), ...Object.fromEntries(ATTR_KEYS.map(attr => [attr, number(p[attr], 50)])) };
+      const officialOvr = officialByName.get(normalizeName(p.name));
+      if (officialOvr) {
+        current.ovr = officialOvr;
+        top100MatchedCount++;
       }
-      if (!matched && candidates.length === 1) {
-        matched = candidates[0];
-        uniqueNameMatches++;
-      }
-      if (!matched && candidates.length > 1) {
-        matched = candidates.slice().sort((a, b) => number(b.overall, 0) - number(a.overall, 0))[0];
-      }
-
-      if (matched) {
-        ratings[key] = map2k27Attributes(matched);
-        samples[key] = { games: 0, minutes: 0, basis: 'nba2k27-api', sourceTeam: matched.team || '' };
-        if (expectedTeamName && matched.team === expectedTeamName) directTeamMatches++;
-      } else {
-        ratings[key] = { ovr: number(p.ovr, 70), ...Object.fromEntries(ATTR_KEYS.map(attr => [attr, number(p[attr], 50)])) };
-        samples[key] = { games: 0, minutes: 0, basis: 'no-2k27-match' };
-        unresolved.push(key);
-      }
+      ratings[key] = current;
+      samples[key] = { games: 0, minutes: 0, basis: officialOvr ? 'nba2k27-official-top100-ovr' : 'no-official-top100-match' };
     }
+  }
+
+  const rosterNameSet = new Set();
+  for (const teamPlayers of Object.values(roster)) {
+    for (const p of teamPlayers || []) rosterNameSet.add(normalizeName(p.name));
+  }
+  for (const p of officialTop100) {
+    const base = normalizeName(p.name);
+    const fixedLeadingC = normalizeName(p.name.replace(/^c([A-Z])/, '$1'));
+    if (!rosterNameSet.has(base) && !rosterNameSet.has(fixedLeadingC)) top100Unmatched.push(`${p.name}|${p.ovr}`);
   }
 
   const meta = {
     season: 'NBA 2K27',
-    seasonType: 'Current Rosters',
+    seasonType: 'Official Top 100 OVR',
     generated: new Date().toISOString().slice(0, 10),
     players: Object.keys(ratings).length,
-    apiPlayers: players.length,
-    directTeamMatches,
-    uniqueNameMatches,
-    unresolvedCount: unresolved.length,
-    unresolvedPlayers: unresolved,
-    sources: [API_BASE_URL, 'https://nba2kapi.com'],
+    officialTop100Count: officialTop100.length,
+    top100MatchedCount,
+    top100UnmatchedCount: top100Unmatched.length,
+    top100Unmatched,
+    sources: [OFFICIAL_TOP100_URL],
   };
 
   const output = `/* Auto-generated by tools/update_current_player_ratings_2k27.mjs. */\n` +
@@ -178,7 +138,7 @@ async function main() {
     `      Object.keys(rating).forEach(function(attr) { player[attr] = rating[attr]; });\n` +
     `      var sample = NBA_CURRENT_RATINGS_2026_SAMPLES[key] || {};\n` +
     `      player.ratingSeason = NBA_CURRENT_RATINGS_2026_META.season;\n` +
-    `      player.ratingBasis = sample.basis || 'nba2k27-api';\n` +
+    `      player.ratingBasis = sample.basis || 'nba2k27-official-top100-ovr';\n` +
     `      player.ratingSampleGames = sample.games || 0;\n` +
     `      player.ratingSampleMinutes = sample.minutes || 0;\n` +
     `    });\n` +
