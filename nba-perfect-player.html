@@ -2619,24 +2619,36 @@ function applyKobeAllRatingsTo99() {
   }
 }
 
+var _officialCurrentOvrByNameCache = null;
+
+function normalizeOfficialPlayerName(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
+}
+
+function getOfficialCurrentOvrByName(playerName) {
+  if (typeof NBA_CURRENT_RATINGS_2026 === 'undefined') return null;
+  if (!_officialCurrentOvrByNameCache) {
+    _officialCurrentOvrByNameCache = {};
+    Object.keys(NBA_CURRENT_RATINGS_2026).forEach(function(key) {
+      var name = key.split('|')[1] || '';
+      var item = NBA_CURRENT_RATINGS_2026[key];
+      if (!item || item.ovr == null) return;
+      var nk = normalizeOfficialPlayerName(name);
+      if (!nk || _officialCurrentOvrByNameCache[nk] != null) return;
+      _officialCurrentOvrByNameCache[nk] = Number(item.ovr);
+    });
+  }
+  var target = normalizeOfficialPlayerName(playerName);
+  if (!target || _officialCurrentOvrByNameCache[target] == null) return null;
+  return _officialCurrentOvrByNameCache[target];
+}
+
 function setOfficialCurrentOvrRatingsInRosterMap(rosterMap) {
   if (!rosterMap || typeof NBA2K_TEAMS === 'undefined' || typeof NBA_CURRENT_RATINGS_2026 === 'undefined') return;
-  var normalize = function(value) {
-    return String(value || '')
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, '');
-  };
-  var ovrByName = {};
-  Object.keys(NBA_CURRENT_RATINGS_2026).forEach(function(key) {
-    var name = key.split('|')[1] || '';
-    var item = NBA_CURRENT_RATINGS_2026[key];
-    if (!item || item.ovr == null) return;
-    var nk = normalize(name);
-    if (!nk || ovrByName[nk] != null) return;
-    ovrByName[nk] = Number(item.ovr);
-  });
   NBA2K_TEAMS.forEach(function(team) {
     var roster = rosterMap[team];
     if (!Array.isArray(roster)) return;
@@ -2644,7 +2656,7 @@ function setOfficialCurrentOvrRatingsInRosterMap(rosterMap) {
       if (!player || !player.name) return;
       var key = team + '|' + player.name;
       var rating = NBA_CURRENT_RATINGS_2026[key];
-      var ovr = (rating && rating.ovr != null) ? Number(rating.ovr) : ovrByName[normalize(player.name)];
+      var ovr = (rating && rating.ovr != null) ? Number(rating.ovr) : getOfficialCurrentOvrByName(player.name);
       if (!Number.isFinite(ovr)) return;
       player.ovr = ovr;
     });
@@ -19395,23 +19407,28 @@ function evolveLeague() {
       var age = getLeaguePlayerAge(p);
       var gene = getPlayerGene(p.name);
       var volatility = gene.v;
-      var ageFactor = 0;
-      if (age <= 22) ageFactor = 1 + rngNext() * 1.5;
-      else if (age <= 28) ageFactor = (rngNext() - 0.5) * 1.5;
-      else if (age <= 33) ageFactor = -1 - rngNext() * 1.5;
-      else ageFactor = -2 - rngNext() * 2;
-      var volFactor = (rngNext() - 0.5) * volatility * 0.6;
-      var randFactor = (rngNext() - 0.5) * 1.5;
-      var change = ageFactor * 0.5 + volFactor * 0.3 + randFactor * 0.2;
-      if (isMvpStar(p) && age <= 26) change += 0.6 + rngNext() * 0.8; // 重点新秀成长加速
-      change = Math.round(change * 2) / 2;
-      var newOvr = Math.max(55, Math.min(99, p.ovr + change));
-      if (newOvr !== p.ovr) {
-        var ratio = Math.round(newOvr) / p.ovr;
-        SIM_CONFIG.ATTR_LIST.forEach(function(attrKey) {
-          if (p[attrKey] != null) p[attrKey] = Math.max(25, Math.min(99, Math.round(p[attrKey] * ratio)));
-        });
-        p.ovr = Math.round(newOvr);
+      var officialOvr = getOfficialCurrentOvrByName(p.name);
+      if (Number.isFinite(officialOvr)) {
+        p.ovr = officialOvr;
+      } else {
+        var ageFactor = 0;
+        if (age <= 22) ageFactor = 1 + rngNext() * 1.5;
+        else if (age <= 28) ageFactor = (rngNext() - 0.5) * 1.5;
+        else if (age <= 33) ageFactor = -1 - rngNext() * 1.5;
+        else ageFactor = -2 - rngNext() * 2;
+        var volFactor = (rngNext() - 0.5) * volatility * 0.6;
+        var randFactor = (rngNext() - 0.5) * 1.5;
+        var change = ageFactor * 0.5 + volFactor * 0.3 + randFactor * 0.2;
+        if (isMvpStar(p) && age <= 26) change += 0.6 + rngNext() * 0.8; // 重点新秀成长加速
+        change = Math.round(change * 2) / 2;
+        var newOvr = Math.max(55, Math.min(99, p.ovr + change));
+        if (newOvr !== p.ovr) {
+          var ratio = Math.round(newOvr) / p.ovr;
+          SIM_CONFIG.ATTR_LIST.forEach(function(attrKey) {
+            if (p[attrKey] != null) p[attrKey] = Math.max(25, Math.min(99, Math.round(p[attrKey] * ratio)));
+          });
+          p.ovr = Math.round(newOvr);
+        }
       }
       // 联盟球员同样按“年龄 × 当前能力”双判定；42 岁赛季结束后统一退役。
       var retireChance = getLeagueRetirementChance(p, age);
